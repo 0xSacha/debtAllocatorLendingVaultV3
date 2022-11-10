@@ -1,4 +1,3 @@
 networks:
     default: goerli
-    test_rpc: http://goerli.prylabs.net/
 dotenv: .env

@@ -113,8 +113,6 @@ STRATEGYY_CHECKDATA = [CHECKDATA_0, CHECKDATA_1, CHECKDATA_2, CHECKDATA_3, CHECK
 # offset, which args we need from the data received from the call, 0 by default
 STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, STRATEGYY_OFFSET_3, STRATEGYY_OFFSET_4, STRATEGYY_OFFSET_5, STRATEGYY_OFFSET_6, STRATEGYY_OFFSET_7, STRATEGYY_OFFSET_8, STRATEGYY_OFFSET_9]
 
-# calculation (logic described in the readme)
-STRATEGYY_CALCULATION = []
 
 
 # ////////////////Supply rate = Ut * (SBt*St + VBt*Vt) * (1 - Rt)
@@ -353,5 +351,5 @@ CALCULATION_CONDITION = [3, 1, 2, 0, 10000, 3, 0, 1, 1000020000, 2, 10003, 4, 31
 
 
 def main():
-    acct = accounts.load('sa')
+    acct = accounts.load('sach')
     DebtAllocator[0].addStrategy.call(STRATEGY_ADDRESS, MAX_STRATEGY_DEBT_RATIO, STRATEGY_CONTRACTS, STRATEGYY_CHECKDATA, STRATEGYY_OFFSET, STRATEGYY_CALCULATION, CALCULATION_CONDITION,{'from': acct})

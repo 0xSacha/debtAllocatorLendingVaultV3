@@ -26,8 +26,9 @@ contract DebtAllocator {
     //mapping to get strategy inputs, contracts address+selector
     mapping(address => address[]) public strategyContracts;
     mapping(address => bytes[]) public strategyCheckdata;
-
+    mapping(address => uint256[]) public strategyOffset;
     mapping(address => Calculation[]) public strategyCalculation;
+    mapping(address => Calculation[]) public strategyCondition;
 
     //Some strategies may be risky or involve lock, their allocation should be limited in the vault
     mapping(address => uint16) public strategyMaxDebtRatio;
@@ -81,10 +82,11 @@ contract DebtAllocator {
         emit NewStaleSnapshotPeriod(_staleSnapshotPeriod);
     }
 
-    function addStrategy(address strategy, uint16 maxDebtRatio,address[] memory contracts, bytes[] memory checkdata, Calculation[] memory calculations) external {
+    function addStrategy(address strategy, uint16 maxDebtRatio,address[] memory contracts, bytes[] memory checkdata, uint256[] memory offset, Calculation[] memory calculations) external {
         strategies.push(strategy);
         require(strategyMaxDebtRatio[strategy] == 0, "Strategy exists");
         require(contracts.length == checkdata.length, "different tab length");
+        require(contracts.length == offset.length, "different tab length");
         for(uint256 i; i < contracts.length; i++) {
             strategyContracts[strategy].push(contracts[i]);
             strategyCheckdata[strategy].push(checkdata[i]);
@@ -94,15 +96,21 @@ contract DebtAllocator {
             strategyCalculation[strategy].push(calculations[j]);
         }
 
+        for(uint256 k; k < calculations.length; k++) {
+            strategyOffset[strategy].push(offset[k]);
+        }
+
         strategyMaxDebtRatio[strategy] = maxDebtRatio;
         emit NewStrategy(strategy, strategyMaxDebtRatio[strategy] ,strategyContracts[strategy], strategyCheckdata[strategy], strategyCalculation[strategy]);
     }
 
-    function updateStrategy(address strategy, uint16 maxDebtRatio,address[] memory contracts, bytes[] memory checkdata, Calculation[] memory calculations) external {
+    function updateStrategy(address strategy, uint16 maxDebtRatio,address[] memory contracts, bytes[] memory checkdata, uint256[] memory offset, Calculation[] memory calculations) external {
         require(strategyMaxDebtRatio[strategy] != 0, "Strategy not found");
         require(contracts.length == checkdata.length, "different tab length");
+        require(contracts.length == offset.length, "different tab length");
         delete strategyContracts[strategy];
         delete strategyCheckdata[strategy];
+        delete strategyOffset[strategy];
         delete strategyCalculation[strategy];
         delete strategyMaxDebtRatio[strategy];
 
@@ -116,6 +124,10 @@ contract DebtAllocator {
             strategyCalculation[strategy].push(calculations[j]);
         }
 
+        for(uint256 k; k < calculations.length; k++) {
+            strategyOffset[strategy].push(offset[k]);
+        }
+
         strategyMaxDebtRatio[strategy] = maxDebtRatio;
         emit StrategyUpdated(strategy, strategyMaxDebtRatio[strategy] ,strategyContracts[strategy], strategyCheckdata[strategy], strategyCalculation[strategy]);
     }
@@ -127,6 +139,7 @@ contract DebtAllocator {
         address strategy = strategies[index];
         delete strategyContracts[strategy];
         delete strategyCheckdata[strategy];
+        delete strategyOffset[strategy];
         delete strategyCalculation[strategy];
         delete strategyMaxDebtRatio[strategy];
         strategies[index] = strategies[strategies.length-1];
@@ -134,26 +147,6 @@ contract DebtAllocator {
         emit StrategyRemoved(strategy);
     }
 
-    function exctractTypeFromBytesTab(address contract_address, bytes4 selector, bytes[] memory args, uint256 offset, uint256 length) public returns(bytes32 bytesgot, bytes32 loli, uint256 wt, uint256 wtff) {
-    (, bytes memory data) = contract_address.call(abi.encodeWithSelector(selector, args));
-        bytesgot = bytesToBytes32(data, offset, length);
-       return(bytesgot, bytes32(data), uint256(bytesgot), uint256(bytes32(data)));   
-    }
-
-    // function exctractTypeFromBytes(address contract_address, bytes[] memory checkdata, uint256 offset, uint256 length) public returns(bytes32 bytesgot) {
-    // (, bytes memory data) = contract_address.call(checkdata));
-    //     bytesgot = bytesToBytes32(data, offset, length);
-    //    return(bytesgot);   
-    // }
-
-    function bytesToBytes32(bytes memory b, uint offset, uint256 length) private pure returns (bytes32) {
-  bytes32 out;
-
-  for (uint i = 0; i < length; i++) {
-    out |= bytes32(b[offset + i] & 0xFF) >> (i * 8);
-  }
-  return out;
-}
 
 
 
@@ -162,12 +155,13 @@ contract DebtAllocator {
         uint256[][] memory dataStrategies = new uint256[][](strategies.length);
         for(uint256 i; i < dataStrategies.length; i++) {
             bytes[] memory checkdata = strategyCheckdata[strategies[i]];
+            uint256[] memory offset = strategyOffset[strategies[i]];
             address[] memory contracts = strategyContracts[strategies[i]];
             uint256[] memory dataStrategy = new uint256[](contracts.length);
             for(uint256 j; j < checkdata.length; j++) {
                 (bool success, bytes memory data) = contracts[j].call(checkdata[j]);
                 require(success == true, "call didn't succeed");
-                dataStrategy[j] = uint256(bytes32(data));
+                dataStrategy[j] = uint256(bytesToBytes32(data, offset[j]));
             }
             dataStrategies[i] = dataStrategy;
         }
@@ -275,6 +269,15 @@ contract DebtAllocator {
         for(uint256 i; i < debtRatios_.length; i++) {
             require(debtRatios_[i] <= strategyMaxDebtRatio[strategies[i]],"not allowed debt ratio");
         }
+    }
+
+        
+    function bytesToBytes32(bytes memory b, uint offset) private pure returns (bytes32) {
+        bytes32 out;
+        for (uint i = 0; i < 32; i++) {
+            out |= bytes32(b[offset + i] & 0xFF) >> (i * 8);
+        }
+        return out;
     }
 }
 

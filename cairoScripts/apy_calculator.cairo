@@ -99,16 +99,10 @@ func calcul_score_strategy{ range_check_ptr }(
         }
     }
 
-     %{  
-        print(ids.op1_)
-        print(ids.op2_)
-    %}
-
     let (result_) = perform_calculation(op1_, op2_, _calcul_strat[3 * _step_len + 2]);
-    %{  
-        print(ids.result_)
-    %}
-
+    // %{  
+    //     print(ids.result_)
+    // %}
     assert _step[_step_len] = result_;
     return calcul_score_strategy(_data_strat_len, _data_strat, _calcul_strat_len, _calcul_strat, _step_len + 1, _step);
 }
@@ -178,7 +172,7 @@ func prepare_calcul{ range_check_ptr }(
     }
 
     let (result_) = perform_calculation(op1_, op2_, _conditions_strat[3 * _step_len + 2]);
-    %{  
+        %{  
         print(ids.result_)
     %}
     assert _step[_step_len] = result_;
@@ -204,20 +198,19 @@ func run_input{ range_check_ptr }(
         _cumulative_strat_condtions_array: felt*,
         _cumulative_calculation_strat_array_len: felt,
         _cumulative_calculation_strat_array: felt*,
-        _cumulative_debt_: felt,
+        tab_len_: felt,
         _strat_amount: felt
     ) -> (
        current_score: felt,
        new_score: felt,
        input_hash: Uint256,
-       strat_amount: felt
     ){
     alloc_locals;
-    if(_cumulative_debt_ == 10000){
+    if(tab_len_ == _strat_amount){
         memcpy(_cumulative_data_strat_array + _cumulative_data_strat_array_len, _cumulative_calculation_strat_array, _cumulative_calculation_strat_array_len);
         memcpy(_cumulative_data_strat_array + _cumulative_data_strat_array_len + _cumulative_calculation_strat_array_len, _cumulative_strat_condtions_array, _cumulative_strat_condtions_array_len);
         let (input_hash_) = keccak_felts(_cumulative_data_strat_array_len + _cumulative_calculation_strat_array_len + _cumulative_strat_condtions_array_len, _cumulative_data_strat_array);
-        return(_cumulative_current_score, _cumulative_new_score, input_hash_, _strat_amount);
+        return(_cumulative_current_score, _cumulative_new_score, input_hash_);
     }
 
     let (local calcul_strat_after_condition_: felt*) = alloc();
@@ -254,10 +247,10 @@ func run_input{ range_check_ptr }(
     let current_score_ = strategy_apy_ *  _current_debt_ratio[0];
     let new_score_ = strategy_apy_ *  _new_debt_ratio[0];
 
-    %{  
-        print(ids.current_score_)
-        print(ids.new_score_)
-    %}
+    // %{  
+    //     print(ids.current_score_)
+    //     print(ids.new_score_)
+    // %}
 
     // memcpy(dst: felt*, src: felt*, len)
     memcpy(_cumulative_data_strat_array + _cumulative_data_strat_array_len, _data_strat + 1,  _data_strat[0]);
@@ -281,7 +274,7 @@ func run_input{ range_check_ptr }(
         _cumulative_strat_condtions_array,
         _cumulative_calculation_strat_array_len + _calcul_strat[0]*3,
         _cumulative_calculation_strat_array,
-        _cumulative_debt_ + _current_debt_ratio[0],
+        tab_len_,
         _strat_amount + 1);
 }
 
@@ -296,6 +289,8 @@ func main{output_ptr: felt*, range_check_ptr, bitwise_ptr : BitwiseBuiltin*}() {
     tempvar tab_len_;
 
     %{  
+        strategy_amount = len(program_input['current_debt_ratio'])
+        ids.tab_len_ = strategy_amount
         current_debt_ratio = ids.current_debt_ratio
         for i, val in enumerate(program_input['current_debt_ratio']):
              memory[current_debt_ratio + i] = val
@@ -319,11 +314,11 @@ func main{output_ptr: felt*, range_check_ptr, bitwise_ptr : BitwiseBuiltin*}() {
 
     %}
 
-
+    let tab_len_ = tab_len_;
     let (local cumulative_data_strat_array : felt*) = alloc();
     let (local cumulative_calculation_strat_array : felt*) = alloc();
     let (local cumulative_condition_strat_array : felt*) = alloc();
-    let (current_score_, new_score_, input_hash_, strat_amount) = run_input(current_debt_ratio, new_debt_ratio, strat_data, strat_calculation, strat_calculation_conditions,0, 0, 0, cumulative_data_strat_array, 0, cumulative_calculation_strat_array, 0, cumulative_condition_strat_array, 0, 0);
+    let (current_score_, new_score_, input_hash_) = run_input(current_debt_ratio, new_debt_ratio, strat_data, strat_calculation, strat_calculation_conditions,0, 0, 0, cumulative_data_strat_array, 0, cumulative_calculation_strat_array, 0, cumulative_condition_strat_array, tab_len_, 0);
     let (vault_current_apy_,r) = unsigned_div_rem(current_score_, 10000);
     let (vault_new_apy_,r) = unsigned_div_rem(new_score_, 10000);
 
@@ -332,8 +327,8 @@ func main{output_ptr: felt*, range_check_ptr, bitwise_ptr : BitwiseBuiltin*}() {
 
     serialize_word(input_hash_.high);
     serialize_word(input_hash_.low);
-    serialize_array(current_debt_ratio, strat_amount, 1, callback);    
-    serialize_array(new_debt_ratio, strat_amount, 1, callback);    
+    serialize_array(current_debt_ratio, tab_len_, 1, callback);    
+    serialize_array(new_debt_ratio, tab_len_, 1, callback);    
     serialize_word(vault_current_apy_);
     serialize_word(vault_new_apy_);
     return ();

@@ -121,66 +121,65 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 # calcul availableLiq + stable debt
 # Step0 = 1, 2, 0
 
-# calcul totalLiq : Step0 + var_debt 
+# calcul totalLiq : Step0 + var_debt                        //totalLiq step 1
 # Step1= 10000, 3, 0
 
-# calcul availableLiq x Precison (10^9)
-# Step2 = 1, 1000020000, 2
+# calcul total borrowed : stable debt + var debt
+# Step2 = 2, 3, 0                                                total borrowed Step 2
 
-# calcul Ut(10^9) :  Step2 / Step1       Ut(10^9) step 3
-# Step3 = 10002, 10001, 3
+# calcul  total borrowed x Precison (10^27)
+# Step3 = 10002, 1000000000000000000000020000, 2
 
+# calcul Ut(10^27) :  Step3 / Step1                         Ut(10^27) step 4
+# Step4 = 10003, 10001, 3
 
 # calcul Ut - Uo
-# Step4 = 10003, 4, 1
+# Step5 = 10004, 4, 1
 
 # calcul  1 - Uo
-# Step5 = 1000020000, 4, 1            
+# Step6 = 1000000000000000000000020000, 4, 1            
 
 # calcul (Ut - Uo) x Precision
-# Step6 = 10004, 1000020000, 2
+# Step7 = 10005, 1000000000000000000000020000, 2
 
-# calcul (Ut - Uo)(10^9) / (1 - Uo)
-# step7 = 10006, 10005, 3                           (Ut - Uo)(10^9) / (1 - Uo) Step 7
+# calcul (Ut - Uo)(10^27) / (1 - Uo)
+# step8 = 10007, 10006, 3                           (Ut - Uo)(10^27) / (1 - Uo) Step 8
 
 
 #  average stable rate St= R0 + R1s + (Ut - Uo)/ (1 - Uo)R2s
 
-# calcul R2s * step7 * (10^9)
-# Step8 = 10007, 6, 2
+# calcul R2s * step8 * (10^27)
+# Step9 = 10008, 6, 2
 
 # calcul R2s * (Ut - Uo)/ (1 - Uo)
-# Step9 = 10008, 1000020000, 3
+# Step10 = 10009, 1000000000000000000000020000, 3
 
 
 # calcul R2s * (Ut - Uo)/ (1 - Uo) + R1s
-# Step10 = 10009, 5, 0
+# Step11 = 10010, 5, 0
 
 # calcul R2s * (Ut - Uo)/ (1 - Uo) + R1s + R0
-# Step11 = 10010, 9, 0                                            St= R0 + R1s + (Ut - Uo)/ (1 - Uo)R2s   Step 11
-
-# calcul total borrowed : stable debt + var debt
-# Step12 = 2, 3, 0                                                total borrowed Step 12
+# Step12 = 10011, 9, 0                                            St= R0 + R1s + (Ut - Uo)/ (1 - Uo)R2s   Step 11
 
 # calcul stable_debt * Precision
-# Step13 = 2, 1000020000, 2
+# Step13 = 2, 1000000000000000000000020000, 2
 
-# calcul SBt(10^9) =  stable_debt * Precision / total borrowed
-# Step14 = 10013, 10012, 3                                                SBt(10^9) step 14
+# calcul SBt(10^27) =  stable_debt * Precision / total borrowed
+# Step14 = 10013, 10002, 3                                                SBt(10^27) step 14
 
-# calcul SBt * St (10^9) =  Step 11 * step 14
+# calcul SBt * St (10^27) =  Step 11 * step 14
 # Step15 = 10011, 10014, 2
 
 # calcul SBt * St =  Step 15/ precision
-# Step16 = 10015, 1000020000, 3                                       SBt * St  Step 16
+# Step16 = 10015, 1000000000000000000000020000, 3                                       SBt * St  Step 16
     
 #  average variable rate Vt= R0 + R1v + (Ut - Uo)/ (1 - Uo)R2v
 
-# calcul R2v * step7 * (10^9)
-# Step17 = 10007, 8, 2
+# calcul R2v * step8 * (10^27)
+# Step17 = 10008, 8, 2
 
 # calcul R2v * (Ut - Uo)/ (1 - Uo)
-# Step18 = 10017, 1000020000, 3
+# Step18 = 10017, 1000000000000000000000020000, 3
 
 # calcul R2v * (Ut - Uo)/ (1 - Uo) + R1v
 # Step19 = 10018, 7, 0
@@ -190,19 +189,19 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 
 
 # calcul variable_debt * Precision
-# Step21 = 3, 1000020000, 2
+# Step21 = 3, 1000000000000000000000020000, 2
 
-# calcul VBt(10^9) =  variable_debt * Precision / total borrowed
-# Ste22 = 10021, 10012, 3                                                VBt(10^9) step 22
+# calcul VBt(10^27) =  variable_debt * Precision / total borrowed
+# Ste22 = 10021, 10002, 3                                                VBt(10^27) step 22
 
 
-# calcul Vt * VBt (10^9) =  Step 20 * step 22
+# calcul Vt * VBt (10^27) =  Step 20 * step 22
 # Step23 = 10020, 10022, 2
 
 # calcul Vt * VBt =  Step23/ precision
-# Step24 = 10023, 1000020000, 3                                       VBt * Vt  Step 24
+# Step24 = 10023, 1000000000000000000000020000, 3                                       VBt * Vt  Step 24
     
-# calcul (SBt * St) + (Vt * VBt) =  Step23/ precision
+# calcul (SBt * St) + (Vt * VBt) =  step 16 + step 24
 # Step25 = 10016, 10024, 0                                                (SBt * St) + (VBt * Vt) Step 25
 
 # !! Reserve factor /10000 = reserve factor !! 
@@ -215,85 +214,85 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 # calcul  (SBt * St) + (VBt * Vt) * (1 - Rt)  : Step 27 / precision
 # Step28 = 10027, 30000, 3  
 
-# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt) * Ut(10^9): Step28 * Step3
-# Step29 = 10028, 10003, 2    
+# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt) * Ut(10^27): Step28 * Step4
+# Step29 = 10028, 10004, 2    
 
-# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt) * Ut: Step29 / precision(10^9)
-# Step30 = 10029, 1000020000, 3                                                   🧪🧪🧪 conditon NOT OK Supply rate STEP 30 🧪🧪🧪 (31 Length )
+# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt) * Ut: Step29 / precision(10^27)
+# Step30 = 10029, 1000000000000000000000020000, 3                                                   🧪🧪🧪 conditon NOT OK Supply rate STEP 30 🧪🧪🧪 (31 Length )
 
-# [1, 2, 0, 10000, 3, 0, 1, 1000020000, 2, 10002, 10001, 3, 10003, 4, 1, 1000020000, 4, 1, 10004, 1000020000, 2, 10006, 10005, 3, 10007, 6, 2, 10008, 1000020000, 3,
-# 10009, 5, 0, 10010, 9, 0, 2, 3, 0, 2, 1000020000, 2, 10013, 10012, 3, 10011, 10014, 2, 10015, 1000020000, 3, 10007, 8, 2, 10017, 1000020000, 3, 10018, 7, 0, 10019, 9, 0,
-# 3, 1000020000, 2, 10021, 10012, 3, 10020, 10022, 2, 10023, 1000020000, 3, 10016, 10024, 0, 30000, 0, 1, 10025, 10026, 2, 10027, 30000, 3, 10028, 10003, 2, 10029, 1000020000, 3]
-
+# [1, 2, 0, 10000, 3, 0, 2, 3, 0, 10002, 1000000000000000000000020000, 2,10003, 10001, 3, 10004, 4, 1, 1000000000000000000000020000, 4, 1, 10005, 1000000000000000000000020000, 2, 10007, 10006, 3, 10008, 6, 2, 10009, 1000000000000000000000020000, 3,
+# 10010, 5, 0, 10011, 9, 0, 2, 1000000000000000000000020000, 2, 10013, 10002, 3, 10011, 10014, 2, 10015, 1000000000000000000000020000, 3, 10008, 8, 2, 10017, 1000000000000000000000020000, 3, 10018, 7, 0, 10019, 9, 0,
+# 3, 1000000000000000000000020000, 2, 10021, 10002, 3, 10020, 10022, 2, 10023, 1000000000000000000000020000, 3, 10016, 10024, 0, 30000, 0, 1, 10025, 10026, 2, 10027, 30000, 3, 10028, 10004, 2, 10029, 1000000000000000000000020000, 3]
 
 # ////////CASE Ut <= Uo
+
 # calcul availableLiq + stable debt
 # Step0 = 1, 2, 0
 
-# calcul totalLiq : Step0 + var_debt 
+# calcul totalLiq : Step0 + var_debt                        //totalLiq step 1
 # Step1= 10000, 3, 0
 
-# calcul availableLiq x Precison (10^9)
-# Step2 = 1, 1000020000, 2
+# calcul total borrowed : stable debt + var debt
+# Step2 = 2, 3, 0                                                total borrowed Step 2
 
-# calcul Ut(10^9) :  Step2 / Step1       Ut(10^9) step 3
-# Step3 = 10002, 10001, 3
+# calcul  total borrowed x Precison (10^27)
+# Step3 = 10002, 1000000000000000000000020000, 2
 
-# calcul Ut x Precison (10^9)
-# Step4 = 10003, 1000020000, 2
+# calcul Ut(10^27) :  Step3 / Step1                         Ut(10^27) step 4
+# Step4 = 10003, 10001, 3
+
+###
+
+# calcul Ut x Precison (10^27)
+# Step5 = 10004, 1000000000000000000000020000, 2
 
 # calcul Ut/Uo
-# Step5 = 10004, 4, 3              Ut(10^9)/Uo step 5
+# Step6 = 10005, 4, 3              Ut(10^27)/Uo step 6
 
 
 #  average stable rate St = R0 + (Ut/Uo)* R1s
-# calcul (Ut(10^9)/Uo)* R1s 
-# Step6 = 10005, 5, 2
+# calcul (Ut(10^27)/Uo)* R1s 
+# Ste7 = 10006, 5, 2
 
 # calcul (Ut/Uo)* R1s
-# Step7 = 10006, 1000020000, 3
+# Step8 = 10007, 1000000000000000000000020000, 3
 
 # calcul St = R0 + (Ut/Uo)* R1s          
-# Step8 = 10007, 9, 0                                      St step 8
+# Step9 = 10008, 9, 0                                      St step 9
 
-# calcul stable debt + var debt                            total debt step 9
-# Step9 = 2, 3, 0
+# calcul stable x Precison (10^27)
+# Step10 = 2, 1000000000000000000000020000, 2
 
+# calcul SBt(10^27) : stable_debt(10^27)/ totalborrow step 2      
+# Step11 = 10010, 10002, 3                                  SBt(10^27) step 11
 
-
-# calcul stable x Precison (10^9)
-# Step10 = 2, 1000020000, 2
-
-# calcul SBt(10^9) : stable_debt(10^9)/ Step9      
-# Step11 = 10010, 10009, 3                                  SBt(10^9) step 11
-
-# calcul SBt(10^9) * St : step11 * step8    
+# calcul SBt(10^27) * St : step11 * step8    
 # Step12 = 10011, 10009, 2   
 
 # calcul SBt * St : step12 / Precision  
-# Step13 = 10012, 1000020000, 3                           SBt * St Step 13   
+# Step13 = 10012, 1000000000000000000000020000, 3                           SBt * St Step 13   
 
 # average variable rate Vt = R0 + (Ut/Uo)* R1v
-# calcul (Ut(10^9)/Uo)* R1v
-# Step14 = 10005, 7, 2
+# calcul (Ut(10^27)/Uo)* R1v
+# Step14 = 10006, 7, 2
 
 # calcul (Ut/Uo)* R1v
-# Step15 = 10014, 1000020000, 3
+# Step15 = 10014, 1000000000000000000000020000, 3
 
 # calcul Vt = R0 + (Ut/Uo)* R1v
 # Step16 = 10015, 9, 0                                     Vt STEP 16
 
-# calcul variable_debt x Precison (10^9)
-# Step17 = 3, 1000020000, 2
+# calcul variable_debt x Precison (10^27)
+# Step17 = 3, 1000000000000000000000020000, 2
 
-# calcul variable_debt(10^9) / Step 9
-# Step18 = 10017, 10009, 3                                VBt(10^9) step 18
+# calcul variable_debt(10^27) / Step 2
+# Step18 = 10017, 10002, 3                                VBt(10^27) step 18
 
-# calcul VBt(10^9) * Vt : step16 * Step18   
+# calcul VBt(10^27) * Vt : step16 * Step18   
 # Step19 = 10016, 10018, 2   
 
 # calcul VBt * Vt : step19 / Precision   
-# Step20 = 10019, 1000020000, 3                           VBt * Vt Step 20 
+# Step20 = 10019, 1000000000000000000000020000, 3                           VBt * Vt Step 20 
 
 
 # calcul (SBt * St) + (VBt * Vt)  : step13 + step20
@@ -310,45 +309,49 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 # calcul  (SBt * St) + (VBt * Vt) * (1 - Rt)  : Step 23 / precision(10^4)
 # Step24 = 10023, 30000, 3                                                    (SBt * St) + (VBt * Vt) * (1 - Rt) step24
 
-# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt) * Ut(10^9): Step24 * Step3
-# Step25 = 10024, 10003, 2    
+# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt) * Ut(10^27): Step24 * Step3
+# Step25 = 10024, 10004, 2    
 
-# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt) * Ut: Step25 / precision(10^9)
-# Step26 = 10025, 1000020000, 3                                                   🧪🧪🧪 conditon OK Supply rate STEP 26 🧪🧪🧪 (27 Length )
+# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt) * Ut: Step25 / precision(10^27)
+# Step26 = 10025, 1000000000000000000000020000, 3                                                   🧪🧪🧪 conditon OK Supply rate STEP 26 🧪🧪🧪 (27 Length )
 
-# [1, 2, 0, 10000, 3, 0, 1, 1000020000, 2, 10002, 10001, 3, 10003, 1000020000, 2, 10004, 4, 3, 10005, 5, 2, 10006, 1000020000, 3, 10007, 9, 0, 2, 3, 0, 2, 1000020000, 2,
-# 10010, 10009, 3, 10011, 10009, 2, 10012, 1000020000, 3, 10005, 7, 2, 10014, 1000020000, 3, 10015, 9, 0, 3, 1000020000, 2, 10017, 10009, 3, 10016, 10018, 2, 10019, 1000020000, 3,
-# 10013, 10020, 0, 30000, 0, 1, 10021, 10022, 2, 10023, 30000, 3, 10024, 10003, 2, 10025, 1000020000, 3]
-
+# [1, 2, 0, 10000, 3, 0, 2, 3, 0, 10002, 1000000000000000000000020000, 2, 10003, 10001, 3, 10004, 1000000000000000000000020000, 2, 10005, 4, 3, 10006, 5, 2, 10007, 1000000000000000000000020000, 3, 10008, 9, 0, 2, 1000000000000000000000020000, 2,
+# 10010, 10002, 3, 10011, 10009, 2, 10012, 1000000000000000000000020000, 3, 10006, 7, 2, 10014, 1000000000000000000000020000, 3, 10015, 9, 0, 3, 1000000000000000000000020000, 2, 10017, 10002, 3, 10016, 10018, 2, 10019, 1000000000000000000000020000, 3,
+# 10013, 10020, 0, 30000, 0, 1, 10021, 10022, 2, 10023, 30000, 3, 10024, 10004, 2, 10025, 1000000000000000000000020000, 3]
 
 # Total Length (31 + 27 = 58) + NOT OK Solution + OK Solution
 
-STRATEGYY_CALCULATION = [58, 1, 2, 0, 10000, 3, 0, 1, 1000020000, 2, 10002, 10001, 3, 10003, 4, 1, 1000020000, 4, 1, 10004, 1000020000, 2, 10006, 10005, 3, 10007, 6, 2, 10008, 1000020000, 3,
-10009, 5, 0, 10010, 9, 0, 2, 3, 0, 2, 1000020000, 2, 10013, 10012, 3, 10011, 10014, 2, 10015, 1000020000, 3, 10007, 8, 2, 10017, 1000020000, 3, 10018, 7, 0, 10019, 9, 0,
-3, 1000020000, 2, 10021, 10012, 3, 10020, 10022, 2, 10023, 1000020000, 3, 10016, 10024, 0, 30000, 0, 1, 10025, 10026, 2, 10027, 30000, 3, 10028, 10003, 2, 10029, 1000020000, 3, 
-1, 2, 0, 10000, 3, 0, 10001, 1000020000, 2, 10002, 10001, 3, 10003, 1000020000, 2, 10004, 4, 3, 10005, 5, 2, 10006, 1000020000, 3, 10007, 9, 0, 2, 3, 0, 2, 1000020000, 2,
-10010, 10009, 3, 10011, 10009, 2, 10012, 1000020000, 3, 10005, 7, 2, 10014, 1000020000, 3, 10015, 9, 0, 3, 1000020000, 2, 10017, 10009, 3, 10016, 10018, 2, 10019, 1000020000, 3,
-10013, 10020, 0, 30000, 0, 1, 10021, 10022, 2, 10023, 30000, 3, 10024, 10003, 2, 10025, 1000020000, 3]
-
+STRATEGYY_CALCULATION = [1, 2, 0, 10000, 3, 0, 2, 3, 0, 10002, 1000000000000000000000020000, 2,10003, 10001, 3, 10004, 4, 1, 1000000000000000000000020000, 4, 1, 10005, 1000000000000000000000020000, 2, 10007, 10006, 3, 10008, 6, 2, 10009, 1000000000000000000000020000, 3,
+                10010, 5, 0, 10011, 9, 0, 2, 1000000000000000000000020000, 2, 10013, 10002, 3, 10011, 10014, 2, 10015, 1000000000000000000000020000, 3, 10008, 8, 2, 10017, 1000000000000000000000020000, 3, 10018, 7, 0, 10019, 9, 0,
+                3, 1000000000000000000000020000, 2, 10021, 10002, 3, 10020, 10022, 2, 10023, 1000000000000000000000020000, 3, 10016, 10024, 0, 30000, 0, 1, 10025, 10026, 2, 10027, 30000, 3, 10028, 10004, 2, 10029, 1000000000000000000000020000, 3, 1, 2, 0, 10000, 3, 
+                0, 2, 3, 0, 10002, 1000000000000000000000020000, 2, 10003, 10001, 3, 10004, 1000000000000000000000020000, 2, 10005, 4, 3, 10006, 5, 2, 10007, 1000000000000000000000020000, 3, 10008, 9, 0, 2, 1000000000000000000000020000, 2,
+                     10010, 10002, 3, 10011, 10009, 2, 10012, 1000000000000000000000020000, 3, 10006, 7, 2, 10014, 1000000000000000000000020000, 3, 10015, 9, 0, 3, 1000000000000000000000020000, 2, 10017, 10002, 3, 10016, 10018, 2, 10019, 1000000000000000000000020000, 3,
+                     10013, 10020, 0, 30000, 0, 1, 10021, 10022, 2, 10023, 30000, 3, 10024, 10004, 2, 10025, 1000000000000000000000020000, 3]
+                    ## 58 !! add len for the cairo script input
+ 
 # Condition : if Ut <= Uo : jump 31
+
 # calcul availableLiq + stable debt
 # Step0 = 1, 2, 0
 
-# calcul totalLiq : Step0 + var_debt 
+# calcul totalLiq : Step0 + var_debt                        //totalLiq step 1
 # Step1= 10000, 3, 0
 
-# calcul availableLiq x Precison (10^9)
-# Step2 = 1, 1000020000, 2
+# calcul total borrowed : stable debt + var debt
+# Step2 = 2, 3, 0                                                total borrowed Step 2
 
-# calcul Ut(10^9) :  Step2 / Step1       Ut(10^9) step 3
-# Step3 = 10002, 10001, 3
+# calcul  total borrowed x Precison (10^27)
+# Step3 = 10002, 1000000000000000000000020000, 2
+
+# calcul Ut(10^27) :  Step3 / Step1                         Ut(10^27) step 4
+# Step4 = 10003, 10001, 3
 
 # Final: if step3 (Ut) <= stratData 4 (Uo) : go index 31 and 27 length
-# FinalStep = 10003, 4, 31, 27
+# FinalStep = 10004, 4, 31, 27
 
-# Total Length (without finalStep): 3 + steps + final step
-CALCULATION_CONDITION = [3, 1, 2, 0, 10000, 3, 0, 1, 1000020000, 2, 10003, 4, 31, 27]
-
+# Total Length (without finalStep): 4 (steps length) + steps + final step
+CALCULATION_CONDITION = [1, 2, 0, 10000, 3, 0, 2, 3, 0, 10002, 1000000000000000000000020000, 2, 10003, 10001, 3, 10004, 4, 31, 27]
+## !! add len for the cairo script input: 5
 
 def main():
     acct = accounts.load('sach')

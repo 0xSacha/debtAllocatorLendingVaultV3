@@ -14792,7 +14792,20 @@
                         "__main__.calcul_score_strategy.result_": 218
                     }
                 },
-                "hints": [],
+                "hints": [
+                    {
+                        "location": {
+                            "end_col": 7,
+                            "end_line": 117,
+                            "input_file": {
+                                "filename": "apy_calculator.cairo"
+                            },
+                            "start_col": 5,
+                            "start_line": 115
+                        },
+                        "n_prefix_newlines": 1
+                    }
+                ],
                 "inst": {
                     "end_col": 28,
                     "end_line": 118,
@@ -20512,20 +20525,7 @@
                         "__main__.prepare_calcul.range_check_ptr": 255
                     }
                 },
-                "hints": [
-                    {
-                        "location": {
-                            "end_col": 7,
-                            "end_line": 173,
-                            "input_file": {
-                                "filename": "apy_calculator.cairo"
-                            },
-                            "start_col": 5,
-                            "start_line": 170
-                        },
-                        "n_prefix_newlines": 1
-                    }
-                ],
+                "hints": [],
                 "inst": {
                     "end_col": 42,
                     "end_line": 175,
@@ -24389,20 +24389,7 @@
                         "__main__.prepare_calcul.result_": 328
                     }
                 },
-                "hints": [
-                    {
-                        "location": {
-                            "end_col": 7,
-                            "end_line": 189,
-                            "input_file": {
-                                "filename": "apy_calculator.cairo"
-                            },
-                            "start_col": 9,
-                            "start_line": 187
-                        },
-                        "n_prefix_newlines": 1
-                    }
-                ],
+                "hints": [],
                 "inst": {
                     "end_col": 28,
                     "end_line": 190,
@@ -25515,20 +25502,7 @@
                         "__main__.run_input.tab_len_": 344
                     }
                 },
-                "hints": [
-                    {
-                        "location": {
-                            "end_col": 7,
-                            "end_line": 240,
-                            "input_file": {
-                                "filename": "apy_calculator.cairo"
-                            },
-                            "start_col": 5,
-                            "start_line": 222
-                        },
-                        "n_prefix_newlines": 1
-                    }
-                ],
+                "hints": [],
                 "inst": {
                     "end_col": 79,
                     "end_line": 241,
@@ -27239,20 +27213,7 @@
                         "__main__.run_input.tab_len_": 344
                     }
                 },
-                "hints": [
-                    {
-                        "location": {
-                            "end_col": 7,
-                            "end_line": 266,
-                            "input_file": {
-                                "filename": "apy_calculator.cairo"
-                            },
-                            "start_col": 5,
-                            "start_line": 260
-                        },
-                        "n_prefix_newlines": 1
-                    }
-                ],
+                "hints": [],
                 "inst": {
                     "end_col": 40,
                     "end_line": 269,
@@ -34743,177 +34704,54 @@
                 }
             }
         ],
-        "607": [
+        "458": [
             {
                 "accessible_scopes": [
                     "__main__",
-                    "__main__.prepare_calcul"
-                ],
-                "code": "print(ids.op1_)\nprint(ids.op2_)",
-                "flow_tracking_data": {
-                    "ap_tracking": {
-                        "group": 41,
-                        "offset": 0
-                    },
-                    "reference_ids": {
-                        "__main__.prepare_calcul.__temp100": 244,
-                        "__main__.prepare_calcul.__temp101": 245,
-                        "__main__.prepare_calcul.__temp102": 248,
-                        "__main__.prepare_calcul.__temp103": 249,
-                        "__main__.prepare_calcul.__temp104": 250,
-                        "__main__.prepare_calcul.__temp105": 251,
-                        "__main__.prepare_calcul.__temp106": 257,
-                        "__main__.prepare_calcul.__temp123": 275,
-                        "__main__.prepare_calcul.__temp92": 231,
-                        "__main__.prepare_calcul.__temp93": 232,
-                        "__main__.prepare_calcul.__temp94": 233,
-                        "__main__.prepare_calcul.__temp95": 236,
-                        "__main__.prepare_calcul.__temp96": 237,
-                        "__main__.prepare_calcul.__temp97": 238,
-                        "__main__.prepare_calcul.__temp98": 239,
-                        "__main__.prepare_calcul.__temp99": 243,
-                        "__main__.prepare_calcul._calcul_strat": 228,
-                        "__main__.prepare_calcul._calcul_strat_len": 227,
-                        "__main__.prepare_calcul._conditions_strat": 224,
-                        "__main__.prepare_calcul._conditions_strat_len": 223,
-                        "__main__.prepare_calcul._data_strat": 222,
-                        "__main__.prepare_calcul._data_strat_len": 221,
-                        "__main__.prepare_calcul._step": 226,
-                        "__main__.prepare_calcul._step_len": 225,
-                        "__main__.prepare_calcul._to_prepare": 229,
-                        "__main__.prepare_calcul.is_operand1_const_": 247,
-                        "__main__.prepare_calcul.is_operand1_input_": 235,
-                        "__main__.prepare_calcul.is_operand2_const_": 254,
-                        "__main__.prepare_calcul.is_operand2_input_": 242,
-                        "__main__.prepare_calcul.op1_": 256,
-                        "__main__.prepare_calcul.op2_": 274,
-                        "__main__.prepare_calcul.range_check_ptr": 255
-                    }
-                }
-            }
-        ],
-        "684": [
-            {
-                "accessible_scopes": [
-                    "__main__",
-                    "__main__.prepare_calcul"
+                    "__main__.calcul_score_strategy"
                 ],
                 "code": "print(ids.result_)",
                 "flow_tracking_data": {
                     "ap_tracking": {
-                        "group": 44,
+                        "group": 34,
                         "offset": 0
                     },
                     "reference_ids": {
-                        "__main__.prepare_calcul.__temp100": 244,
-                        "__main__.prepare_calcul.__temp101": 245,
-                        "__main__.prepare_calcul.__temp102": 248,
-                        "__main__.prepare_calcul.__temp103": 249,
-                        "__main__.prepare_calcul.__temp104": 250,
-                        "__main__.prepare_calcul.__temp105": 251,
-                        "__main__.prepare_calcul.__temp106": 257,
-                        "__main__.prepare_calcul.__temp123": 275,
-                        "__main__.prepare_calcul.__temp143": 295,
-                        "__main__.prepare_calcul.__temp168": 323,
-                        "__main__.prepare_calcul.__temp169": 324,
-                        "__main__.prepare_calcul.__temp170": 325,
-                        "__main__.prepare_calcul.__temp171": 326,
-                        "__main__.prepare_calcul.__temp92": 231,
-                        "__main__.prepare_calcul.__temp93": 232,
-                        "__main__.prepare_calcul.__temp94": 233,
-                        "__main__.prepare_calcul.__temp95": 236,
-                        "__main__.prepare_calcul.__temp96": 237,
-                        "__main__.prepare_calcul.__temp97": 238,
-                        "__main__.prepare_calcul.__temp98": 239,
-                        "__main__.prepare_calcul.__temp99": 243,
-                        "__main__.prepare_calcul._calcul_strat": 228,
-                        "__main__.prepare_calcul._calcul_strat_len": 227,
-                        "__main__.prepare_calcul._conditions_strat": 224,
-                        "__main__.prepare_calcul._conditions_strat_len": 223,
-                        "__main__.prepare_calcul._data_strat": 222,
-                        "__main__.prepare_calcul._data_strat_len": 221,
-                        "__main__.prepare_calcul._step": 226,
-                        "__main__.prepare_calcul._step_len": 225,
-                        "__main__.prepare_calcul._to_prepare": 229,
-                        "__main__.prepare_calcul.is_operand1_const_": 247,
-                        "__main__.prepare_calcul.is_operand1_input_": 235,
-                        "__main__.prepare_calcul.is_operand2_const_": 254,
-                        "__main__.prepare_calcul.is_operand2_input_": 242,
-                        "__main__.prepare_calcul.op1_": 256,
-                        "__main__.prepare_calcul.op2_": 274,
-                        "__main__.prepare_calcul.range_check_ptr": 327,
-                        "__main__.prepare_calcul.result_": 328
-                    }
-                }
-            }
-        ],
-        "705": [
-            {
-                "accessible_scopes": [
-                    "__main__",
-                    "__main__.run_input"
-                ],
-                "code": "print(\"data strat : \")\nprint(ids._cumulative_data_strat_array_len)\ncumulative_data_strat_array = ids._cumulative_data_strat_array\nfor i in range(ids._cumulative_data_strat_array_len):\n     print(memory[cumulative_data_strat_array + i]) \n\nprint(\"calcul : \")\nprint(ids._cumulative_calculation_strat_array_len)\ncumulative_calculation_strat_array = ids._cumulative_calculation_strat_array\nfor i in range(ids._cumulative_calculation_strat_array_len):\n     print(memory[cumulative_calculation_strat_array + i]) \n\nprint(\"conditions : \")\nprint(ids._cumulative_strat_condtions_array_len)\ncumulative_strat_condtions_array = ids._cumulative_strat_condtions_array\nfor i in range(ids._cumulative_strat_condtions_array_len):\n     print(memory[cumulative_strat_condtions_array + i])",
-                "flow_tracking_data": {
-                    "ap_tracking": {
-                        "group": 46,
-                        "offset": 7
-                    },
-                    "reference_ids": {
-                        "__main__.run_input.__temp173": 347,
-                        "__main__.run_input._calcul_strat": 334,
-                        "__main__.run_input._condtions_strat": 335,
-                        "__main__.run_input._cumulative_calculation_strat_array": 343,
-                        "__main__.run_input._cumulative_calculation_strat_array_len": 342,
-                        "__main__.run_input._cumulative_current_score": 336,
-                        "__main__.run_input._cumulative_data_strat_array": 339,
-                        "__main__.run_input._cumulative_data_strat_array_len": 338,
-                        "__main__.run_input._cumulative_new_score": 337,
-                        "__main__.run_input._cumulative_strat_condtions_array": 341,
-                        "__main__.run_input._cumulative_strat_condtions_array_len": 340,
-                        "__main__.run_input._current_debt_ratio": 331,
-                        "__main__.run_input._data_strat": 333,
-                        "__main__.run_input._new_debt_ratio": 332,
-                        "__main__.run_input._strat_amount": 345,
-                        "__main__.run_input.range_check_ptr": 346,
-                        "__main__.run_input.tab_len_": 344
-                    }
-                }
-            }
-        ],
-        "750": [
-            {
-                "accessible_scopes": [
-                    "__main__",
-                    "__main__.run_input"
-                ],
-                "code": "print(\"after prepare\")\nprint(ids.calcul_strat_after_condition_len_)\ncalcul_strat_after_condition_ = ids.calcul_strat_after_condition_\nfor i in range(ids.calcul_strat_after_condition_len_ * 3):\n     print(memory[calcul_strat_after_condition_ + i])",
-                "flow_tracking_data": {
-                    "ap_tracking": {
-                        "group": 50,
-                        "offset": 0
-                    },
-                    "reference_ids": {
-                        "__main__.run_input.__temp173": 347,
-                        "__main__.run_input._calcul_strat": 334,
-                        "__main__.run_input._condtions_strat": 335,
-                        "__main__.run_input._cumulative_calculation_strat_array": 343,
-                        "__main__.run_input._cumulative_calculation_strat_array_len": 342,
-                        "__main__.run_input._cumulative_current_score": 336,
-                        "__main__.run_input._cumulative_data_strat_array": 339,
-                        "__main__.run_input._cumulative_data_strat_array_len": 338,
-                        "__main__.run_input._cumulative_new_score": 337,
-                        "__main__.run_input._cumulative_strat_condtions_array": 341,
-                        "__main__.run_input._cumulative_strat_condtions_array_len": 340,
-                        "__main__.run_input._current_debt_ratio": 331,
-                        "__main__.run_input._data_strat": 333,
-                        "__main__.run_input._new_debt_ratio": 332,
-                        "__main__.run_input._strat_amount": 345,
-                        "__main__.run_input.calcul_strat_after_condition_": 353,
-                        "__main__.run_input.calcul_strat_after_condition_len_": 357,
-                        "__main__.run_input.condition_step": 355,
-                        "__main__.run_input.range_check_ptr": 356,
-                        "__main__.run_input.tab_len_": 344
+                        "__main__.calcul_score_strategy.__temp33": 146,
+                        "__main__.calcul_score_strategy.__temp36": 149,
+                        "__main__.calcul_score_strategy.__temp37": 150,
+                        "__main__.calcul_score_strategy.__temp38": 151,
+                        "__main__.calcul_score_strategy.__temp39": 154,
+                        "__main__.calcul_score_strategy.__temp40": 155,
+                        "__main__.calcul_score_strategy.__temp41": 156,
+                        "__main__.calcul_score_strategy.__temp42": 157,
+                        "__main__.calcul_score_strategy.__temp43": 161,
+                        "__main__.calcul_score_strategy.__temp44": 162,
+                        "__main__.calcul_score_strategy.__temp45": 163,
+                        "__main__.calcul_score_strategy.__temp46": 166,
+                        "__main__.calcul_score_strategy.__temp47": 167,
+                        "__main__.calcul_score_strategy.__temp48": 168,
+                        "__main__.calcul_score_strategy.__temp49": 169,
+                        "__main__.calcul_score_strategy.__temp50": 175,
+                        "__main__.calcul_score_strategy.__temp67": 193,
+                        "__main__.calcul_score_strategy.__temp87": 213,
+                        "__main__.calcul_score_strategy.__temp88": 214,
+                        "__main__.calcul_score_strategy.__temp89": 215,
+                        "__main__.calcul_score_strategy.__temp90": 216,
+                        "__main__.calcul_score_strategy._calcul_strat": 142,
+                        "__main__.calcul_score_strategy._calcul_strat_len": 141,
+                        "__main__.calcul_score_strategy._data_strat": 140,
+                        "__main__.calcul_score_strategy._data_strat_len": 139,
+                        "__main__.calcul_score_strategy._step": 144,
+                        "__main__.calcul_score_strategy._step_len": 143,
+                        "__main__.calcul_score_strategy.is_operand1_const_": 165,
+                        "__main__.calcul_score_strategy.is_operand1_input_": 153,
+                        "__main__.calcul_score_strategy.is_operand2_const_": 172,
+                        "__main__.calcul_score_strategy.is_operand2_input_": 160,
+                        "__main__.calcul_score_strategy.op1_": 174,
+                        "__main__.calcul_score_strategy.op2_": 192,
+                        "__main__.calcul_score_strategy.range_check_ptr": 217,
+                        "__main__.calcul_score_strategy.result_": 218
                     }
                 }
             }

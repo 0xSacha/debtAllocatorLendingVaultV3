@@ -167,10 +167,10 @@ func prepare_calcul{ range_check_ptr }(
         }
     }
 
-    %{  
-        print(ids.op1_)
-        print(ids.op2_)
-    %}
+    // %{  
+    //     print(ids.op1_)
+    //     print(ids.op2_)
+    // %}
 
     if(_conditions_strat_len == _step_len){
         let is_le_ = is_le(op1_, op2_);
@@ -184,9 +184,9 @@ func prepare_calcul{ range_check_ptr }(
     }
 
     let (result_) = perform_calculation(op1_, op2_, _conditions_strat[3 * _step_len + 2]);
-        %{  
-        print(ids.result_)
-    %}
+    //     %{  
+    //     print(ids.result_)
+    // %}
     assert _step[_step_len] = result_;
 
     return prepare_calcul(_data_strat_len, _data_strat, _conditions_strat_len, _conditions_strat, _step_len + 1, _step, _calcul_strat_len, _calcul_strat, _to_prepare);
@@ -219,25 +219,25 @@ func run_input{ range_check_ptr }(
     ){
     alloc_locals;
     if(tab_len_ == _strat_amount){
-    %{  
-        print("data strat : ")
-        print(ids._cumulative_data_strat_array_len)
-        cumulative_data_strat_array = ids._cumulative_data_strat_array
-        for i in range(ids._cumulative_data_strat_array_len):
-             print(memory[cumulative_data_strat_array + i]) 
+    // %{  
+    //     print("data strat : ")
+    //     print(ids._cumulative_data_strat_array_len)
+    //     cumulative_data_strat_array = ids._cumulative_data_strat_array
+    //     for i in range(ids._cumulative_data_strat_array_len):
+    //          print(memory[cumulative_data_strat_array + i]) 
 
-        print("calcul : ")
-        print(ids._cumulative_calculation_strat_array_len)
-        cumulative_calculation_strat_array = ids._cumulative_calculation_strat_array
-        for i in range(ids._cumulative_calculation_strat_array_len):
-             print(memory[cumulative_calculation_strat_array + i]) 
+    //     print("calcul : ")
+    //     print(ids._cumulative_calculation_strat_array_len)
+    //     cumulative_calculation_strat_array = ids._cumulative_calculation_strat_array
+    //     for i in range(ids._cumulative_calculation_strat_array_len):
+    //          print(memory[cumulative_calculation_strat_array + i]) 
 
-        print("conditions : ")
-        print(ids._cumulative_strat_condtions_array_len)
-        cumulative_strat_condtions_array = ids._cumulative_strat_condtions_array
-        for i in range(ids._cumulative_strat_condtions_array_len):
-             print(memory[cumulative_strat_condtions_array + i]) 
-    %}
+    //     print("conditions : ")
+    //     print(ids._cumulative_strat_condtions_array_len)
+    //     cumulative_strat_condtions_array = ids._cumulative_strat_condtions_array
+    //     for i in range(ids._cumulative_strat_condtions_array_len):
+    //          print(memory[cumulative_strat_condtions_array + i]) 
+    // %}
         memcpy(_cumulative_data_strat_array + _cumulative_data_strat_array_len, _cumulative_calculation_strat_array, _cumulative_calculation_strat_array_len);
         memcpy(_cumulative_data_strat_array + _cumulative_data_strat_array_len + _cumulative_calculation_strat_array_len, _cumulative_strat_condtions_array, _cumulative_strat_condtions_array_len);
         let (input_hash_) = keccak_felts(_cumulative_data_strat_array_len + _cumulative_calculation_strat_array_len + _cumulative_strat_condtions_array_len, _cumulative_data_strat_array);
@@ -257,13 +257,13 @@ func run_input{ range_check_ptr }(
         _calcul_strat + 1,
         calcul_strat_after_condition_);
 
-    %{  
-        print("after prepare")
-        print(ids.calcul_strat_after_condition_len_)
-        calcul_strat_after_condition_ = ids.calcul_strat_after_condition_
-        for i in range(ids.calcul_strat_after_condition_len_ * 3):
-             print(memory[calcul_strat_after_condition_ + i]) 
-    %}
+    // %{  
+    //     print("after prepare")
+    //     print(ids.calcul_strat_after_condition_len_)
+    //     calcul_strat_after_condition_ = ids.calcul_strat_after_condition_
+    //     for i in range(ids.calcul_strat_after_condition_len_ * 3):
+    //          print(memory[calcul_strat_after_condition_ + i]) 
+    // %}
 
 
     let (local steps : felt*) = alloc();

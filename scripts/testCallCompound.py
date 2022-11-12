@@ -54,12 +54,9 @@ STRATEGYY_OFFSET_7 = 0
 
 def main():
     acct = accounts.load('sach')
-    tx = testCall[0].getStrategiesData(CONTRACT_ADDRESS_1, CHECKDATA_1, STRATEGYY_OFFSET_1, {'from': acct})
-    print("yo")
-    tx = testCall[0].getStrategiesData(CONTRACT_ADDRESS_2, CHECKDATA_2, STRATEGYY_OFFSET_2, {'from': acct})
-    print("yo")
-    tx = testCall[0].getStrategiesData(CONTRACT_ADDRESS_3, CHECKDATA_3, STRATEGYY_OFFSET_3, {'from': acct})
-    print("yo")
+    # tx = testCall[0].getStrategiesData(CONTRACT_ADDRESS_1, CHECKDATA_1, STRATEGYY_OFFSET_1, {'from': acct})
+    # tx = testCall[0].getStrategiesData(CONTRACT_ADDRESS_2, CHECKDATA_2, STRATEGYY_OFFSET_2, {'from': acct})
+    # tx = testCall[0].getStrategiesData(CONTRACT_ADDRESS_3, CHECKDATA_3, STRATEGYY_OFFSET_3, {'from': acct})
     tx = testCall[0].getStrategiesData(CONTRACT_ADDRESS_4, CHECKDATA_4, STRATEGYY_OFFSET_4, {'from': acct})
     print("yo")
     tx = testCall[0].getStrategiesData(CONTRACT_ADDRESS_5, CHECKDATA_5, STRATEGYY_OFFSET_5, {'from': acct})

@@ -41,7 +41,7 @@ contract DebtAllocator is Ownable, Pausable {
     // uint256 public stalePeriod = 24 * 3600;
 
 
-    // 100% APY = 10^27
+    // 100% APY = 10^27, minimum increased = 10^23 = 0,01%
     uint256 public minimumApyIncreaseForNewSolution = 100000000000000000000000;
 
     constructor(address _cairoVerifier, bytes32 _cairoProgramHash) payable {

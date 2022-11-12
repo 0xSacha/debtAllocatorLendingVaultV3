@@ -18,58 +18,111 @@ from brownie import DebtAllocator, accounts
 
 ## Head to https://docs.compound.finance/v2/#networks, get the wanted cToken address get the interest rate contract address and call  kink(), multiplierPerBlock(), jumpMultiplierPerBlock(), baseRatePerBlock()
 
+## Head to https://docs.compound.finance/v2/#networks, get the wanted Comptroller address get the compSupplySpeeds
 
-## The following data is valid for Goerli, with WETH ASSET
-cETH = "0x64078a6189Bf45f80091c6Ff2fCEe1B15Ac8dbde"
-INTEREST_RATE_CETH = "0xB24D5c2F5d881689C14F69Dd4a7118C89747D403"
+## Head to https://docs.chain.link/docs/data-feeds/price-feeds/addresses/ get the oracle pair COMP/USD, call() pair and the 
+
+
+## The following data is valid for Goerli, with cUSDC ASSET, implementation for weth differ from mainet
+WANTED_TOKEN = "0x07865c6E87B9F70255377e024ace6630C1Eaa37F"
+cTOKEN = "0x73506770799Eb04befb5AaE4734e58C2C624F493"
+INTEREST_RATE_cTOKEN = "0xef5ae06093bdFc54Fbc804C7627B15dAE98Ca5e7"
+Comptroller = "0x05Df6C772A563FfB37fD3E04C1A279Fb30228621"
+## not available on goerli so DAI/USD is taken 
+COMP_USD = "0x0d79df66BE487753B02D015Fb622DED7f0E9798d"
+## usdc token as wanted token
+WANTED_TOKEN_USD = "0xAb5c49580294Aff77670F839ea425f5b78ab3Ae7"
+
 
 ## getCash
-CONTRACT_ADDRESS_0 = cETH
+CONTRACT_ADDRESS_0 = cTOKEN
 ## 0x3b1d21a2 (selector from getCash())
 CHECKDATA_0 = "0x3b1d21a2"
 STRATEGYY_OFFSET_0 = 0
 
 ## totalBorrows()
-CONTRACT_ADDRESS_1 = cETH
+CONTRACT_ADDRESS_1 = cTOKEN
 ## 0x47bd3718 (selector from totalBorrows()) 
 CHECKDATA_1 = "0x47bd3718"
 STRATEGYY_OFFSET_1 = 0
 
 ## totalReserves() 
-CONTRACT_ADDRESS_2 = cETH
+CONTRACT_ADDRESS_2 = cTOKEN
 ## 0x8f840ddd (selector from totalReserves())
 CHECKDATA_2 = "0x8f840ddd"
 STRATEGYY_OFFSET_2 = 0
 
 ## reserveFactorMantissa() 
-CONTRACT_ADDRESS_3 = cETH
+CONTRACT_ADDRESS_3 = cTOKEN
 ## 0x173b9904 (selector from reserveFactorMantissa()) 
 CHECKDATA_3 = "0x173b9904"
 STRATEGYY_OFFSET_3 = 0
 
 ## Optimal utilization rate  
-CONTRACT_ADDRESS_4 = INTEREST_RATE_CETH
+CONTRACT_ADDRESS_4 = INTEREST_RATE_cTOKEN
 ## 0x35ea6a75 (selector from kink() ) 
 CHECKDATA_4 = "0xfd2da339"
 STRATEGYY_OFFSET_4 = 0
 
 ## multiplierPerBlock R1
-CONTRACT_ADDRESS_5 = INTEREST_RATE_CETH
+CONTRACT_ADDRESS_5 = INTEREST_RATE_cTOKEN
 ## 0x8726bb89 (selector from multiplierPerBlock() ) 
 CHECKDATA_5 = "0x8726bb89"
 STRATEGYY_OFFSET_5 = 0
 
 ## jumpMultiplierPerBlock R2
-CONTRACT_ADDRESS_6 = INTEREST_RATE_CETH
+CONTRACT_ADDRESS_6 = INTEREST_RATE_cTOKEN
 ## 0xb9f9850a (selector from jumpMultiplierPerBlock() ) 
 CHECKDATA_6 = "0xb9f9850a"
 STRATEGYY_OFFSET_6 = 0
 
 ## baseRatePerBlock R0
-CONTRACT_ADDRESS_7 = INTEREST_RATE_CETH
+CONTRACT_ADDRESS_7 = INTEREST_RATE_cTOKEN
 ## 0xf14039de (selector from baseRatePerBlock() ) 
 CHECKDATA_7 = "0xf14039de"
 STRATEGYY_OFFSET_7 = 0
+
+## blocksPerYear() R0
+CONTRACT_ADDRESS_8 = INTEREST_RATE_cTOKEN
+## 0xa385fb96 (selector from blocksPerYear() ) 
+CHECKDATA_8 = "0xa385fb96"
+STRATEGYY_OFFSET_8 = 0
+
+##compSupplySpeeds(address)
+CONTRACT_ADDRESS_9 = Comptroller
+## 0x6aa875b5 (selector from compSupplySpeeds(address) ) 
+CHECKDATA_9 = "0x6aa875b500000000000000000000000073506770799Eb04befb5AaE4734e58C2C624F493"
+STRATEGYY_OFFSET_9 = 0
+
+##latestAnswer()
+CONTRACT_ADDRESS_10 = COMP_USD
+## 0x50d25bcd (selector from latestAnswer() ) 
+CHECKDATA_10 = "0x50d25bcd"
+STRATEGYY_OFFSET_10 = 0
+
+##decimals()
+CONTRACT_ADDRESS_11 = COMP_USD
+## 0x313ce567 (selector from decimals() ) 
+CHECKDATA_11 = "0x313ce567"
+STRATEGYY_OFFSET_11 = 0
+
+##latestAnswer()
+CONTRACT_ADDRESS_12 = WANTED_TOKEN_USD
+## 0x50d25bcd (selector from latestAnswer() ) 
+CHECKDATA_12 = "0x50d25bcd"
+STRATEGYY_OFFSET_12 = 0
+
+##decimals()
+CONTRACT_ADDRESS_13 = WANTED_TOKEN_USD
+## 0x313ce567 (selector from decimals() ) 
+CHECKDATA_13 = "0x313ce567"
+STRATEGYY_OFFSET_13 = 0
+
+##decimals()
+CONTRACT_ADDRESS_14 = WANTED_TOKEN
+## 0x313ce567 (selector from decimals() ) 
+CHECKDATA_14 = "0x313ce567"
+STRATEGYY_OFFSET_14 = 0
 
 # concerned strategy address
 STRATEGY_ADDRESS= "0x76aFA2b8C29E1B277A3BB1CD320b2756c1674c91" 
@@ -77,21 +130,22 @@ STRATEGY_ADDRESS= "0x76aFA2b8C29E1B277A3BB1CD320b2756c1674c91"
 MAX_STRATEGY_DEBT_RATIO = 10000
 
 # contracts to get data from
-STRATEGY_CONTRACTS = [CONTRACT_ADDRESS_0, CONTRACT_ADDRESS_1, CONTRACT_ADDRESS_2, CONTRACT_ADDRESS_3, CONTRACT_ADDRESS_4, CONTRACT_ADDRESS_5, CONTRACT_ADDRESS_6, CONTRACT_ADDRESS_7]
+STRATEGY_CONTRACTS = [CONTRACT_ADDRESS_0, CONTRACT_ADDRESS_1, CONTRACT_ADDRESS_2, CONTRACT_ADDRESS_3, CONTRACT_ADDRESS_4, CONTRACT_ADDRESS_5, CONTRACT_ADDRESS_6, CONTRACT_ADDRESS_7, CONTRACT_ADDRESS_8, CONTRACT_ADDRESS_9, CONTRACT_ADDRESS_10, CONTRACT_ADDRESS_11, CONTRACT_ADDRESS_12, CONTRACT_ADDRESS_13, CONTRACT_ADDRESS_14]
 
 # checkdata (selector + neccessary args bytes32)
-STRATEGYY_CHECKDATA = [CHECKDATA_0, CHECKDATA_1, CHECKDATA_2, CHECKDATA_3, CHECKDATA_4, CHECKDATA_5, CHECKDATA_6, CHECKDATA_7]
+STRATEGYY_CHECKDATA = [CHECKDATA_0, CHECKDATA_1, CHECKDATA_2, CHECKDATA_3, CHECKDATA_4, CHECKDATA_5, CHECKDATA_6, CHECKDATA_7, CHECKDATA_8, CHECKDATA_9, CHECKDATA_10, CHECKDATA_11, CHECKDATA_12, CHECKDATA_13, CHECKDATA_14]
 
 # offset, which args we need from the data received from the call, 0 by default
-STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, STRATEGYY_OFFSET_3, STRATEGYY_OFFSET_4, STRATEGYY_OFFSET_5, STRATEGYY_OFFSET_6, STRATEGYY_OFFSET_7]
+STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, STRATEGYY_OFFSET_3, STRATEGYY_OFFSET_4, STRATEGYY_OFFSET_5, STRATEGYY_OFFSET_6, STRATEGYY_OFFSET_7,STRATEGYY_OFFSET_8, STRATEGYY_OFFSET_9, STRATEGYY_OFFSET_10, STRATEGYY_OFFSET_11, STRATEGYY_OFFSET_12,STRATEGYY_OFFSET_13, STRATEGYY_OFFSET_14]
 
 
 # ////////CASE Ut > Uo
 
+## Precision 10^18 kink, reserve factor  
 # calcul cash + total borrow
 # Step0 = 0, 1, 0
 
-# calcul step1 - reserve
+# calcul step1 - reserve     total supply asset
 # Step1 = 10000, 2, 1
 
 # calcul totalBorrow * precision 10^18
@@ -112,7 +166,6 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 # calcul Ut(10^18) - Uo (kink)
 # Step7 = 10003, 4, 1
 
-
 # calcul step7 * R2
 # Step8 = 10007, 6, 2      
 
@@ -128,19 +181,65 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 # Calcul ( VT * step11*(10^18)) 
 # Step12 = 10010, 10011, 2
 
-# [0, 1, 0, 10000, 2, 1, 1, 1000000000000020000, 2, 10002, 10001, 3, 4, 5, 2, 10004, 1000000000000020000, 
-# 3, 4, 5, 2, 10004, 1000000000000020000, 3, 10005, 7, 0, 10003, 4, 1, 10007, 6, 2, 10008, 1000000000000020000, 3,
-# 1000000000000020000, 3, 1, 10010, 10011, 2, 10012, 1000000000000020000, 3, 10013, 10003, 2, 10015, 1000000000000020000, 3]
+# Calcul ( VT * step11) 
+# Step13 = 10012, 1000000000000020000, 3                      Supply rate per block step 13 
 
-# Calcul Step13 / Precision
-# Step13 = 10012, 1000000000000020000, 3
-
-# Step 13 * Ut(10^18)
+# Calcul Step13 * Ut (10^18)
 # Step14 = 10013, 10003, 2
 
-# Step 15 Supply rate per block
-# Step15 = 10015, 1000000000000020000, 3
+# Calcul Step14 / Precision
+# Step15 = 10014, 1000000000000020000, 3
 
+# Calcul ( VT * step11) 
+# Step16 = 10015, 8, 2                          APR supply * 10^18
+
+###### LiquidityMining APY`
+
+# Calcul compSupplySpeeds() per year ( * block/year) 
+# Step17 = 9, 8, 2                                  COMP for supplier per Year
+
+# Calcul 10^wantedtoken decimals
+# Step18 = 20010, 14, 4
+
+# Calcul step 15 * 10^wantedtoken decimals 
+# Step19 = 10017, 10018, 2
+
+# Calcul  comp in a year / total in supply =         APR in COMP step 18
+# Step20 = 10019, 10001, 3   
+
+# Calcul Step 20 in USD * 10^oracle decimals
+# Step21 = 10020, 10, 2                    
+
+# Calcul 10^decimals oracle comp usd
+# Step22 = 20010, 11, 4
+
+# Calcul  Step 18 in USD
+# Step23 = 20021, 20022, 3                              APR in USD step 21
+
+# Calcul 10^decimals oracle wanted token usd
+# Step24 = 20010, 13, 4
+
+# Calcul Step21 * 10^oracle decimals 
+# Step23 = 20021, 20022, 2
+
+# Calcul Step 18 in Wanted token
+# Step24 = 20023, 12, 3                                 APR in WANTED token Step 24 (10^18)
+
+# Calcul totoal apr 10^18           TOTAL APR (10^18)
+# Step25 = 20024, 10014, 0 
+
+# Calcul (total APR 10^27)                          TOTAL APR (10^27)
+# Step26 = 20024, 1000020000, 2 
+
+## 26 step len = 27
+
+# [0, 1, 0, 10000, 2, 1, 1, 1000000000000020000, 2, 10002, 10001, 3, 4, 5, 2, 10004, 1000000000000020000, 3, 10005, 7, 0, 10003, 4, 1, 
+# 10007, 6, 2, 10008, 1000000000000020000, 3, 1000000000000020000, 3, 1, 10010, 10011, 2, 10012, 1000000000000020000, 3, 
+
+
+10013, 8, 2,
+#9, 8, 2, 20010, 14, 4, 10015, 10016, 2, 10017, 10001, 3, 10018, 10, 2, 20010, 11, 4, 20019, 20020, 3, 20010, 13, 4, 20021, 20022, 2,
+#20023, 12, 3, 20024, 10014, 0, 20024, 1000020000, 2]
 
 
 # ////////CASE Ut <= Uo
@@ -169,8 +268,6 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 # Calcul ( 10^18 - reserveFactorMantissa) 
 # Step7 = 1000000000000020000, 3, 1
 
-# [0, 1, 0, 10000, 2, 1, 1, 1000000000000020000, 2, 10002, 10001, 3 , 10003, 5, 2, 10004, 1000000000000020000, 3
-# 10005, 7, 0 , 1000000000000020000, 3, 1, 10007, 10006, 2, 10008, 1000000000000020000, 3, 10009, 10003, 2, 10010, 1000000000000020000, 3]
 
 # Calcul (Ut*R1 + R0) * (1 - Rt) *(10^18)
 # Step8 = 10007, 10006, 2
@@ -184,8 +281,9 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 # Calcul Step10 / Precision
 # Step11 = 10010, 1000000000000020000, 3
 
+
+
 ## Not ok len = 16 + ok len 11 tot 27, offset 16
-STRATEGYY_CALCULATION = [0, 1, 0, 10000, 2, 1, 1, 1000000000000020000, 2, 10002, 10001, 3, 4, 5, 2, 10004, 1000000000000020000, 3, 4, 5, 2, 10004, 1000000000000020000, 3, 10005, 7, 0, 10003, 4, 1, 10007, 6, 2, 10008, 1000000000000020000, 3, 1000000000000020000, 3, 1, 10010, 10011, 2, 10012, 1000000000000020000, 3, 10013, 10003, 2, 10015, 1000000000000020000, 3, 0, 1, 0, 10000, 2, 1, 1, 1000000000000020000, 2, 10002, 10001, 3 , 10003, 5, 2, 10004, 1000000000000020000, 310005, 7, 0 , 1000000000000020000, 3, 1, 10007, 10006, 2, 10008, 1000000000000020000, 3, 10009, 10003, 2, 10010, 1000000000000020000, 3]
 ## ! add 27 script
 
 

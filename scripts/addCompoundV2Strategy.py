@@ -175,6 +175,8 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 # calcul R1*kink + RO + R2(Ut - Uo)
 # Step10 = 10009, 10006, 0                     Vt = R1*kink + RO + R2(Ut - Uo) Step 10
 
+
+
 # Calcul ( 10^18 - reserveFactorMantissa) 
 # Step11 = 1000000000000020000, 3, 1
 
@@ -190,21 +192,21 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 # Calcul Step14 / Precision
 # Step15 = 10014, 1000000000000020000, 3
 
-# Calcul ( VT * step11) 
+# Calcul Step15 * blockperyear
 # Step16 = 10015, 8, 2                          APR supply * 10^18
 
 ###### LiquidityMining APY`
 
 # Calcul compSupplySpeeds() per year ( * block/year) 
-# Step17 = 9, 8, 2                                  COMP for supplier per Year
+# Step17 = 9, 8, 2                                  COMP for supplier per Year step 17
 
 # Calcul 10^wantedtoken decimals
 # Step18 = 20010, 14, 4
 
-# Calcul step 15 * 10^wantedtoken decimals 
+# Calcul step 17 * 10^wantedtoken decimals 
 # Step19 = 10017, 10018, 2
 
-# Calcul  comp in a year / total in supply =         APR in COMP step 18
+# Calcul  comp in a year / total in supply =         APR in COMP step 20
 # Step20 = 10019, 10001, 3   
 
 # Calcul Step 20 in USD * 10^oracle decimals
@@ -214,32 +216,33 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 # Step22 = 20010, 11, 4
 
 # Calcul  Step 18 in USD
-# Step23 = 20021, 20022, 3                              APR in USD step 21
+# Step23 = 10021, 10022, 3                              APR in USD step 23
 
 # Calcul 10^decimals oracle wanted token usd
 # Step24 = 20010, 13, 4
 
-# Calcul Step21 * 10^oracle decimals 
-# Step23 = 20021, 20022, 2
+# Calcul Step23 * 10^oracle decimals 
+# Step25 = 10023, 10024, 2
 
 # Calcul Step 18 in Wanted token
-# Step24 = 20023, 12, 3                                 APR in WANTED token Step 24 (10^18)
+# Step26 = 10025, 12, 3                                 APR in WANTED token Step 26 (10^18)
 
 # Calcul totoal apr 10^18           TOTAL APR (10^18)
-# Step25 = 20024, 10014, 0 
+# Step27 = 10026, 10016, 0 
 
 # Calcul (total APR 10^27)                          TOTAL APR (10^27)
-# Step26 = 20024, 1000020000, 2 
+# Step28 = 10027, 1000020000, 2 
 
-## 26 step len = 27
+## 28 step      LEN = 29
 
-# [0, 1, 0, 10000, 2, 1, 1, 1000000000000020000, 2, 10002, 10001, 3, 4, 5, 2, 10004, 1000000000000020000, 3, 10005, 7, 0, 10003, 4, 1, 
-# 10007, 6, 2, 10008, 1000000000000020000, 3, 1000000000000020000, 3, 1, 10010, 10011, 2, 10012, 1000000000000020000, 3, 
-
-
-10013, 8, 2,
-#9, 8, 2, 20010, 14, 4, 10015, 10016, 2, 10017, 10001, 3, 10018, 10, 2, 20010, 11, 4, 20019, 20020, 3, 20010, 13, 4, 20021, 20022, 2,
-#20023, 12, 3, 20024, 10014, 0, 20024, 1000020000, 2]
+# 1, 5 and last each lign
+# [0, 1, 0, 
+# 10000, 2, 1, 1, 1000000000000020000, 2, 10002, 10001, 3, 4, 5, 2, 10004, 1000000000000020000, 3,
+# 10005, 7, 0, 10003, 4, 1, 10007, 6, 2, 10008, 1000000000000020000, 3, 10009, 10006, 0, 
+# 1000000000000020000, 3, 1, 10010, 10011, 2, 10012, 1000000000000020000, 3, 10013, 10003, 2, 10014, 1000000000000020000, 3,
+# 10015, 8, 2, 9, 8, 2, 20010, 14, 4, 10017, 10018, 2, 10019, 10001, 3,
+# 10020, 10, 2, 20010, 11, 4, 10021, 10022, 3, 20010, 13, 4, 10023, 10024, 2,
+# 10025, 12, 3, 10026, 10016, 0 , 10027, 1000020000, 2]
 
 
 # ////////CASE Ut <= Uo
@@ -268,7 +271,6 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 # Calcul ( 10^18 - reserveFactorMantissa) 
 # Step7 = 1000000000000020000, 3, 1
 
-
 # Calcul (Ut*R1 + R0) * (1 - Rt) *(10^18)
 # Step8 = 10007, 10006, 2
 
@@ -281,10 +283,67 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 # Calcul Step10 / Precision
 # Step11 = 10010, 1000000000000020000, 3
 
+# Calcul Step11 * blockperyear
+# Step12 = 10011, 8, 2                          APR supply * 10^18
+
+###### LiquidityMining APY`
+
+# Calcul compSupplySpeeds() per year ( * block/year) 
+# Step13 = 9, 8, 2                                  COMP for supplier per Year step 13
+
+# Calcul 10^wantedtoken decimals
+# Step14 = 20010, 14, 4
+
+# Calcul step 13 * 10^wantedtoken decimals 
+# Step15 = 10013, 10014, 2
+
+# Calcul  comp in a year / total in supply =         APR in COMP step 18
+# Step16 = 10015, 10001, 3   
+
+# Calcul Step 16 in USD * 10^oracle decimals
+# Step17 = 10016, 10, 2                    
+
+# Calcul 10^decimals oracle comp usd
+# Step18 = 20010, 11, 4
+
+# Calcul  Step 18 in USD
+# Step19 = 10017, 10018, 3                              APR in USD step 19
+
+# Calcul 10^decimals oracle wanted token usd
+# Step20 = 20010, 13, 4
+
+# Calcul Step19 * 10^oracle decimals 
+# Step21 = 20019, 20020, 2
+
+# Calcul Step 18 in Wanted token
+# Step22 = 10021, 12, 3                                 APR in WANTED token Step 24 (10^18)
+
+# Calcul totoal apr 10^18           TOTAL APR (10^18)
+# Step23 = 20022, 10012, 0 
+
+# Calcul (total APR 10^27)                          TOTAL APR (10^27)
+# Step24 = 20023, 1000020000, 2 
 
 
-## Not ok len = 16 + ok len 11 tot 27, offset 16
-## ! add 27 script
+## 24 step      LEN = 25
+
+# [0, 1, 0, 
+# 10000, 2, 1, 1, 1000000000000020000, 2, 10002, 10001, 3, 10003, 5, 2, 10004, 1000000000000020000, 3,
+# 10005, 7, 0, 1000000000000020000, 3, 1, 10007, 10006, 2, 10008, 1000000000000020000, 3, 10009, 10003, 2,
+# 10010, 1000000000000020000, 3, 10011, 8, 2, 9, 8, 2, 20010, 14, 4, 10013, 10014, 2,
+# 10015, 10001, 3, 10016, 10, 2, 20010, 11, 4, 10017, 10018, 3, 20010, 13, 4,
+# 20019, 20020, 2, 10021, 12, 3, 20022, 10012, 0, 20023, 1000020000, 2]
+
+
+
+## Not ok len = 29 + ok len 25 tot 54, offset 29
+
+STRATEGYY_CALCULATION = [0, 1, 0, 10000, 2, 1, 1, 1000000000000020000, 2, 10002, 10001, 3, 4, 5, 2, 10004, 1000000000000020000, 3, 10005, 7, 0, 10003, 4, 1, 10007, 6, 2, 10008, 1000000000000020000, 3, 10009, 10006, 0, 
+1000000000000020000, 3, 1, 10010, 10011, 2, 10012, 1000000000000020000, 3, 10013, 10003, 2, 10014, 1000000000000020000, 3, 10015, 8, 2, 9, 8, 2, 20010, 14, 4, 10017, 10018, 2, 10019, 10001, 3,
+10020, 10, 2, 20010, 11, 4, 10021, 10022, 3, 20010, 13, 4, 10023, 10024, 2, 10025, 12, 3, 10026, 10016, 0 , 10027, 1000020000, 2, 0, 1, 0, 10000, 2, 1, 1, 1000000000000020000, 2, 10002, 10001, 3, 10003, 5, 2, 10004, 1000000000000020000, 3,
+10005, 7, 0, 1000000000000020000, 3, 1, 10007, 10006, 2, 10008, 1000000000000020000, 3, 10009, 10003, 2, 10010, 1000000000000020000, 3, 10011, 8, 2, 9, 8, 2, 20010, 14, 4, 10013, 10014, 2,
+10015, 10001, 3, 10016, 10, 2, 20010, 11, 4, 10017, 10018, 3, 20010, 13, 4, 20019, 20020, 2, 10021, 12, 3, 20022, 10012, 0, 20023, 1000020000, 2]
+## ! add len 54 script cairo
 
 
 # calcul cash + total borrow
@@ -299,10 +358,12 @@ STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, 
 # calcul Step2 / step 1                         
 # Step3 = 10002, 10001, 3             Step3: Ut (10^18)
 
+# final Step                        
+# finalStep = 10003, 4, 29, 25             Step3: Ut (10^18)
 
-CALCULATION_CONDITION = [0, 1, 0, 10000, 2, 1, 1, 1000000000000020000, 2, 10002, 10001, 3, 10003, 4, 16, 27]
-## add len for script 4
+CALCULATION_CONDITION = [0, 1, 0, 10000, 2, 1, 1, 1000000000000020000, 2, 10002, 10001, 3, 10003, 4, 29, 25]
+## add len 4 for cairo script 
 
 def main():
     acct = accounts.load('sach')
-    DebtAllocator[1].addStrategy(STRATEGY_ADDRESS, MAX_STRATEGY_DEBT_RATIO, STRATEGY_CONTRACTS, STRATEGYY_CHECKDATA, STRATEGYY_OFFSET, STRATEGYY_CALCULATION, CALCULATION_CONDITION,{'from': acct})
+    DebtAllocator[0].addStrategy(STRATEGY_ADDRESS, MAX_STRATEGY_DEBT_RATIO, STRATEGY_CONTRACTS, STRATEGYY_CHECKDATA, STRATEGYY_OFFSET, STRATEGYY_CALCULATION, CALCULATION_CONDITION,{'from': acct})

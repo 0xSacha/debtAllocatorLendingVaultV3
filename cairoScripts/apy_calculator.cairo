@@ -53,21 +53,21 @@ func perform_calculation{ range_check_ptr }(
     assert _operation = 4;
 
     if(_operation == 4){
-        let (result_) = pow(_operand1, _operand2);
-        return(result_);
+        let (result_) =  pow(_operand1, _operand2);
+        return(result_,);
     } 
 
     return(0,);
 }
 
 
-func pow{ range_check_ptr }(base : felt, exp : felt) -> (res):
-    if exp == 0:
-        return (res=1)
-    end
-    let (res) = pow(base=base, exp=exp - 1)
-    return (res=res * base)
-end
+func pow{ range_check_ptr }(base : felt, exp : felt) -> (res: felt){
+    if(exp == 0){
+        return (1,);
+    }
+    let (res_) = pow(base=base, exp=exp - 1);
+    return (res_ * base,);
+}
 
 func calcul_score_strategy{ range_check_ptr }(
         _data_strat_len: felt,
@@ -112,9 +112,9 @@ func calcul_score_strategy{ range_check_ptr }(
     }
 
     let (result_) = perform_calculation(op1_, op2_, _calcul_strat[3 * _step_len + 2]);
-    // %{  
-    //     print(ids.result_)
-    // %}
+    %{  
+        print(ids.result_)
+    %}
     assert _step[_step_len] = result_;
     return calcul_score_strategy(_data_strat_len, _data_strat, _calcul_strat_len, _calcul_strat, _step_len + 1, _step);
 }

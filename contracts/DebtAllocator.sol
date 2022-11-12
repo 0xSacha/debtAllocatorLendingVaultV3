@@ -303,14 +303,11 @@ contract DebtAllocator is Ownable, Pausable {
 
         // check no one has improven it in stale period (in case market conditions deteriorated)
         // require(_newSolution > currentAPY || block.timestamp - lastUpdate >= stalePeriod, "WRONG_SOLUTION");
-        require(1 == 2, "wtf1");
         currentAPY = new_solution;
         debtRatios = new_debt_ratio;
         lastUpdate = block.timestamp;
         proposer = msg.sender;
         proposerPerformance = new_solution - current_solution;
-
-        require(1 == 2, "wtf2");
 
         emit NewSolution(new_solution, new_debt_ratio, msg.sender, proposerPerformance,block.timestamp);
         return(fact);

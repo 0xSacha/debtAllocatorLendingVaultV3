@@ -207,6 +207,25 @@ func run_input{ range_check_ptr }(
     ){
     alloc_locals;
     if(tab_len_ == _strat_amount){
+    %{  
+        print("data strat : ")
+        print(ids._cumulative_data_strat_array_len)
+        cumulative_data_strat_array = ids._cumulative_data_strat_array
+        for i in range(ids._cumulative_data_strat_array_len):
+             print(memory[cumulative_data_strat_array + i]) 
+
+        print("calcul : ")
+        print(ids._cumulative_calculation_strat_array_len)
+        cumulative_calculation_strat_array = ids._cumulative_calculation_strat_array
+        for i in range(ids._cumulative_calculation_strat_array_len):
+             print(memory[cumulative_calculation_strat_array + i]) 
+
+        print("conditions : ")
+        print(ids._cumulative_strat_condtions_array_len)
+        cumulative_strat_condtions_array = ids._cumulative_strat_condtions_array
+        for i in range(ids._cumulative_strat_condtions_array_len):
+             print(memory[cumulative_strat_condtions_array + i]) 
+    %}
         memcpy(_cumulative_data_strat_array + _cumulative_data_strat_array_len, _cumulative_calculation_strat_array, _cumulative_calculation_strat_array_len);
         memcpy(_cumulative_data_strat_array + _cumulative_data_strat_array_len + _cumulative_calculation_strat_array_len, _cumulative_strat_condtions_array, _cumulative_strat_condtions_array_len);
         let (input_hash_) = keccak_felts(_cumulative_data_strat_array_len + _cumulative_calculation_strat_array_len + _cumulative_strat_condtions_array_len, _cumulative_data_strat_array);
@@ -255,7 +274,7 @@ func run_input{ range_check_ptr }(
     // memcpy(dst: felt*, src: felt*, len)
     memcpy(_cumulative_data_strat_array + _cumulative_data_strat_array_len, _data_strat + 1,  _data_strat[0]);
     memcpy(_cumulative_calculation_strat_array + _cumulative_calculation_strat_array_len, _calcul_strat + 1,  _calcul_strat[0]*3);
-    memcpy(_cumulative_strat_condtions_array + _cumulative_strat_condtions_array_len, _condtions_strat, _condtions_strat[0]*3 + 4);
+    memcpy(_cumulative_strat_condtions_array + _cumulative_strat_condtions_array_len, _condtions_strat + 1, _condtions_strat[0]*3 + 4);
 
     return run_input(
         _current_debt_ratio + 1,
@@ -333,3 +352,216 @@ func main{output_ptr: felt*, range_check_ptr, bitwise_ptr : BitwiseBuiltin*}() {
     serialize_word(vault_new_apy_);
     return ();
 }
+
+// data strat : 
+
+// 1000
+// 10508806652004197702289
+// 61531367844136515193
+// 371172208054495441149
+// 650000000000000000000000000
+// 100000000000000000000000000
+// 1000000000000000000000000000
+// 80000000000000000000000000
+// 1000000000000000000000000000
+// 0
+// calcul : 
+// 174
+
+// 1
+// 2
+// 0
+// 10000
+// 3
+// 0
+// 2
+// 3
+// 0
+// 10002
+// 1000000000000000000000020000
+// 2
+// 10003
+// 10001
+// 3
+// 10004
+// 4
+// 1
+// 1000000000000000000000020000
+// 4
+// 1
+// 10005
+// 1000000000000000000000020000
+// 2
+// 10007
+// 10006
+// 3
+// 10008
+// 6
+// 2
+// 10009
+// 1000000000000000000000020000
+// 3
+// 10010
+// 5
+// 0
+// 10011
+// 9
+// 0
+// 2
+// 1000000000000000000000020000
+// 2
+// 10013
+// 10002
+// 3
+// 10011
+// 10014
+// 2
+// 10015
+// 1000000000000000000000020000
+// 3
+// 10008
+// 8
+// 2
+// 10017
+// 1000000000000000000000020000
+// 3
+// 10018
+// 7
+// 0
+// 10019
+// 9
+// 0
+// 3
+// 1000000000000000000000020000
+// 2
+// 10021
+// 10002
+// 3
+// 10020
+// 10022
+// 2
+// 10023
+// 1000000000000000000000020000
+// 3
+// 10016
+// 10024
+// 0
+// 30000
+// 0
+// 1
+// 10025
+// 10026
+// 2
+// 10027
+// 30000
+// 3
+// 10028
+// 10004
+// 2
+// 10029
+// 1000000000000000000000020000
+// 3
+// 1
+// 2
+// 0
+// 10000
+// 3
+// 0
+// 2
+// 3
+// 0
+// 10002
+// 1000000000000000000000020000
+// 2
+// 10003
+// 10001
+// 3
+// 10004
+// 1000000000000000000000020000
+// 2
+// 10005
+// 4
+// 3
+// 10006
+// 5
+// 2
+// 10007
+// 1000000000000000000000020000
+// 3
+// 10008
+// 9
+// 0
+// 2
+// 1000000000000000000000020000
+// 2
+// 10010
+// 10002
+// 3
+// 10011
+// 10009
+// 2
+// 10012
+// 1000000000000000000000020000
+// 3
+// 10006
+// 7
+// 2
+// 10014
+// 1000000000000000000000020000
+// 3
+// 10015
+// 9
+// 0
+// 3
+// 1000000000000000000000020000
+// 2
+// 10017
+// 10002
+// 3
+// 10016
+// 10018
+// 2
+// 10019
+// 1000000000000000000000020000
+// 3
+// 10013
+// 10020
+// 0
+// 30000
+// 0
+// 1
+// 10021
+// 10022
+// 2
+// 10023
+// 30000
+// 3
+// 10024
+// 10004
+// 2
+// 10025
+// 1000000000000000000000020000
+// 3
+
+// conditions : 
+// 19
+
+// 5
+// 1
+// 2
+// 0
+// 10000
+// 3
+// 0
+// 2
+// 3
+// 0
+// 10002
+// 1000000000000000000000020000
+// 2
+// 10003
+// 10001
+// 3
+// 10004
+// 4
+// 31

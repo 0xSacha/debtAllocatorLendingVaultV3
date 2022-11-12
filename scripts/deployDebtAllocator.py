@@ -1,7 +1,7 @@
 from brownie import DebtAllocator, accounts
 
-CAIRO_VERIFIER = "0x47312450B3Ac8b5b8e247a6bB6d523e7605bDb60"
-CAIRO_PROGRAM_HASH = "0x00bfd3c17a344350521b3f4c254de74e98ef52cbb2a305be36c72f8af8b6b282"
+CAIRO_VERIFIER = "0xAB43bA48c9edF4C2C4bB01237348D1D7B28ef168"
+CAIRO_PROGRAM_HASH = "0x3cc4ec7f67570d17a6a16240289f85340ac752ec9f39aea1362dae5c06d5f1f"
 
 def main():
     acct = accounts.load('sach')

@@ -769,11 +769,12 @@
         "0x484480017fff8000",
         "0x3",
         "0x482a7ff87ff98000",
-        "0x480a7ff37fff8000",
+        "0x482680017ff38000",
+        "0x1",
         "0x482480017ffd8000",
         "0x4",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffdb4",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffdb3",
         "0x482680017ff18000",
         "0x1",
         "0x480280007ff18000",
@@ -818,36 +819,36 @@
         "0x482680017ffd8000",
         "0x1",
         "0x1104800180018000",
-        "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff7a",
+        "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff79",
         "0x208b7fff7fff7ffe",
         "0x40780017fff7fff",
         "0xd",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd79",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd78",
         "0x40137fff7fff8000",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd76",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd75",
         "0x40137fff7fff8001",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd73",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd72",
         "0x40137fff7fff8002",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd70",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd6f",
         "0x40137fff7fff8003",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd6d",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd6c",
         "0x40137fff7fff8004",
         "0x40780017fff7fff",
         "0x1",
         "0x40137fff7fff8005",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd67",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd66",
         "0x40137fff7fff8006",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd64",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd63",
         "0x40137fff7fff8007",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd61",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd60",
         "0x40137fff7fff8008",
         "0x480a7ffc7fff8000",
         "0x480a80007fff8000",
@@ -872,54 +873,54 @@
         "0x480680017fff8000",
         "0x0",
         "0x1104800180018000",
-        "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff44",
+        "0x800000000000010ffffffffffffffffffffffffffffffffffffffffffffff43",
         "0x48127ffb7fff8000",
         "0x48127ffb7fff8000",
         "0x480680017fff8000",
         "0x2710",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffcef",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffcee",
         "0x40137ffe7fff8009",
         "0x48127ffd7fff8000",
         "0x48127fe77fff8000",
         "0x480680017fff8000",
         "0x2710",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffce8",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffce7",
         "0x40137ffe7fff800a",
         "0x40137ffd7fff800b",
         "0x480680017fff8000",
         "0xf5",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd38",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd37",
         "0x40137fff7fff800c",
         "0x480a7ffb7fff8000",
         "0x48127fcd7fff8000",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd12",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd11",
         "0x48127fc87fff8000",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd0f",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd0e",
         "0x480a80007fff8000",
         "0x480a80057fff8000",
         "0x480680017fff8000",
         "0x1",
         "0x480a800c7fff8000",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd1b",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd1a",
         "0x480a80017fff8000",
         "0x480a80057fff8000",
         "0x480680017fff8000",
         "0x1",
         "0x480a800c7fff8000",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd14",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffd13",
         "0x480a80097fff8000",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffcfe",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffcfd",
         "0x480a800a7fff8000",
         "0x1104800180018000",
-        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffcfb",
+        "0x800000000000010fffffffffffffffffffffffffffffffffffffffffffffcfa",
         "0x480a800b7fff8000",
         "0x480a7ffd7fff8000",
         "0x208b7fff7fff7ffe"
@@ -24817,15 +24818,28 @@
                         "__main__.run_input.tab_len_": 336
                     }
                 },
-                "hints": [],
+                "hints": [
+                    {
+                        "location": {
+                            "end_col": 7,
+                            "end_line": 228,
+                            "input_file": {
+                                "filename": "apy_calculator.cairo"
+                            },
+                            "start_col": 5,
+                            "start_line": 210
+                        },
+                        "n_prefix_newlines": 1
+                    }
+                ],
                 "inst": {
                     "end_col": 79,
-                    "end_line": 210,
+                    "end_line": 229,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 16,
-                    "start_line": 210
+                    "start_line": 229
                 }
             },
             "681": {
@@ -24868,12 +24882,12 @@
                     "parent_location": [
                         {
                             "end_col": 116,
-                            "end_line": 210,
+                            "end_line": 229,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 81,
-                            "start_line": 210
+                            "start_line": 229
                         },
                         "While expanding the reference '_cumulative_calculation_strat_array' in:"
                     ],
@@ -24921,12 +24935,12 @@
                     "parent_location": [
                         {
                             "end_col": 157,
-                            "end_line": 210,
+                            "end_line": 229,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 118,
-                            "start_line": 210
+                            "start_line": 229
                         },
                         "While expanding the reference '_cumulative_calculation_strat_array_len' in:"
                     ],
@@ -24967,12 +24981,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 158,
-                    "end_line": 210,
+                    "end_line": 229,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 210
+                    "start_line": 229
                 }
             },
             "685": {
@@ -25008,12 +25022,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 79,
-                    "end_line": 211,
+                    "end_line": 230,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 16,
-                    "start_line": 211
+                    "start_line": 230
                 }
             },
             "686": {
@@ -25050,12 +25064,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 121,
-                    "end_line": 211,
+                    "end_line": 230,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 16,
-                    "start_line": 211
+                    "start_line": 230
                 }
             },
             "687": {
@@ -25099,12 +25113,12 @@
                     "parent_location": [
                         {
                             "end_col": 156,
-                            "end_line": 211,
+                            "end_line": 230,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 123,
-                            "start_line": 211
+                            "start_line": 230
                         },
                         "While expanding the reference '_cumulative_strat_condtions_array' in:"
                     ],
@@ -25153,12 +25167,12 @@
                     "parent_location": [
                         {
                             "end_col": 195,
-                            "end_line": 211,
+                            "end_line": 230,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 158,
-                            "start_line": 211
+                            "start_line": 230
                         },
                         "While expanding the reference '_cumulative_strat_condtions_array_len' in:"
                     ],
@@ -25200,12 +25214,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 196,
-                    "end_line": 211,
+                    "end_line": 230,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 211
+                    "start_line": 230
                 }
             },
             "691": {
@@ -25242,12 +25256,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 116,
-                    "end_line": 212,
+                    "end_line": 231,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 42,
-                    "start_line": 212
+                    "start_line": 231
                 }
             },
             "692": {
@@ -25299,12 +25313,12 @@
                             "parent_location": [
                                 {
                                     "end_col": 187,
-                                    "end_line": 212,
+                                    "end_line": 231,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 29,
-                                    "start_line": 212
+                                    "start_line": 231
                                 },
                                 "While trying to retrieve the implicit argument 'range_check_ptr' in:"
                             ],
@@ -25352,12 +25366,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 156,
-                    "end_line": 212,
+                    "end_line": 231,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 42,
-                    "start_line": 212
+                    "start_line": 231
                 }
             },
             "694": {
@@ -25402,12 +25416,12 @@
                     "parent_location": [
                         {
                             "end_col": 186,
-                            "end_line": 212,
+                            "end_line": 231,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 158,
-                            "start_line": 212
+                            "start_line": 231
                         },
                         "While expanding the reference '_cumulative_data_strat_array' in:"
                     ],
@@ -25450,12 +25464,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 187,
-                    "end_line": 212,
+                    "end_line": 231,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 29,
-                    "start_line": 212
+                    "start_line": 231
                 }
             },
             "697": {
@@ -25501,7 +25515,7 @@
                     "parent_location": [
                         {
                             "end_col": 187,
-                            "end_line": 212,
+                            "end_line": 231,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
@@ -25515,12 +25529,12 @@
                                     "parent_location": [
                                         {
                                             "end_col": 79,
-                                            "end_line": 213,
+                                            "end_line": 232,
                                             "input_file": {
                                                 "filename": "apy_calculator.cairo"
                                             },
                                             "start_col": 9,
-                                            "start_line": 213
+                                            "start_line": 232
                                         },
                                         "While trying to retrieve the implicit argument 'range_check_ptr' in:"
                                     ],
@@ -25530,7 +25544,7 @@
                                 "While expanding the reference 'range_check_ptr' in:"
                             ],
                             "start_col": 29,
-                            "start_line": 212
+                            "start_line": 231
                         },
                         "While trying to update the implicit return value 'range_check_ptr' in:"
                     ],
@@ -25581,12 +25595,12 @@
                     "parent_location": [
                         {
                             "end_col": 41,
-                            "end_line": 213,
+                            "end_line": 232,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 16,
-                            "start_line": 213
+                            "start_line": 232
                         },
                         "While expanding the reference '_cumulative_current_score' in:"
                     ],
@@ -25637,12 +25651,12 @@
                     "parent_location": [
                         {
                             "end_col": 64,
-                            "end_line": 213,
+                            "end_line": 232,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 43,
-                            "start_line": 213
+                            "start_line": 232
                         },
                         "While expanding the reference '_cumulative_new_score' in:"
                     ],
@@ -25686,24 +25700,24 @@
                 "hints": [],
                 "inst": {
                     "end_col": 25,
-                    "end_line": 212,
+                    "end_line": 231,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 77,
-                            "end_line": 213,
+                            "end_line": 232,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 66,
-                            "start_line": 213
+                            "start_line": 232
                         },
                         "While expanding the reference 'input_hash_' in:"
                     ],
                     "start_col": 14,
-                    "start_line": 212
+                    "start_line": 231
                 }
             },
             "701": {
@@ -25742,24 +25756,24 @@
                 "hints": [],
                 "inst": {
                     "end_col": 25,
-                    "end_line": 212,
+                    "end_line": 231,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 77,
-                            "end_line": 213,
+                            "end_line": 232,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 66,
-                            "start_line": 213
+                            "start_line": 232
                         },
                         "While expanding the reference 'input_hash_' in:"
                     ],
                     "start_col": 14,
-                    "start_line": 212
+                    "start_line": 231
                 }
             },
             "702": {
@@ -25798,12 +25812,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 79,
-                    "end_line": 213,
+                    "end_line": 232,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 213
+                    "start_line": 232
                 }
             },
             "703": {
@@ -25839,12 +25853,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 63,
-                    "end_line": 216,
+                    "end_line": 235,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 56,
-                    "start_line": 216
+                    "start_line": 235
                 }
             },
             "705": {
@@ -25881,12 +25895,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 52,
-                    "end_line": 216,
+                    "end_line": 235,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 10,
-                    "start_line": 216
+                    "start_line": 235
                 }
             },
             "706": {
@@ -25923,12 +25937,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 49,
-                    "end_line": 217,
+                    "end_line": 236,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 42,
-                    "start_line": 217
+                    "start_line": 236
                 }
             },
             "708": {
@@ -25966,12 +25980,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 38,
-                    "end_line": 217,
+                    "end_line": 236,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 10,
-                    "start_line": 217
+                    "start_line": 236
                 }
             },
             "709": {
@@ -26023,12 +26037,12 @@
                             "parent_location": [
                                 {
                                     "end_col": 39,
-                                    "end_line": 227,
+                                    "end_line": 246,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 53,
-                                    "start_line": 218
+                                    "start_line": 237
                                 },
                                 "While trying to retrieve the implicit argument 'range_check_ptr' in:"
                             ],
@@ -26076,12 +26090,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 23,
-                    "end_line": 219,
+                    "end_line": 238,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 219
+                    "start_line": 238
                 }
             },
             "711": {
@@ -26119,12 +26133,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 24,
-                    "end_line": 220,
+                    "end_line": 239,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 220
+                    "start_line": 239
                 }
             },
             "713": {
@@ -26162,12 +26176,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 28,
-                    "end_line": 221,
+                    "end_line": 240,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 221
+                    "start_line": 240
                 }
             },
             "714": {
@@ -26205,12 +26219,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 29,
-                    "end_line": 222,
+                    "end_line": 241,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 222
+                    "start_line": 241
                 }
             },
             "716": {
@@ -26248,12 +26262,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 10,
-                    "end_line": 223,
+                    "end_line": 242,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 223
+                    "start_line": 242
                 }
             },
             "718": {
@@ -26291,24 +26305,24 @@
                 "hints": [],
                 "inst": {
                     "end_col": 30,
-                    "end_line": 217,
+                    "end_line": 236,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 23,
-                            "end_line": 224,
+                            "end_line": 243,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 9,
-                            "start_line": 224
+                            "start_line": 243
                         },
                         "While expanding the reference 'condition_step' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 217
+                    "start_line": 236
                 }
             },
             "719": {
@@ -26346,12 +26360,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 25,
-                    "end_line": 225,
+                    "end_line": 244,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 225
+                    "start_line": 244
                 }
             },
             "720": {
@@ -26389,12 +26403,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 26,
-                    "end_line": 226,
+                    "end_line": 245,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 226
+                    "start_line": 245
                 }
             },
             "722": {
@@ -26432,24 +26446,24 @@
                 "hints": [],
                 "inst": {
                     "end_col": 45,
-                    "end_line": 216,
+                    "end_line": 235,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 38,
-                            "end_line": 227,
+                            "end_line": 246,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 9,
-                            "start_line": 227
+                            "start_line": 246
                         },
                         "While expanding the reference 'calcul_strat_after_condition_' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 216
+                    "start_line": 235
                 }
             },
             "723": {
@@ -26487,12 +26501,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 39,
-                    "end_line": 227,
+                    "end_line": 246,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 53,
-                    "start_line": 218
+                    "start_line": 237
                 }
             },
             "725": {
@@ -26532,24 +26546,24 @@
                     {
                         "location": {
                             "end_col": 7,
-                            "end_line": 235,
+                            "end_line": 254,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 5,
-                            "start_line": 229
+                            "start_line": 248
                         },
                         "n_prefix_newlines": 1
                     }
                 ],
                 "inst": {
                     "end_col": 40,
-                    "end_line": 238,
+                    "end_line": 257,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 33,
-                    "start_line": 238
+                    "start_line": 257
                 }
             },
             "727": {
@@ -26589,12 +26603,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 29,
-                    "end_line": 238,
+                    "end_line": 257,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 10,
-                    "start_line": 238
+                    "start_line": 257
                 }
             },
             "728": {
@@ -26641,7 +26655,7 @@
                     "parent_location": [
                         {
                             "end_col": 39,
-                            "end_line": 227,
+                            "end_line": 246,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
@@ -26655,12 +26669,12 @@
                                     "parent_location": [
                                         {
                                             "end_col": 15,
-                                            "end_line": 245,
+                                            "end_line": 264,
                                             "input_file": {
                                                 "filename": "apy_calculator.cairo"
                                             },
                                             "start_col": 27,
-                                            "start_line": 239
+                                            "start_line": 258
                                         },
                                         "While trying to retrieve the implicit argument 'range_check_ptr' in:"
                                     ],
@@ -26670,7 +26684,7 @@
                                 "While expanding the reference 'range_check_ptr' in:"
                             ],
                             "start_col": 53,
-                            "start_line": 218
+                            "start_line": 237
                         },
                         "While trying to update the implicit return value 'range_check_ptr' in:"
                     ],
@@ -26715,12 +26729,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 23,
-                    "end_line": 240,
+                    "end_line": 259,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 240
+                    "start_line": 259
                 }
             },
             "730": {
@@ -26760,12 +26774,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 24,
-                    "end_line": 241,
+                    "end_line": 260,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 241
+                    "start_line": 260
                 }
             },
             "732": {
@@ -26805,24 +26819,24 @@
                 "hints": [],
                 "inst": {
                     "end_col": 49,
-                    "end_line": 218,
+                    "end_line": 237,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 42,
-                            "end_line": 242,
+                            "end_line": 261,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 9,
-                            "start_line": 242
+                            "start_line": 261
                         },
                         "While expanding the reference 'calcul_strat_after_condition_len_' in:"
                     ],
                     "start_col": 10,
-                    "start_line": 218
+                    "start_line": 237
                 }
             },
             "733": {
@@ -26862,24 +26876,24 @@
                 "hints": [],
                 "inst": {
                     "end_col": 45,
-                    "end_line": 216,
+                    "end_line": 235,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 38,
-                            "end_line": 243,
+                            "end_line": 262,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 9,
-                            "start_line": 243
+                            "start_line": 262
                         },
                         "While expanding the reference 'calcul_strat_after_condition_' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 216
+                    "start_line": 235
                 }
             },
             "734": {
@@ -26919,12 +26933,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 10,
-                    "end_line": 244,
+                    "end_line": 263,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 244
+                    "start_line": 263
                 }
             },
             "736": {
@@ -26964,24 +26978,24 @@
                 "hints": [],
                 "inst": {
                     "end_col": 21,
-                    "end_line": 238,
+                    "end_line": 257,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 14,
-                            "end_line": 245,
+                            "end_line": 264,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 9,
-                            "start_line": 245
+                            "start_line": 264
                         },
                         "While expanding the reference 'steps' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 238
+                    "start_line": 257
                 }
             },
             "737": {
@@ -27021,12 +27035,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 15,
-                    "end_line": 245,
+                    "end_line": 264,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 27,
-                    "start_line": 239
+                    "start_line": 258
                 }
             },
             "739": {
@@ -27074,7 +27088,7 @@
                     "parent_location": [
                         {
                             "end_col": 15,
-                            "end_line": 245,
+                            "end_line": 264,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
@@ -27088,12 +27102,12 @@
                                     "parent_location": [
                                         {
                                             "end_col": 15,
-                                            "end_line": 245,
+                                            "end_line": 264,
                                             "input_file": {
                                                 "filename": "apy_calculator.cairo"
                                             },
                                             "start_col": 27,
-                                            "start_line": 239
+                                            "start_line": 258
                                         },
                                         "While trying to update the implicit return value 'range_check_ptr' in:"
                                     ],
@@ -27103,7 +27117,7 @@
                                 "While auto generating local variable for 'range_check_ptr'."
                             ],
                             "start_col": 27,
-                            "start_line": 239
+                            "start_line": 258
                         },
                         "While trying to update the implicit return value 'range_check_ptr' in:"
                     ],
@@ -27150,36 +27164,36 @@
                 "hints": [],
                 "inst": {
                     "end_col": 65,
-                    "end_line": 247,
+                    "end_line": 266,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 23,
-                            "end_line": 247,
+                            "end_line": 266,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "parent_location": [
                                 {
                                     "end_col": 23,
-                                    "end_line": 247,
+                                    "end_line": 266,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 9,
-                                    "start_line": 247
+                                    "start_line": 266
                                 },
                                 "While auto generating local variable for 'current_score_'."
                             ],
                             "start_col": 9,
-                            "start_line": 247
+                            "start_line": 266
                         },
                         "While expanding the reference 'current_score_' in:"
                     ],
                     "start_col": 43,
-                    "start_line": 247
+                    "start_line": 266
                 }
             },
             "741": {
@@ -27222,24 +27236,24 @@
                 "hints": [],
                 "inst": {
                     "end_col": 23,
-                    "end_line": 247,
+                    "end_line": 266,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 23,
-                            "end_line": 247,
+                            "end_line": 266,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 9,
-                            "start_line": 247
+                            "start_line": 266
                         },
                         "While auto generating local variable for 'current_score_'."
                     ],
                     "start_col": 9,
-                    "start_line": 247
+                    "start_line": 266
                 }
             },
             "742": {
@@ -27283,36 +27297,36 @@
                 "hints": [],
                 "inst": {
                     "end_col": 57,
-                    "end_line": 248,
+                    "end_line": 267,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 19,
-                            "end_line": 248,
+                            "end_line": 267,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "parent_location": [
                                 {
                                     "end_col": 19,
-                                    "end_line": 248,
+                                    "end_line": 267,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 9,
-                                    "start_line": 248
+                                    "start_line": 267
                                 },
                                 "While auto generating local variable for 'new_score_'."
                             ],
                             "start_col": 9,
-                            "start_line": 248
+                            "start_line": 267
                         },
                         "While expanding the reference 'new_score_' in:"
                     ],
                     "start_col": 39,
-                    "start_line": 248
+                    "start_line": 267
                 }
             },
             "743": {
@@ -27357,24 +27371,24 @@
                 "hints": [],
                 "inst": {
                     "end_col": 19,
-                    "end_line": 248,
+                    "end_line": 267,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 19,
-                            "end_line": 248,
+                            "end_line": 267,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 9,
-                            "start_line": 248
+                            "start_line": 267
                         },
                         "While auto generating local variable for 'new_score_'."
                     ],
                     "start_col": 9,
-                    "start_line": 248
+                    "start_line": 267
                 }
             },
             "744": {
@@ -27419,12 +27433,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 75,
-                    "end_line": 256,
+                    "end_line": 275,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 12,
-                    "start_line": 256
+                    "start_line": 275
                 }
             },
             "745": {
@@ -27469,12 +27483,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 92,
-                    "end_line": 256,
+                    "end_line": 275,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 77,
-                    "start_line": 256
+                    "start_line": 275
                 }
             },
             "747": {
@@ -27519,12 +27533,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 109,
-                    "end_line": 256,
+                    "end_line": 275,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 95,
-                    "start_line": 256
+                    "start_line": 275
                 }
             },
             "748": {
@@ -27569,12 +27583,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 110,
-                    "end_line": 256,
+                    "end_line": 275,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 5,
-                    "start_line": 256
+                    "start_line": 275
                 }
             },
             "750": {
@@ -27619,12 +27633,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 127,
-                    "end_line": 257,
+                    "end_line": 276,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 111,
-                    "start_line": 257
+                    "start_line": 276
                 }
             },
             "751": {
@@ -27670,12 +27684,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 89,
-                    "end_line": 257,
+                    "end_line": 276,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 12,
-                    "start_line": 257
+                    "start_line": 276
                 }
             },
             "752": {
@@ -27721,12 +27735,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 108,
-                    "end_line": 257,
+                    "end_line": 276,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 91,
-                    "start_line": 257
+                    "start_line": 276
                 }
             },
             "754": {
@@ -27772,12 +27786,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 129,
-                    "end_line": 257,
+                    "end_line": 276,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 111,
-                    "start_line": 257
+                    "start_line": 276
                 }
             },
             "756": {
@@ -27823,12 +27837,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 130,
-                    "end_line": 257,
+                    "end_line": 276,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 5,
-                    "start_line": 257
+                    "start_line": 276
                 }
             },
             "758": {
@@ -27873,13 +27887,13 @@
                 },
                 "hints": [],
                 "inst": {
-                    "end_col": 124,
-                    "end_line": 258,
+                    "end_col": 128,
+                    "end_line": 277,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
-                    "start_col": 105,
-                    "start_line": 258
+                    "start_col": 109,
+                    "start_line": 277
                 }
             },
             "759": {
@@ -27925,13 +27939,13 @@
                 },
                 "hints": [],
                 "inst": {
-                    "end_col": 126,
-                    "end_line": 258,
+                    "end_col": 130,
+                    "end_line": 277,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
-                    "start_col": 105,
-                    "start_line": 258
+                    "start_col": 109,
+                    "start_line": 277
                 }
             },
             "761": {
@@ -27979,12 +27993,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 85,
-                    "end_line": 258,
+                    "end_line": 277,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 12,
-                    "start_line": 258
+                    "start_line": 277
                 }
             },
             "762": {
@@ -28031,28 +28045,16 @@
                 },
                 "hints": [],
                 "inst": {
-                    "end_col": 32,
-                    "end_line": 190,
+                    "end_col": 107,
+                    "end_line": 277,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
-                    "parent_location": [
-                        {
-                            "end_col": 103,
-                            "end_line": 258,
-                            "input_file": {
-                                "filename": "apy_calculator.cairo"
-                            },
-                            "start_col": 87,
-                            "start_line": 258
-                        },
-                        "While expanding the reference '_condtions_strat' in:"
-                    ],
-                    "start_col": 9,
-                    "start_line": 190
+                    "start_col": 87,
+                    "start_line": 277
                 }
             },
-            "763": {
+            "764": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28096,16 +28098,16 @@
                 },
                 "hints": [],
                 "inst": {
-                    "end_col": 130,
-                    "end_line": 258,
+                    "end_col": 134,
+                    "end_line": 277,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
-                    "start_col": 105,
-                    "start_line": 258
+                    "start_col": 109,
+                    "start_line": 277
                 }
             },
-            "765": {
+            "766": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28149,16 +28151,16 @@
                 },
                 "hints": [],
                 "inst": {
-                    "end_col": 131,
-                    "end_line": 258,
+                    "end_col": 135,
+                    "end_line": 277,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 5,
-                    "start_line": 258
+                    "start_line": 277
                 }
             },
-            "767": {
+            "768": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28203,15 +28205,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 24,
-                    "end_line": 264,
+                    "end_line": 283,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 264
+                    "start_line": 283
                 }
             },
-            "769": {
+            "770": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28257,15 +28259,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 42,
-                    "end_line": 264,
+                    "end_line": 283,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 28,
-                    "start_line": 264
+                    "start_line": 283
                 }
             },
-            "770": {
+            "771": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28312,15 +28314,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 26,
-                    "end_line": 265,
+                    "end_line": 284,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 265
+                    "start_line": 284
                 }
             },
-            "772": {
+            "773": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28368,15 +28370,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 45,
-                    "end_line": 265,
+                    "end_line": 284,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 29,
-                    "start_line": 265
+                    "start_line": 284
                 }
             },
-            "773": {
+            "774": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28425,15 +28427,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 48,
-                    "end_line": 265,
+                    "end_line": 284,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 29,
-                    "start_line": 265
+                    "start_line": 284
                 }
             },
-            "775": {
+            "776": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28483,15 +28485,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 29,
-                    "end_line": 266,
+                    "end_line": 285,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 266
+                    "start_line": 285
                 }
             },
-            "777": {
+            "778": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28542,15 +28544,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 51,
-                    "end_line": 266,
+                    "end_line": 285,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 32,
-                    "start_line": 266
+                    "start_line": 285
                 }
             },
-            "778": {
+            "779": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28602,15 +28604,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 53,
-                    "end_line": 266,
+                    "end_line": 285,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 32,
-                    "start_line": 266
+                    "start_line": 285
                 }
             },
-            "780": {
+            "781": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28663,15 +28665,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 57,
-                    "end_line": 266,
+                    "end_line": 285,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 266
+                    "start_line": 285
                 }
             },
-            "782": {
+            "783": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28725,15 +28727,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 58,
-                    "end_line": 271,
+                    "end_line": 290,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 44,
-                    "start_line": 271
+                    "start_line": 290
                 }
             },
-            "783": {
+            "784": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28788,15 +28790,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 68,
-                    "end_line": 273,
+                    "end_line": 292,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 49,
-                    "start_line": 273
+                    "start_line": 292
                 }
             },
-            "784": {
+            "785": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28852,15 +28854,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 70,
-                    "end_line": 273,
+                    "end_line": 292,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 49,
-                    "start_line": 273
+                    "start_line": 292
                 }
             },
-            "786": {
+            "787": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28917,15 +28919,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 74,
-                    "end_line": 273,
+                    "end_line": 292,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 273
+                    "start_line": 292
                 }
             },
-            "788": {
+            "789": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -28983,15 +28985,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 67,
-                    "end_line": 275,
+                    "end_line": 294,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 51,
-                    "start_line": 275
+                    "start_line": 294
                 }
             },
-            "789": {
+            "790": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -29050,15 +29052,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 69,
-                    "end_line": 275,
+                    "end_line": 294,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 51,
-                    "start_line": 275
+                    "start_line": 294
                 }
             },
-            "791": {
+            "792": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -29125,7 +29127,7 @@
                     "parent_location": [
                         {
                             "end_col": 15,
-                            "end_line": 245,
+                            "end_line": 264,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
@@ -29139,7 +29141,7 @@
                                     "parent_location": [
                                         {
                                             "end_col": 15,
-                                            "end_line": 245,
+                                            "end_line": 264,
                                             "input_file": {
                                                 "filename": "apy_calculator.cairo"
                                             },
@@ -29153,12 +29155,12 @@
                                                     "parent_location": [
                                                         {
                                                             "end_col": 27,
-                                                            "end_line": 278,
+                                                            "end_line": 297,
                                                             "input_file": {
                                                                 "filename": "apy_calculator.cairo"
                                                             },
                                                             "start_col": 12,
-                                                            "start_line": 260
+                                                            "start_line": 279
                                                         },
                                                         "While trying to retrieve the implicit argument 'range_check_ptr' in:"
                                                     ],
@@ -29168,7 +29170,7 @@
                                                 "While expanding the reference 'range_check_ptr' in:"
                                             ],
                                             "start_col": 27,
-                                            "start_line": 239
+                                            "start_line": 258
                                         },
                                         "While trying to update the implicit return value 'range_check_ptr' in:"
                                     ],
@@ -29178,7 +29180,7 @@
                                 "While auto generating local variable for 'range_check_ptr'."
                             ],
                             "start_col": 27,
-                            "start_line": 239
+                            "start_line": 258
                         },
                         "While trying to update the implicit return value 'range_check_ptr' in:"
                     ],
@@ -29186,7 +29188,7 @@
                     "start_line": 60
                 }
             },
-            "792": {
+            "793": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -29246,15 +29248,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 32,
-                    "end_line": 261,
+                    "end_line": 280,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 261
+                    "start_line": 280
                 }
             },
-            "794": {
+            "795": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -29314,15 +29316,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 28,
-                    "end_line": 262,
+                    "end_line": 281,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 262
+                    "start_line": 281
                 }
             },
-            "796": {
+            "797": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -29382,15 +29384,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 42,
-                    "end_line": 264,
+                    "end_line": 283,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 264
+                    "start_line": 283
                 }
             },
-            "797": {
+            "798": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -29450,15 +29452,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 48,
-                    "end_line": 265,
+                    "end_line": 284,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 265
+                    "start_line": 284
                 }
             },
-            "798": {
+            "799": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -29518,15 +29520,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 57,
-                    "end_line": 266,
+                    "end_line": 285,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 266
+                    "start_line": 285
                 }
             },
-            "799": {
+            "800": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -29586,15 +29588,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 51,
-                    "end_line": 268,
+                    "end_line": 287,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 268
+                    "start_line": 287
                 }
             },
-            "800": {
+            "801": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -29654,15 +29656,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 43,
-                    "end_line": 269,
+                    "end_line": 288,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 269
+                    "start_line": 288
                 }
             },
-            "801": {
+            "802": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -29722,15 +29724,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 58,
-                    "end_line": 271,
+                    "end_line": 290,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 271
+                    "start_line": 290
                 }
             },
-            "802": {
+            "803": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -29797,12 +29799,12 @@
                     "parent_location": [
                         {
                             "end_col": 37,
-                            "end_line": 272,
+                            "end_line": 291,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 9,
-                            "start_line": 272
+                            "start_line": 291
                         },
                         "While expanding the reference '_cumulative_data_strat_array' in:"
                     ],
@@ -29810,7 +29812,7 @@
                     "start_line": 196
                 }
             },
-            "803": {
+            "804": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -29870,15 +29872,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 74,
-                    "end_line": 273,
+                    "end_line": 292,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 273
+                    "start_line": 292
                 }
             },
-            "804": {
+            "805": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -29945,12 +29947,12 @@
                     "parent_location": [
                         {
                             "end_col": 42,
-                            "end_line": 274,
+                            "end_line": 293,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 9,
-                            "start_line": 274
+                            "start_line": 293
                         },
                         "While expanding the reference '_cumulative_strat_condtions_array' in:"
                     ],
@@ -29958,7 +29960,7 @@
                     "start_line": 198
                 }
             },
-            "805": {
+            "806": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -30018,15 +30020,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 69,
-                    "end_line": 275,
+                    "end_line": 294,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 275
+                    "start_line": 294
                 }
             },
-            "806": {
+            "807": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -30093,12 +30095,12 @@
                     "parent_location": [
                         {
                             "end_col": 44,
-                            "end_line": 276,
+                            "end_line": 295,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 9,
-                            "start_line": 276
+                            "start_line": 295
                         },
                         "While expanding the reference '_cumulative_calculation_strat_array' in:"
                     ],
@@ -30106,7 +30108,7 @@
                     "start_line": 200
                 }
             },
-            "807": {
+            "808": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -30173,12 +30175,12 @@
                     "parent_location": [
                         {
                             "end_col": 17,
-                            "end_line": 277,
+                            "end_line": 296,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 9,
-                            "start_line": 277
+                            "start_line": 296
                         },
                         "While expanding the reference 'tab_len_' in:"
                     ],
@@ -30186,7 +30188,7 @@
                     "start_line": 201
                 }
             },
-            "808": {
+            "809": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -30246,15 +30248,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 26,
-                    "end_line": 278,
+                    "end_line": 297,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 9,
-                    "start_line": 278
+                    "start_line": 297
                 }
             },
-            "810": {
+            "811": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -30314,15 +30316,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 27,
-                    "end_line": 278,
+                    "end_line": 297,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 12,
-                    "start_line": 260
+                    "start_line": 279
                 }
             },
-            "812": {
+            "813": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.run_input"
@@ -30382,15 +30384,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 28,
-                    "end_line": 278,
+                    "end_line": 297,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 5,
-                    "start_line": 260
+                    "start_line": 279
                 }
             },
-            "813": {
+            "814": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30409,15 +30411,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 18,
-                    "end_line": 283,
+                    "end_line": 302,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 5,
-                    "start_line": 283
+                    "start_line": 302
                 }
             },
-            "815": {
+            "816": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30436,15 +30438,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 53,
-                    "end_line": 284,
+                    "end_line": 303,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 46,
-                    "start_line": 284
+                    "start_line": 303
                 }
             },
-            "817": {
+            "818": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30464,15 +30466,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 42,
-                    "end_line": 284,
+                    "end_line": 303,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 10,
-                    "start_line": 284
+                    "start_line": 303
                 }
             },
-            "818": {
+            "819": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30492,15 +30494,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 49,
-                    "end_line": 285,
+                    "end_line": 304,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 42,
-                    "start_line": 285
+                    "start_line": 304
                 }
             },
-            "820": {
+            "821": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30521,15 +30523,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 38,
-                    "end_line": 285,
+                    "end_line": 304,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 10,
-                    "start_line": 285
+                    "start_line": 304
                 }
             },
-            "821": {
+            "822": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30550,15 +30552,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 45,
-                    "end_line": 286,
+                    "end_line": 305,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 38,
-                    "start_line": 286
+                    "start_line": 305
                 }
             },
-            "823": {
+            "824": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30580,15 +30582,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 34,
-                    "end_line": 286,
+                    "end_line": 305,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 10,
-                    "start_line": 286
+                    "start_line": 305
                 }
             },
-            "824": {
+            "825": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30610,15 +30612,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 52,
-                    "end_line": 287,
+                    "end_line": 306,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 45,
-                    "start_line": 287
+                    "start_line": 306
                 }
             },
-            "826": {
+            "827": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30641,15 +30643,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 41,
-                    "end_line": 287,
+                    "end_line": 306,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 10,
-                    "start_line": 287
+                    "start_line": 306
                 }
             },
-            "827": {
+            "828": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30672,15 +30674,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 63,
-                    "end_line": 288,
+                    "end_line": 307,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 56,
-                    "start_line": 288
+                    "start_line": 307
                 }
             },
-            "829": {
+            "830": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30704,15 +30706,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 52,
-                    "end_line": 288,
+                    "end_line": 307,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 10,
-                    "start_line": 288
+                    "start_line": 307
                 }
             },
-            "830": {
+            "831": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30736,15 +30738,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 22,
-                    "end_line": 289,
+                    "end_line": 308,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 5,
-                    "start_line": 289
+                    "start_line": 308
                 }
             },
-            "832": {
+            "833": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30770,39 +30772,39 @@
                     {
                         "location": {
                             "end_col": 7,
-                            "end_line": 315,
+                            "end_line": 334,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 5,
-                            "start_line": 291
+                            "start_line": 310
                         },
                         "n_prefix_newlines": 1
                     }
                 ],
                 "inst": {
                     "end_col": 17,
-                    "end_line": 317,
+                    "end_line": 336,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 17,
-                            "end_line": 317,
+                            "end_line": 336,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 9,
-                            "start_line": 317
+                            "start_line": 336
                         },
                         "While auto generating local variable for 'tab_len_'."
                     ],
                     "start_col": 9,
-                    "start_line": 317
+                    "start_line": 336
                 }
             },
-            "833": {
+            "834": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30827,15 +30829,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 62,
-                    "end_line": 318,
+                    "end_line": 337,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 55,
-                    "start_line": 318
+                    "start_line": 337
                 }
             },
-            "835": {
+            "836": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30861,15 +30863,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 51,
-                    "end_line": 318,
+                    "end_line": 337,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 10,
-                    "start_line": 318
+                    "start_line": 337
                 }
             },
-            "836": {
+            "837": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30895,15 +30897,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 69,
-                    "end_line": 319,
+                    "end_line": 338,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 62,
-                    "start_line": 319
+                    "start_line": 338
                 }
             },
-            "838": {
+            "839": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30930,15 +30932,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 58,
-                    "end_line": 319,
+                    "end_line": 338,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 10,
-                    "start_line": 319
+                    "start_line": 338
                 }
             },
-            "839": {
+            "840": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -30965,15 +30967,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 67,
-                    "end_line": 320,
+                    "end_line": 339,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 60,
-                    "start_line": 320
+                    "start_line": 339
                 }
             },
-            "841": {
+            "842": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31001,15 +31003,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 56,
-                    "end_line": 320,
+                    "end_line": 339,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 10,
-                    "start_line": 320
+                    "start_line": 339
                 }
             },
-            "842": {
+            "843": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31037,7 +31039,7 @@
                 "hints": [],
                 "inst": {
                     "end_col": 45,
-                    "end_line": 282,
+                    "end_line": 301,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
@@ -31051,12 +31053,12 @@
                             "parent_location": [
                                 {
                                     "end_col": 285,
-                                    "end_line": 321,
+                                    "end_line": 340,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 53,
-                                    "start_line": 321
+                                    "start_line": 340
                                 },
                                 "While trying to retrieve the implicit argument 'range_check_ptr' in:"
                             ],
@@ -31066,10 +31068,10 @@
                         "While expanding the reference 'range_check_ptr' in:"
                     ],
                     "start_col": 30,
-                    "start_line": 282
+                    "start_line": 301
                 }
             },
-            "843": {
+            "844": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31097,27 +31099,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 34,
-                    "end_line": 284,
+                    "end_line": 303,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 81,
-                            "end_line": 321,
+                            "end_line": 340,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 63,
-                            "start_line": 321
+                            "start_line": 340
                         },
                         "While expanding the reference 'current_debt_ratio' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 284
+                    "start_line": 303
                 }
             },
-            "844": {
+            "845": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31145,27 +31147,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 30,
-                    "end_line": 285,
+                    "end_line": 304,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 97,
-                            "end_line": 321,
+                            "end_line": 340,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 83,
-                            "start_line": 321
+                            "start_line": 340
                         },
                         "While expanding the reference 'new_debt_ratio' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 285
+                    "start_line": 304
                 }
             },
-            "845": {
+            "846": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31193,27 +31195,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 26,
-                    "end_line": 286,
+                    "end_line": 305,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 109,
-                            "end_line": 321,
+                            "end_line": 340,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 99,
-                            "start_line": 321
+                            "start_line": 340
                         },
                         "While expanding the reference 'strat_data' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 286
+                    "start_line": 305
                 }
             },
-            "846": {
+            "847": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31241,27 +31243,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 33,
-                    "end_line": 287,
+                    "end_line": 306,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 128,
-                            "end_line": 321,
+                            "end_line": 340,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 111,
-                            "start_line": 321
+                            "start_line": 340
                         },
                         "While expanding the reference 'strat_calculation' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 287
+                    "start_line": 306
                 }
             },
-            "847": {
+            "848": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31289,27 +31291,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 44,
-                    "end_line": 288,
+                    "end_line": 307,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 158,
-                            "end_line": 321,
+                            "end_line": 340,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 130,
-                            "start_line": 321
+                            "start_line": 340
                         },
                         "While expanding the reference 'strat_calculation_conditions' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 288
+                    "start_line": 307
                 }
             },
-            "848": {
+            "849": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31337,15 +31339,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 160,
-                    "end_line": 321,
+                    "end_line": 340,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 159,
-                    "start_line": 321
+                    "start_line": 340
                 }
             },
-            "850": {
+            "851": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31373,15 +31375,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 163,
-                    "end_line": 321,
+                    "end_line": 340,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 162,
-                    "start_line": 321
+                    "start_line": 340
                 }
             },
-            "852": {
+            "853": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31409,15 +31411,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 166,
-                    "end_line": 321,
+                    "end_line": 340,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 165,
-                    "start_line": 321
+                    "start_line": 340
                 }
             },
-            "854": {
+            "855": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31445,27 +31447,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 43,
-                    "end_line": 318,
+                    "end_line": 337,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 195,
-                            "end_line": 321,
+                            "end_line": 340,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 168,
-                            "start_line": 321
+                            "start_line": 340
                         },
                         "While expanding the reference 'cumulative_data_strat_array' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 318
+                    "start_line": 337
                 }
             },
-            "855": {
+            "856": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31493,15 +31495,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 198,
-                    "end_line": 321,
+                    "end_line": 340,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 197,
-                    "start_line": 321
+                    "start_line": 340
                 }
             },
-            "857": {
+            "858": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31529,27 +31531,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 50,
-                    "end_line": 319,
+                    "end_line": 338,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 234,
-                            "end_line": 321,
+                            "end_line": 340,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 200,
-                            "start_line": 321
+                            "start_line": 340
                         },
                         "While expanding the reference 'cumulative_calculation_strat_array' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 319
+                    "start_line": 338
                 }
             },
-            "858": {
+            "859": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31577,15 +31579,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 237,
-                    "end_line": 321,
+                    "end_line": 340,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 236,
-                    "start_line": 321
+                    "start_line": 340
                 }
             },
-            "860": {
+            "861": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31613,27 +31615,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 48,
-                    "end_line": 320,
+                    "end_line": 339,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 271,
-                            "end_line": 321,
+                            "end_line": 340,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 239,
-                            "start_line": 321
+                            "start_line": 340
                         },
                         "While expanding the reference 'cumulative_condition_strat_array' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 320
+                    "start_line": 339
                 }
             },
-            "861": {
+            "862": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31661,39 +31663,39 @@
                 "hints": [],
                 "inst": {
                     "end_col": 17,
-                    "end_line": 317,
+                    "end_line": 336,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 17,
-                            "end_line": 317,
+                            "end_line": 336,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "parent_location": [
                                 {
                                     "end_col": 281,
-                                    "end_line": 321,
+                                    "end_line": 340,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 273,
-                                    "start_line": 321
+                                    "start_line": 340
                                 },
                                 "While expanding the reference 'tab_len_' in:"
                             ],
                             "start_col": 9,
-                            "start_line": 317
+                            "start_line": 336
                         },
                         "While auto generating local variable for 'tab_len_'."
                     ],
                     "start_col": 9,
-                    "start_line": 317
+                    "start_line": 336
                 }
             },
-            "862": {
+            "863": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31721,15 +31723,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 284,
-                    "end_line": 321,
+                    "end_line": 340,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 283,
-                    "start_line": 321
+                    "start_line": 340
                 }
             },
-            "864": {
+            "865": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31757,15 +31759,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 285,
-                    "end_line": 321,
+                    "end_line": 340,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 53,
-                    "start_line": 321
+                    "start_line": 340
                 }
             },
-            "866": {
+            "867": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31803,7 +31805,7 @@
                     "parent_location": [
                         {
                             "end_col": 285,
-                            "end_line": 321,
+                            "end_line": 340,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
@@ -31817,12 +31819,12 @@
                                     "parent_location": [
                                         {
                                             "end_col": 73,
-                                            "end_line": 322,
+                                            "end_line": 341,
                                             "input_file": {
                                                 "filename": "apy_calculator.cairo"
                                             },
                                             "start_col": 34,
-                                            "start_line": 322
+                                            "start_line": 341
                                         },
                                         "While trying to retrieve the implicit argument 'range_check_ptr' in:"
                                     ],
@@ -31832,7 +31834,7 @@
                                 "While expanding the reference 'range_check_ptr' in:"
                             ],
                             "start_col": 53,
-                            "start_line": 321
+                            "start_line": 340
                         },
                         "While trying to update the implicit return value 'range_check_ptr' in:"
                     ],
@@ -31840,7 +31842,7 @@
                     "start_line": 184
                 }
             },
-            "867": {
+            "868": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31871,27 +31873,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 24,
-                    "end_line": 321,
+                    "end_line": 340,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 65,
-                            "end_line": 322,
+                            "end_line": 341,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 51,
-                            "start_line": 322
+                            "start_line": 341
                         },
                         "While expanding the reference 'current_score_' in:"
                     ],
                     "start_col": 10,
-                    "start_line": 321
+                    "start_line": 340
                 }
             },
-            "868": {
+            "869": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31922,15 +31924,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 72,
-                    "end_line": 322,
+                    "end_line": 341,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 67,
-                    "start_line": 322
+                    "start_line": 341
                 }
             },
-            "870": {
+            "871": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -31961,15 +31963,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 73,
-                    "end_line": 322,
+                    "end_line": 341,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 34,
-                    "start_line": 322
+                    "start_line": 341
                 }
             },
-            "872": {
+            "873": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32002,27 +32004,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 28,
-                    "end_line": 322,
+                    "end_line": 341,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 28,
-                            "end_line": 322,
+                            "end_line": 341,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 10,
-                            "start_line": 322
+                            "start_line": 341
                         },
                         "While auto generating local variable for 'vault_current_apy_'."
                     ],
                     "start_col": 10,
-                    "start_line": 322
+                    "start_line": 341
                 }
             },
-            "873": {
+            "874": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32062,7 +32064,7 @@
                     "parent_location": [
                         {
                             "end_col": 73,
-                            "end_line": 322,
+                            "end_line": 341,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
@@ -32076,12 +32078,12 @@
                                     "parent_location": [
                                         {
                                             "end_col": 65,
-                                            "end_line": 323,
+                                            "end_line": 342,
                                             "input_file": {
                                                 "filename": "apy_calculator.cairo"
                                             },
                                             "start_col": 30,
-                                            "start_line": 323
+                                            "start_line": 342
                                         },
                                         "While trying to retrieve the implicit argument 'range_check_ptr' in:"
                                     ],
@@ -32091,7 +32093,7 @@
                                 "While expanding the reference 'range_check_ptr' in:"
                             ],
                             "start_col": 34,
-                            "start_line": 322
+                            "start_line": 341
                         },
                         "While trying to update the implicit return value 'range_check_ptr' in:"
                     ],
@@ -32099,7 +32101,7 @@
                     "start_line": 297
                 }
             },
-            "874": {
+            "875": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32132,27 +32134,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 36,
-                    "end_line": 321,
+                    "end_line": 340,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 57,
-                            "end_line": 323,
+                            "end_line": 342,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 47,
-                            "start_line": 323
+                            "start_line": 342
                         },
                         "While expanding the reference 'new_score_' in:"
                     ],
                     "start_col": 26,
-                    "start_line": 321
+                    "start_line": 340
                 }
             },
-            "875": {
+            "876": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32185,15 +32187,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 64,
-                    "end_line": 323,
+                    "end_line": 342,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 59,
-                    "start_line": 323
+                    "start_line": 342
                 }
             },
-            "877": {
+            "878": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32226,15 +32228,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 65,
-                    "end_line": 323,
+                    "end_line": 342,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 30,
-                    "start_line": 323
+                    "start_line": 342
                 }
             },
-            "879": {
+            "880": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32268,27 +32270,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 24,
-                    "end_line": 323,
+                    "end_line": 342,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 24,
-                            "end_line": 323,
+                            "end_line": 342,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 10,
-                            "start_line": 323
+                            "start_line": 342
                         },
                         "While auto generating local variable for 'vault_new_apy_'."
                     ],
                     "start_col": 10,
-                    "start_line": 323
+                    "start_line": 342
                 }
             },
-            "880": {
+            "881": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32329,7 +32331,7 @@
                     "parent_location": [
                         {
                             "end_col": 65,
-                            "end_line": 323,
+                            "end_line": 342,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
@@ -32343,12 +32345,12 @@
                                     "parent_location": [
                                         {
                                             "end_col": 65,
-                                            "end_line": 323,
+                                            "end_line": 342,
                                             "input_file": {
                                                 "filename": "apy_calculator.cairo"
                                             },
                                             "start_col": 30,
-                                            "start_line": 323
+                                            "start_line": 342
                                         },
                                         "While trying to update the implicit return value 'range_check_ptr' in:"
                                     ],
@@ -32358,7 +32360,7 @@
                                 "While auto generating local variable for 'range_check_ptr'."
                             ],
                             "start_col": 30,
-                            "start_line": 323
+                            "start_line": 342
                         },
                         "While trying to update the implicit return value 'range_check_ptr' in:"
                     ],
@@ -32366,7 +32368,7 @@
                     "start_line": 297
                 }
             },
-            "881": {
+            "882": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32400,15 +32402,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 68,
-                    "end_line": 326,
+                    "end_line": 345,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 41,
-                    "start_line": 326
+                    "start_line": 345
                 }
             },
-            "883": {
+            "884": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32442,15 +32444,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 69,
-                    "end_line": 326,
+                    "end_line": 345,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 22,
-                    "start_line": 326
+                    "start_line": 345
                 }
             },
-            "885": {
+            "886": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32485,27 +32487,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 18,
-                    "end_line": 326,
+                    "end_line": 345,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 18,
-                            "end_line": 326,
+                            "end_line": 345,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 10,
-                            "start_line": 326
+                            "start_line": 345
                         },
                         "While auto generating local variable for 'callback'."
                     ],
                     "start_col": 10,
-                    "start_line": 326
+                    "start_line": 345
                 }
             },
-            "886": {
+            "887": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32540,7 +32542,7 @@
                 "hints": [],
                 "inst": {
                     "end_col": 28,
-                    "end_line": 282,
+                    "end_line": 301,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
@@ -32554,12 +32556,12 @@
                             "parent_location": [
                                 {
                                     "end_col": 37,
-                                    "end_line": 328,
+                                    "end_line": 347,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 5,
-                                    "start_line": 328
+                                    "start_line": 347
                                 },
                                 "While trying to retrieve the implicit argument 'output_ptr' in:"
                             ],
@@ -32569,10 +32571,10 @@
                         "While expanding the reference 'output_ptr' in:"
                     ],
                     "start_col": 11,
-                    "start_line": 282
+                    "start_line": 301
                 }
             },
-            "887": {
+            "888": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32607,15 +32609,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 36,
-                    "end_line": 328,
+                    "end_line": 347,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 20,
-                    "start_line": 328
+                    "start_line": 347
                 }
             },
-            "888": {
+            "889": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32650,15 +32652,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 37,
-                    "end_line": 328,
+                    "end_line": 347,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 5,
-                    "start_line": 328
+                    "start_line": 347
                 }
             },
-            "890": {
+            "891": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32693,15 +32695,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 35,
-                    "end_line": 329,
+                    "end_line": 348,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 20,
-                    "start_line": 329
+                    "start_line": 348
                 }
             },
-            "891": {
+            "892": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32736,15 +32738,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 36,
-                    "end_line": 329,
+                    "end_line": 348,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 5,
-                    "start_line": 329
+                    "start_line": 348
                 }
             },
-            "893": {
+            "894": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32779,27 +32781,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 34,
-                    "end_line": 284,
+                    "end_line": 303,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 39,
-                            "end_line": 330,
+                            "end_line": 349,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 21,
-                            "start_line": 330
+                            "start_line": 349
                         },
                         "While expanding the reference 'current_debt_ratio' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 284
+                    "start_line": 303
                 }
             },
-            "894": {
+            "895": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32834,39 +32836,39 @@
                 "hints": [],
                 "inst": {
                     "end_col": 17,
-                    "end_line": 317,
+                    "end_line": 336,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 17,
-                            "end_line": 317,
+                            "end_line": 336,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "parent_location": [
                                 {
                                     "end_col": 49,
-                                    "end_line": 330,
+                                    "end_line": 349,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 41,
-                                    "start_line": 330
+                                    "start_line": 349
                                 },
                                 "While expanding the reference 'tab_len_' in:"
                             ],
                             "start_col": 9,
-                            "start_line": 317
+                            "start_line": 336
                         },
                         "While auto generating local variable for 'tab_len_'."
                     ],
                     "start_col": 9,
-                    "start_line": 317
+                    "start_line": 336
                 }
             },
-            "895": {
+            "896": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32901,15 +32903,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 52,
-                    "end_line": 330,
+                    "end_line": 349,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 51,
-                    "start_line": 330
+                    "start_line": 349
                 }
             },
-            "897": {
+            "898": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -32944,39 +32946,39 @@
                 "hints": [],
                 "inst": {
                     "end_col": 18,
-                    "end_line": 326,
+                    "end_line": 345,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 18,
-                            "end_line": 326,
+                            "end_line": 345,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "parent_location": [
                                 {
                                     "end_col": 62,
-                                    "end_line": 330,
+                                    "end_line": 349,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 54,
-                                    "start_line": 330
+                                    "start_line": 349
                                 },
                                 "While expanding the reference 'callback' in:"
                             ],
                             "start_col": 10,
-                            "start_line": 326
+                            "start_line": 345
                         },
                         "While auto generating local variable for 'callback'."
                     ],
                     "start_col": 10,
-                    "start_line": 326
+                    "start_line": 345
                 }
             },
-            "898": {
+            "899": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -33011,15 +33013,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 63,
-                    "end_line": 330,
+                    "end_line": 349,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 5,
-                    "start_line": 330
+                    "start_line": 349
                 }
             },
-            "900": {
+            "901": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -33054,27 +33056,27 @@
                 "hints": [],
                 "inst": {
                     "end_col": 30,
-                    "end_line": 285,
+                    "end_line": 304,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 35,
-                            "end_line": 331,
+                            "end_line": 350,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "start_col": 21,
-                            "start_line": 331
+                            "start_line": 350
                         },
                         "While expanding the reference 'new_debt_ratio' in:"
                     ],
                     "start_col": 16,
-                    "start_line": 285
+                    "start_line": 304
                 }
             },
-            "901": {
+            "902": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -33109,39 +33111,39 @@
                 "hints": [],
                 "inst": {
                     "end_col": 17,
-                    "end_line": 317,
+                    "end_line": 336,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 17,
-                            "end_line": 317,
+                            "end_line": 336,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "parent_location": [
                                 {
                                     "end_col": 45,
-                                    "end_line": 331,
+                                    "end_line": 350,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 37,
-                                    "start_line": 331
+                                    "start_line": 350
                                 },
                                 "While expanding the reference 'tab_len_' in:"
                             ],
                             "start_col": 9,
-                            "start_line": 317
+                            "start_line": 336
                         },
                         "While auto generating local variable for 'tab_len_'."
                     ],
                     "start_col": 9,
-                    "start_line": 317
+                    "start_line": 336
                 }
             },
-            "902": {
+            "903": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -33176,15 +33178,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 48,
-                    "end_line": 331,
+                    "end_line": 350,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 47,
-                    "start_line": 331
+                    "start_line": 350
                 }
             },
-            "904": {
+            "905": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -33219,39 +33221,39 @@
                 "hints": [],
                 "inst": {
                     "end_col": 18,
-                    "end_line": 326,
+                    "end_line": 345,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 18,
-                            "end_line": 326,
+                            "end_line": 345,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "parent_location": [
                                 {
                                     "end_col": 58,
-                                    "end_line": 331,
+                                    "end_line": 350,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 50,
-                                    "start_line": 331
+                                    "start_line": 350
                                 },
                                 "While expanding the reference 'callback' in:"
                             ],
                             "start_col": 10,
-                            "start_line": 326
+                            "start_line": 345
                         },
                         "While auto generating local variable for 'callback'."
                     ],
                     "start_col": 10,
-                    "start_line": 326
+                    "start_line": 345
                 }
             },
-            "905": {
+            "906": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -33286,15 +33288,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 59,
-                    "end_line": 331,
+                    "end_line": 350,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 5,
-                    "start_line": 331
+                    "start_line": 350
                 }
             },
-            "907": {
+            "908": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -33329,39 +33331,39 @@
                 "hints": [],
                 "inst": {
                     "end_col": 28,
-                    "end_line": 322,
+                    "end_line": 341,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 28,
-                            "end_line": 322,
+                            "end_line": 341,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "parent_location": [
                                 {
                                     "end_col": 38,
-                                    "end_line": 332,
+                                    "end_line": 351,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 20,
-                                    "start_line": 332
+                                    "start_line": 351
                                 },
                                 "While expanding the reference 'vault_current_apy_' in:"
                             ],
                             "start_col": 10,
-                            "start_line": 322
+                            "start_line": 341
                         },
                         "While auto generating local variable for 'vault_current_apy_'."
                     ],
                     "start_col": 10,
-                    "start_line": 322
+                    "start_line": 341
                 }
             },
-            "908": {
+            "909": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -33396,15 +33398,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 39,
-                    "end_line": 332,
+                    "end_line": 351,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 5,
-                    "start_line": 332
+                    "start_line": 351
                 }
             },
-            "910": {
+            "911": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -33439,39 +33441,39 @@
                 "hints": [],
                 "inst": {
                     "end_col": 24,
-                    "end_line": 323,
+                    "end_line": 342,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 24,
-                            "end_line": 323,
+                            "end_line": 342,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "parent_location": [
                                 {
                                     "end_col": 34,
-                                    "end_line": 333,
+                                    "end_line": 352,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 20,
-                                    "start_line": 333
+                                    "start_line": 352
                                 },
                                 "While expanding the reference 'vault_new_apy_' in:"
                             ],
                             "start_col": 10,
-                            "start_line": 323
+                            "start_line": 342
                         },
                         "While auto generating local variable for 'vault_new_apy_'."
                     ],
                     "start_col": 10,
-                    "start_line": 323
+                    "start_line": 342
                 }
             },
-            "911": {
+            "912": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -33506,15 +33508,15 @@
                 "hints": [],
                 "inst": {
                     "end_col": 35,
-                    "end_line": 333,
+                    "end_line": 352,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 5,
-                    "start_line": 333
+                    "start_line": 352
                 }
             },
-            "913": {
+            "914": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -33556,7 +33558,7 @@
                     "parent_location": [
                         {
                             "end_col": 65,
-                            "end_line": 323,
+                            "end_line": 342,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
@@ -33570,36 +33572,36 @@
                                     "parent_location": [
                                         {
                                             "end_col": 65,
-                                            "end_line": 323,
+                                            "end_line": 342,
                                             "input_file": {
                                                 "filename": "apy_calculator.cairo"
                                             },
                                             "parent_location": [
                                                 {
                                                     "end_col": 45,
-                                                    "end_line": 282,
+                                                    "end_line": 301,
                                                     "input_file": {
                                                         "filename": "apy_calculator.cairo"
                                                     },
                                                     "parent_location": [
                                                         {
                                                             "end_col": 15,
-                                                            "end_line": 334,
+                                                            "end_line": 353,
                                                             "input_file": {
                                                                 "filename": "apy_calculator.cairo"
                                                             },
                                                             "start_col": 5,
-                                                            "start_line": 334
+                                                            "start_line": 353
                                                         },
                                                         "While trying to retrieve the implicit argument 'range_check_ptr' in:"
                                                     ],
                                                     "start_col": 30,
-                                                    "start_line": 282
+                                                    "start_line": 301
                                                 },
                                                 "While expanding the reference 'range_check_ptr' in:"
                                             ],
                                             "start_col": 30,
-                                            "start_line": 323
+                                            "start_line": 342
                                         },
                                         "While trying to update the implicit return value 'range_check_ptr' in:"
                                     ],
@@ -33609,7 +33611,7 @@
                                 "While auto generating local variable for 'range_check_ptr'."
                             ],
                             "start_col": 30,
-                            "start_line": 323
+                            "start_line": 342
                         },
                         "While trying to update the implicit return value 'range_check_ptr' in:"
                     ],
@@ -33617,7 +33619,7 @@
                     "start_line": 297
                 }
             },
-            "914": {
+            "915": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -33652,39 +33654,39 @@
                 "hints": [],
                 "inst": {
                     "end_col": 76,
-                    "end_line": 282,
+                    "end_line": 301,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "parent_location": [
                         {
                             "end_col": 76,
-                            "end_line": 282,
+                            "end_line": 301,
                             "input_file": {
                                 "filename": "apy_calculator.cairo"
                             },
                             "parent_location": [
                                 {
                                     "end_col": 15,
-                                    "end_line": 334,
+                                    "end_line": 353,
                                     "input_file": {
                                         "filename": "apy_calculator.cairo"
                                     },
                                     "start_col": 5,
-                                    "start_line": 334
+                                    "start_line": 353
                                 },
                                 "While trying to retrieve the implicit argument 'bitwise_ptr' in:"
                             ],
                             "start_col": 47,
-                            "start_line": 282
+                            "start_line": 301
                         },
                         "While expanding the reference 'bitwise_ptr' in:"
                     ],
                     "start_col": 47,
-                    "start_line": 282
+                    "start_line": 301
                 }
             },
-            "915": {
+            "916": {
                 "accessible_scopes": [
                     "__main__",
                     "__main__.main"
@@ -33719,12 +33721,12 @@
                 "hints": [],
                 "inst": {
                     "end_col": 15,
-                    "end_line": 334,
+                    "end_line": 353,
                     "input_file": {
                         "filename": "apy_calculator.cairo"
                     },
                     "start_col": 5,
-                    "start_line": 334
+                    "start_line": 353
                 }
             }
         }
@@ -34148,6 +34150,40 @@
                 }
             }
         ],
+        "680": [
+            {
+                "accessible_scopes": [
+                    "__main__",
+                    "__main__.run_input"
+                ],
+                "code": "print(\"data strat : \")\nprint(ids._cumulative_data_strat_array_len)\ncumulative_data_strat_array = ids._cumulative_data_strat_array\nfor i in range(ids._cumulative_data_strat_array_len):\n     print(memory[cumulative_data_strat_array + i]) \n\nprint(\"calcul : \")\nprint(ids._cumulative_calculation_strat_array_len)\ncumulative_calculation_strat_array = ids._cumulative_calculation_strat_array\nfor i in range(ids._cumulative_calculation_strat_array_len):\n     print(memory[cumulative_calculation_strat_array + i]) \n\nprint(\"conditions : \")\nprint(ids._cumulative_strat_condtions_array_len)\ncumulative_strat_condtions_array = ids._cumulative_strat_condtions_array\nfor i in range(ids._cumulative_strat_condtions_array_len):\n     print(memory[cumulative_strat_condtions_array + i])",
+                "flow_tracking_data": {
+                    "ap_tracking": {
+                        "group": 43,
+                        "offset": 7
+                    },
+                    "reference_ids": {
+                        "__main__.run_input.__temp172": 339,
+                        "__main__.run_input._calcul_strat": 326,
+                        "__main__.run_input._condtions_strat": 327,
+                        "__main__.run_input._cumulative_calculation_strat_array": 335,
+                        "__main__.run_input._cumulative_calculation_strat_array_len": 334,
+                        "__main__.run_input._cumulative_current_score": 328,
+                        "__main__.run_input._cumulative_data_strat_array": 331,
+                        "__main__.run_input._cumulative_data_strat_array_len": 330,
+                        "__main__.run_input._cumulative_new_score": 329,
+                        "__main__.run_input._cumulative_strat_condtions_array": 333,
+                        "__main__.run_input._cumulative_strat_condtions_array_len": 332,
+                        "__main__.run_input._current_debt_ratio": 323,
+                        "__main__.run_input._data_strat": 325,
+                        "__main__.run_input._new_debt_ratio": 324,
+                        "__main__.run_input._strat_amount": 337,
+                        "__main__.run_input.range_check_ptr": 338,
+                        "__main__.run_input.tab_len_": 336
+                    }
+                }
+            }
+        ],
         "725": [
             {
                 "accessible_scopes": [
@@ -34185,7 +34221,7 @@
                 }
             }
         ],
-        "832": [
+        "833": [
             {
                 "accessible_scopes": [
                     "__main__",
@@ -35529,7 +35565,7 @@
         },
         "__main__.main": {
             "decorators": [],
-            "pc": 813,
+            "pc": 814,
             "type": "function"
         },
         "__main__.main.Args": {
@@ -35574,7 +35610,7 @@
                         "group": 53,
                         "offset": 0
                     },
-                    "pc": 813,
+                    "pc": 814,
                     "value": "[cast(fp + (-3), starkware.cairo.common.cairo_builtins.BitwiseBuiltin**)]"
                 }
             ],
@@ -35589,7 +35625,7 @@
                         "group": 54,
                         "offset": 49
                     },
-                    "pc": 885,
+                    "pc": 886,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35597,7 +35633,7 @@
                         "group": 54,
                         "offset": 49
                     },
-                    "pc": 886,
+                    "pc": 887,
                     "value": "[cast(fp + 12, felt**)]"
                 }
             ],
@@ -35612,7 +35648,7 @@
                         "group": 53,
                         "offset": 35
                     },
-                    "pc": 838,
+                    "pc": 839,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35620,7 +35656,7 @@
                         "group": 53,
                         "offset": 35
                     },
-                    "pc": 839,
+                    "pc": 840,
                     "value": "[cast(fp + 7, felt**)]"
                 }
             ],
@@ -35635,7 +35671,7 @@
                         "group": 53,
                         "offset": 38
                     },
-                    "pc": 841,
+                    "pc": 842,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35643,7 +35679,7 @@
                         "group": 53,
                         "offset": 38
                     },
-                    "pc": 842,
+                    "pc": 843,
                     "value": "[cast(fp + 8, felt**)]"
                 }
             ],
@@ -35658,7 +35694,7 @@
                         "group": 53,
                         "offset": 32
                     },
-                    "pc": 835,
+                    "pc": 836,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35666,7 +35702,7 @@
                         "group": 53,
                         "offset": 32
                     },
-                    "pc": 836,
+                    "pc": 837,
                     "value": "[cast(fp + 6, felt**)]"
                 }
             ],
@@ -35681,7 +35717,7 @@
                         "group": 53,
                         "offset": 16
                     },
-                    "pc": 817,
+                    "pc": 818,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35689,7 +35725,7 @@
                         "group": 53,
                         "offset": 16
                     },
-                    "pc": 818,
+                    "pc": 819,
                     "value": "[cast(fp, felt**)]"
                 }
             ],
@@ -35704,7 +35740,7 @@
                         "group": 54,
                         "offset": 0
                     },
-                    "pc": 866,
+                    "pc": 867,
                     "value": "[cast(ap + (-4), felt*)]"
                 }
             ],
@@ -35719,7 +35755,7 @@
                         "group": 54,
                         "offset": 0
                     },
-                    "pc": 866,
+                    "pc": 867,
                     "value": "[cast(ap + (-2), starkware.cairo.common.uint256.Uint256*)]"
                 }
             ],
@@ -35734,7 +35770,7 @@
                         "group": 53,
                         "offset": 19
                     },
-                    "pc": 820,
+                    "pc": 821,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35742,7 +35778,7 @@
                         "group": 53,
                         "offset": 19
                     },
-                    "pc": 821,
+                    "pc": 822,
                     "value": "[cast(fp + 1, felt**)]"
                 }
             ],
@@ -35757,7 +35793,7 @@
                         "group": 54,
                         "offset": 0
                     },
-                    "pc": 866,
+                    "pc": 867,
                     "value": "[cast(ap + (-3), felt*)]"
                 }
             ],
@@ -35772,7 +35808,7 @@
                         "group": 53,
                         "offset": 0
                     },
-                    "pc": 813,
+                    "pc": 814,
                     "value": "[cast(fp + (-5), felt**)]"
                 },
                 {
@@ -35780,7 +35816,7 @@
                         "group": 54,
                         "offset": 54
                     },
-                    "pc": 885,
+                    "pc": 886,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35788,7 +35824,7 @@
                         "group": 54,
                         "offset": 58
                     },
-                    "pc": 888,
+                    "pc": 889,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35796,7 +35832,7 @@
                         "group": 55,
                         "offset": 0
                     },
-                    "pc": 895,
+                    "pc": 896,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35804,7 +35840,7 @@
                         "group": 56,
                         "offset": 0
                     },
-                    "pc": 902,
+                    "pc": 903,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35812,7 +35848,7 @@
                         "group": 56,
                         "offset": 4
                     },
-                    "pc": 905,
+                    "pc": 906,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35820,7 +35856,7 @@
                         "group": 56,
                         "offset": 8
                     },
-                    "pc": 908,
+                    "pc": 909,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35828,7 +35864,7 @@
                         "group": 54,
                         "offset": 54
                     },
-                    "pc": 890,
+                    "pc": 891,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35836,7 +35872,7 @@
                         "group": 54,
                         "offset": 58
                     },
-                    "pc": 893,
+                    "pc": 894,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35844,7 +35880,7 @@
                         "group": 55,
                         "offset": 0
                     },
-                    "pc": 900,
+                    "pc": 901,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35852,7 +35888,7 @@
                         "group": 56,
                         "offset": 0
                     },
-                    "pc": 907,
+                    "pc": 908,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35860,7 +35896,7 @@
                         "group": 56,
                         "offset": 4
                     },
-                    "pc": 910,
+                    "pc": 911,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35868,7 +35904,7 @@
                         "group": 56,
                         "offset": 8
                     },
-                    "pc": 913,
+                    "pc": 914,
                     "value": "[cast(ap + (-1), felt**)]"
                 }
             ],
@@ -35883,7 +35919,7 @@
                         "group": 54,
                         "offset": 21
                     },
-                    "pc": 872,
+                    "pc": 873,
                     "value": "[cast(ap + (-1), felt*)]"
                 },
                 {
@@ -35891,7 +35927,7 @@
                         "group": 54,
                         "offset": 42
                     },
-                    "pc": 879,
+                    "pc": 880,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -35906,32 +35942,8 @@
                         "group": 53,
                         "offset": 0
                     },
-                    "pc": 813,
+                    "pc": 814,
                     "value": "[cast(fp + (-4), felt*)]"
-                },
-                {
-                    "ap_tracking_data": {
-                        "group": 54,
-                        "offset": 0
-                    },
-                    "pc": 865,
-                    "value": "[cast(ap + (-5), felt*)]"
-                },
-                {
-                    "ap_tracking_data": {
-                        "group": 54,
-                        "offset": 21
-                    },
-                    "pc": 871,
-                    "value": "[cast(ap + (-3), felt*)]"
-                },
-                {
-                    "ap_tracking_data": {
-                        "group": 54,
-                        "offset": 42
-                    },
-                    "pc": 877,
-                    "value": "[cast(ap + (-3), felt*)]"
                 },
                 {
                     "ap_tracking_data": {
@@ -35954,7 +35966,23 @@
                         "group": 54,
                         "offset": 42
                     },
-                    "pc": 879,
+                    "pc": 878,
+                    "value": "[cast(ap + (-3), felt*)]"
+                },
+                {
+                    "ap_tracking_data": {
+                        "group": 54,
+                        "offset": 0
+                    },
+                    "pc": 867,
+                    "value": "[cast(ap + (-5), felt*)]"
+                },
+                {
+                    "ap_tracking_data": {
+                        "group": 54,
+                        "offset": 21
+                    },
+                    "pc": 873,
                     "value": "[cast(ap + (-3), felt*)]"
                 },
                 {
@@ -35962,7 +35990,15 @@
                         "group": 54,
                         "offset": 42
                     },
-                    "pc": 881,
+                    "pc": 880,
+                    "value": "[cast(ap + (-3), felt*)]"
+                },
+                {
+                    "ap_tracking_data": {
+                        "group": 54,
+                        "offset": 42
+                    },
+                    "pc": 882,
                     "value": "[cast(fp + 11, felt*)]"
                 }
             ],
@@ -35977,7 +36013,7 @@
                         "group": 53,
                         "offset": 25
                     },
-                    "pc": 826,
+                    "pc": 827,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -35985,7 +36021,7 @@
                         "group": 53,
                         "offset": 25
                     },
-                    "pc": 827,
+                    "pc": 828,
                     "value": "[cast(fp + 3, felt**)]"
                 }
             ],
@@ -36000,7 +36036,7 @@
                         "group": 53,
                         "offset": 28
                     },
-                    "pc": 829,
+                    "pc": 830,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -36008,7 +36044,7 @@
                         "group": 53,
                         "offset": 28
                     },
-                    "pc": 830,
+                    "pc": 831,
                     "value": "[cast(fp + 4, felt**)]"
                 }
             ],
@@ -36023,7 +36059,7 @@
                         "group": 53,
                         "offset": 22
                     },
-                    "pc": 823,
+                    "pc": 824,
                     "value": "[cast(ap + (-1), felt**)]"
                 },
                 {
@@ -36031,7 +36067,7 @@
                         "group": 53,
                         "offset": 22
                     },
-                    "pc": 824,
+                    "pc": 825,
                     "value": "[cast(fp + 2, felt**)]"
                 }
             ],
@@ -36046,15 +36082,7 @@
                         "group": 53,
                         "offset": 29
                     },
-                    "pc": 832,
-                    "value": "[cast(ap + (-1), felt*)]"
-                },
-                {
-                    "ap_tracking_data": {
-                        "group": 53,
-                        "offset": 29
-                    },
-                    "pc": 832,
+                    "pc": 833,
                     "value": "[cast(ap + (-1), felt*)]"
                 },
                 {
@@ -36063,6 +36091,14 @@
                         "offset": 29
                     },
                     "pc": 833,
+                    "value": "[cast(ap + (-1), felt*)]"
+                },
+                {
+                    "ap_tracking_data": {
+                        "group": 53,
+                        "offset": 29
+                    },
+                    "pc": 834,
                     "value": "[cast(fp + 5, felt*)]"
                 }
             ],
@@ -36077,7 +36113,7 @@
                         "group": 54,
                         "offset": 21
                     },
-                    "pc": 872,
+                    "pc": 873,
                     "value": "[cast(ap + (-2), felt*)]"
                 },
                 {
@@ -36085,7 +36121,7 @@
                         "group": 54,
                         "offset": 21
                     },
-                    "pc": 873,
+                    "pc": 874,
                     "value": "[cast(fp + 9, felt*)]"
                 }
             ],
@@ -36100,7 +36136,7 @@
                         "group": 54,
                         "offset": 42
                     },
-                    "pc": 879,
+                    "pc": 880,
                     "value": "[cast(ap + (-2), felt*)]"
                 },
                 {
@@ -36108,7 +36144,7 @@
                         "group": 54,
                         "offset": 42
                     },
-                    "pc": 880,
+                    "pc": 881,
                     "value": "[cast(fp + 10, felt*)]"
                 }
             ],
@@ -38205,7 +38241,7 @@
                         "group": 51,
                         "offset": 1
                     },
-                    "pc": 769,
+                    "pc": 770,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38220,7 +38256,7 @@
                         "group": 51,
                         "offset": 2
                     },
-                    "pc": 770,
+                    "pc": 771,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38235,7 +38271,7 @@
                         "group": 51,
                         "offset": 3
                     },
-                    "pc": 772,
+                    "pc": 773,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38250,7 +38286,7 @@
                         "group": 51,
                         "offset": 4
                     },
-                    "pc": 773,
+                    "pc": 774,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38265,7 +38301,7 @@
                         "group": 51,
                         "offset": 5
                     },
-                    "pc": 775,
+                    "pc": 776,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38280,7 +38316,7 @@
                         "group": 51,
                         "offset": 6
                     },
-                    "pc": 777,
+                    "pc": 778,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38295,7 +38331,7 @@
                         "group": 51,
                         "offset": 7
                     },
-                    "pc": 778,
+                    "pc": 779,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38310,7 +38346,7 @@
                         "group": 51,
                         "offset": 8
                     },
-                    "pc": 780,
+                    "pc": 781,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38325,7 +38361,7 @@
                         "group": 51,
                         "offset": 9
                     },
-                    "pc": 782,
+                    "pc": 783,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38340,7 +38376,7 @@
                         "group": 51,
                         "offset": 10
                     },
-                    "pc": 783,
+                    "pc": 784,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38355,7 +38391,7 @@
                         "group": 51,
                         "offset": 11
                     },
-                    "pc": 784,
+                    "pc": 785,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38370,7 +38406,7 @@
                         "group": 51,
                         "offset": 12
                     },
-                    "pc": 786,
+                    "pc": 787,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38385,7 +38421,7 @@
                         "group": 51,
                         "offset": 13
                     },
-                    "pc": 788,
+                    "pc": 789,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38400,7 +38436,7 @@
                         "group": 51,
                         "offset": 14
                     },
-                    "pc": 789,
+                    "pc": 790,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38415,7 +38451,7 @@
                         "group": 51,
                         "offset": 15
                     },
-                    "pc": 791,
+                    "pc": 792,
                     "value": "[cast(ap + (-1), felt*)]"
                 }
             ],
@@ -38794,7 +38830,7 @@
                         "group": 52,
                         "offset": 0
                     },
-                    "pc": 807,
+                    "pc": 808,
                     "value": "[cast(ap + (-5), felt*)]"
                 },
                 {
@@ -38834,7 +38870,7 @@
                         "group": 52,
                         "offset": 0
                     },
-                    "pc": 812,
+                    "pc": 813,
                     "value": "[cast(ap + (-5), felt*)]"
                 }
             ],
@@ -44571,7 +44607,7 @@
                     "group": 51,
                     "offset": 1
                 },
-                "pc": 769,
+                "pc": 770,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44579,7 +44615,7 @@
                     "group": 51,
                     "offset": 2
                 },
-                "pc": 770,
+                "pc": 771,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44587,7 +44623,7 @@
                     "group": 51,
                     "offset": 3
                 },
-                "pc": 772,
+                "pc": 773,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44595,7 +44631,7 @@
                     "group": 51,
                     "offset": 4
                 },
-                "pc": 773,
+                "pc": 774,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44603,7 +44639,7 @@
                     "group": 51,
                     "offset": 5
                 },
-                "pc": 775,
+                "pc": 776,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44611,7 +44647,7 @@
                     "group": 51,
                     "offset": 6
                 },
-                "pc": 777,
+                "pc": 778,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44619,7 +44655,7 @@
                     "group": 51,
                     "offset": 7
                 },
-                "pc": 778,
+                "pc": 779,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44627,7 +44663,7 @@
                     "group": 51,
                     "offset": 8
                 },
-                "pc": 780,
+                "pc": 781,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44635,7 +44671,7 @@
                     "group": 51,
                     "offset": 9
                 },
-                "pc": 782,
+                "pc": 783,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44643,7 +44679,7 @@
                     "group": 51,
                     "offset": 10
                 },
-                "pc": 783,
+                "pc": 784,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44651,7 +44687,7 @@
                     "group": 51,
                     "offset": 11
                 },
-                "pc": 784,
+                "pc": 785,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44659,7 +44695,7 @@
                     "group": 51,
                     "offset": 12
                 },
-                "pc": 786,
+                "pc": 787,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44667,7 +44703,7 @@
                     "group": 51,
                     "offset": 13
                 },
-                "pc": 788,
+                "pc": 789,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44675,7 +44711,7 @@
                     "group": 51,
                     "offset": 14
                 },
-                "pc": 789,
+                "pc": 790,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44683,7 +44719,7 @@
                     "group": 51,
                     "offset": 15
                 },
-                "pc": 791,
+                "pc": 792,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44691,7 +44727,7 @@
                     "group": 52,
                     "offset": 0
                 },
-                "pc": 812,
+                "pc": 813,
                 "value": "[cast(ap + (-5), felt*)]"
             },
             {
@@ -44699,7 +44735,7 @@
                     "group": 53,
                     "offset": 0
                 },
-                "pc": 813,
+                "pc": 814,
                 "value": "[cast(fp + (-5), felt**)]"
             },
             {
@@ -44707,7 +44743,7 @@
                     "group": 53,
                     "offset": 0
                 },
-                "pc": 813,
+                "pc": 814,
                 "value": "[cast(fp + (-4), felt*)]"
             },
             {
@@ -44715,7 +44751,7 @@
                     "group": 53,
                     "offset": 0
                 },
-                "pc": 813,
+                "pc": 814,
                 "value": "[cast(fp + (-3), starkware.cairo.common.cairo_builtins.BitwiseBuiltin**)]"
             },
             {
@@ -44723,7 +44759,7 @@
                     "group": 53,
                     "offset": 16
                 },
-                "pc": 817,
+                "pc": 818,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -44731,7 +44767,7 @@
                     "group": 53,
                     "offset": 16
                 },
-                "pc": 818,
+                "pc": 819,
                 "value": "[cast(fp, felt**)]"
             },
             {
@@ -44739,7 +44775,7 @@
                     "group": 53,
                     "offset": 19
                 },
-                "pc": 820,
+                "pc": 821,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -44747,7 +44783,7 @@
                     "group": 53,
                     "offset": 19
                 },
-                "pc": 821,
+                "pc": 822,
                 "value": "[cast(fp + 1, felt**)]"
             },
             {
@@ -44755,7 +44791,7 @@
                     "group": 53,
                     "offset": 22
                 },
-                "pc": 823,
+                "pc": 824,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -44763,7 +44799,7 @@
                     "group": 53,
                     "offset": 22
                 },
-                "pc": 824,
+                "pc": 825,
                 "value": "[cast(fp + 2, felt**)]"
             },
             {
@@ -44771,7 +44807,7 @@
                     "group": 53,
                     "offset": 25
                 },
-                "pc": 826,
+                "pc": 827,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -44779,7 +44815,7 @@
                     "group": 53,
                     "offset": 25
                 },
-                "pc": 827,
+                "pc": 828,
                 "value": "[cast(fp + 3, felt**)]"
             },
             {
@@ -44787,7 +44823,7 @@
                     "group": 53,
                     "offset": 28
                 },
-                "pc": 829,
+                "pc": 830,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -44795,7 +44831,7 @@
                     "group": 53,
                     "offset": 28
                 },
-                "pc": 830,
+                "pc": 831,
                 "value": "[cast(fp + 4, felt**)]"
             },
             {
@@ -44803,15 +44839,7 @@
                     "group": 53,
                     "offset": 29
                 },
-                "pc": 832,
-                "value": "[cast(ap + (-1), felt*)]"
-            },
-            {
-                "ap_tracking_data": {
-                    "group": 53,
-                    "offset": 29
-                },
-                "pc": 832,
+                "pc": 833,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44820,6 +44848,14 @@
                     "offset": 29
                 },
                 "pc": 833,
+                "value": "[cast(ap + (-1), felt*)]"
+            },
+            {
+                "ap_tracking_data": {
+                    "group": 53,
+                    "offset": 29
+                },
+                "pc": 834,
                 "value": "[cast(fp + 5, felt*)]"
             },
             {
@@ -44827,7 +44863,7 @@
                     "group": 53,
                     "offset": 32
                 },
-                "pc": 835,
+                "pc": 836,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -44835,7 +44871,7 @@
                     "group": 53,
                     "offset": 32
                 },
-                "pc": 836,
+                "pc": 837,
                 "value": "[cast(fp + 6, felt**)]"
             },
             {
@@ -44843,7 +44879,7 @@
                     "group": 53,
                     "offset": 35
                 },
-                "pc": 838,
+                "pc": 839,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -44851,7 +44887,7 @@
                     "group": 53,
                     "offset": 35
                 },
-                "pc": 839,
+                "pc": 840,
                 "value": "[cast(fp + 7, felt**)]"
             },
             {
@@ -44859,7 +44895,7 @@
                     "group": 53,
                     "offset": 38
                 },
-                "pc": 841,
+                "pc": 842,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -44867,7 +44903,7 @@
                     "group": 53,
                     "offset": 38
                 },
-                "pc": 842,
+                "pc": 843,
                 "value": "[cast(fp + 8, felt**)]"
             },
             {
@@ -44875,7 +44911,7 @@
                     "group": 54,
                     "offset": 0
                 },
-                "pc": 866,
+                "pc": 867,
                 "value": "[cast(ap + (-5), felt*)]"
             },
             {
@@ -44883,7 +44919,7 @@
                     "group": 54,
                     "offset": 0
                 },
-                "pc": 866,
+                "pc": 867,
                 "value": "[cast(ap + (-4), felt*)]"
             },
             {
@@ -44891,7 +44927,7 @@
                     "group": 54,
                     "offset": 0
                 },
-                "pc": 866,
+                "pc": 867,
                 "value": "[cast(ap + (-3), felt*)]"
             },
             {
@@ -44899,7 +44935,7 @@
                     "group": 54,
                     "offset": 0
                 },
-                "pc": 866,
+                "pc": 867,
                 "value": "[cast(ap + (-2), starkware.cairo.common.uint256.Uint256*)]"
             },
             {
@@ -44907,24 +44943,8 @@
                     "group": 54,
                     "offset": 21
                 },
-                "pc": 872,
+                "pc": 873,
                 "value": "[cast(ap + (-3), felt*)]"
-            },
-            {
-                "ap_tracking_data": {
-                    "group": 54,
-                    "offset": 21
-                },
-                "pc": 872,
-                "value": "[cast(ap + (-2), felt*)]"
-            },
-            {
-                "ap_tracking_data": {
-                    "group": 54,
-                    "offset": 21
-                },
-                "pc": 872,
-                "value": "[cast(ap + (-1), felt*)]"
             },
             {
                 "ap_tracking_data": {
@@ -44932,6 +44952,22 @@
                     "offset": 21
                 },
                 "pc": 873,
+                "value": "[cast(ap + (-2), felt*)]"
+            },
+            {
+                "ap_tracking_data": {
+                    "group": 54,
+                    "offset": 21
+                },
+                "pc": 873,
+                "value": "[cast(ap + (-1), felt*)]"
+            },
+            {
+                "ap_tracking_data": {
+                    "group": 54,
+                    "offset": 21
+                },
+                "pc": 874,
                 "value": "[cast(fp + 9, felt*)]"
             },
             {
@@ -44939,7 +44975,7 @@
                     "group": 54,
                     "offset": 42
                 },
-                "pc": 879,
+                "pc": 880,
                 "value": "[cast(ap + (-3), felt*)]"
             },
             {
@@ -44947,7 +44983,7 @@
                     "group": 54,
                     "offset": 42
                 },
-                "pc": 879,
+                "pc": 880,
                 "value": "[cast(ap + (-2), felt*)]"
             },
             {
@@ -44955,7 +44991,7 @@
                     "group": 54,
                     "offset": 42
                 },
-                "pc": 879,
+                "pc": 880,
                 "value": "[cast(ap + (-1), felt*)]"
             },
             {
@@ -44963,7 +44999,7 @@
                     "group": 54,
                     "offset": 42
                 },
-                "pc": 880,
+                "pc": 881,
                 "value": "[cast(fp + 10, felt*)]"
             },
             {
@@ -44971,7 +45007,7 @@
                     "group": 54,
                     "offset": 42
                 },
-                "pc": 881,
+                "pc": 882,
                 "value": "[cast(fp + 11, felt*)]"
             },
             {
@@ -44979,7 +45015,7 @@
                     "group": 54,
                     "offset": 49
                 },
-                "pc": 885,
+                "pc": 886,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -44987,7 +45023,7 @@
                     "group": 54,
                     "offset": 49
                 },
-                "pc": 886,
+                "pc": 887,
                 "value": "[cast(fp + 12, felt**)]"
             },
             {
@@ -44995,7 +45031,7 @@
                     "group": 54,
                     "offset": 54
                 },
-                "pc": 890,
+                "pc": 891,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -45003,7 +45039,7 @@
                     "group": 54,
                     "offset": 58
                 },
-                "pc": 893,
+                "pc": 894,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -45011,7 +45047,7 @@
                     "group": 55,
                     "offset": 0
                 },
-                "pc": 900,
+                "pc": 901,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -45019,7 +45055,7 @@
                     "group": 56,
                     "offset": 0
                 },
-                "pc": 907,
+                "pc": 908,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -45027,7 +45063,7 @@
                     "group": 56,
                     "offset": 4
                 },
-                "pc": 910,
+                "pc": 911,
                 "value": "[cast(ap + (-1), felt**)]"
             },
             {
@@ -45035,7 +45071,7 @@
                     "group": 56,
                     "offset": 8
                 },
-                "pc": 913,
+                "pc": 914,
                 "value": "[cast(ap + (-1), felt**)]"
             }
         ]

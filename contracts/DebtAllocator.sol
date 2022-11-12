@@ -41,8 +41,8 @@ contract DebtAllocator is Ownable, Pausable {
     // uint256 public stalePeriod = 24 * 3600;
 
 
-    // 100% APY = 1.000.000
-    uint256 public minimumApyIncreaseForNewSolution = 1000;
+    // 100% APY = 10^27
+    uint256 public minimumApyIncreaseForNewSolution = 100000000000000000000000;
 
     constructor(address _cairoVerifier, bytes32 _cairoProgramHash) payable {
         updateCairoVerifier(_cairoVerifier);
@@ -165,7 +165,7 @@ contract DebtAllocator is Ownable, Pausable {
 
     function removeStrategy(uint256 index) external onlyOwner{
         require(index < strategies.length && index >= 0, "INDEX_OUT_OF_RANGE");
-        require(debtRatios[index] == 0, "INDEX_OUT_OF_RANGE");
+        require(debtRatios[index] == 0, "DEBT_RATIO_NOT_NUL");
         address strategy = strategies[index];
         delete strategyContracts[strategy];
         delete strategyCheckdata[strategy];
@@ -273,6 +273,13 @@ contract DebtAllocator is Ownable, Pausable {
         emit NewSnapshot(dataStrategies, calculationStrategies, conditionStrategies,inputHash, block.timestamp);
     }
 
+    
+
+    function wutobo(uint256[] memory programOutput) external{
+        require(1 == 2, "wuttetetetetetettt");
+        uint256 _snapshotTimestamp = snapshotTimestamp[inputHash];
+    }
+
     function verifySolution(uint256[] memory programOutput) external whenNotPaused returns(bytes32){
         // NOTE: Check current snapshot not stale
         uint256 _snapshotTimestamp = snapshotTimestamp[inputHash];
@@ -280,7 +287,6 @@ contract DebtAllocator is Ownable, Pausable {
 
         // NOTE: We get the data from parsing the program output
         (uint256 inputHash_,  uint256[] memory current_debt_ratio, uint256[] memory new_debt_ratio, uint256 current_solution, uint256 new_solution) = parseProgramOutput(programOutput); 
-        
         // check inputs
         require(inputHash_==inputHash, "INVALID_INPUTS");
             
@@ -288,7 +294,7 @@ contract DebtAllocator is Ownable, Pausable {
         checkAllowedDebtRatio(current_debt_ratio, new_debt_ratio);
 
         // check if the new solution better than previous one
-        require(new_solution + minimumApyIncreaseForNewSolution >= current_solution,"new solution not good enough");
+        require(new_solution - minimumApyIncreaseForNewSolution >= current_solution,"NEW_SOLUTION_TOO_BAD");
         
         // Check with cairoVerifier
         bytes32 outputHash = keccak256(abi.encodePacked(programOutput));
@@ -297,12 +303,14 @@ contract DebtAllocator is Ownable, Pausable {
 
         // check no one has improven it in stale period (in case market conditions deteriorated)
         // require(_newSolution > currentAPY || block.timestamp - lastUpdate >= stalePeriod, "WRONG_SOLUTION");
-
+        require(1 == 2, "wtf1");
         currentAPY = new_solution;
         debtRatios = new_debt_ratio;
         lastUpdate = block.timestamp;
         proposer = msg.sender;
         proposerPerformance = new_solution - current_solution;
+
+        require(1 == 2, "wtf2");
 
         emit NewSolution(new_solution, new_debt_ratio, msg.sender, proposerPerformance,block.timestamp);
         return(fact);
@@ -314,19 +322,24 @@ contract DebtAllocator is Ownable, Pausable {
         uint256[] memory current_debt_ratio = new uint256[](strategies.length);
         uint256[] memory new_debt_ratio = new uint256[](strategies.length);
 
-        for(uint256 i = 3; i < programOutput.length - 1; i++) {
+        for(uint256 i = 0; i < strategies.length ; i++) {
             // NOTE: skip the 2 first value + array len 
-            current_debt_ratio[i-3] = programOutput[i];
-            new_debt_ratio[i - 3] = programOutput[i + strategies.length + 1];
+            current_debt_ratio[i] = programOutput[i + 3];
+            new_debt_ratio[i] = programOutput[i + 4 + strategies.length];
         }
         return(inputHashUint256, current_debt_ratio, new_debt_ratio, programOutput[programOutput.length - 2], programOutput[programOutput.length - 1]);
     }
 
     function checkAllowedDebtRatio(uint256[] memory _current_debt_ratio, uint256[] memory _new_debt_ratio) public view {
+        require(_current_debt_ratio.length == debtRatios.length,"INVALID_NEW_DEBT_RATIO");
+        require(_new_debt_ratio.length == debtRatios.length,"INVALID_NEW_DEBT_RATIO");
+        uint256 cumulative_new_debt = 0;
         for(uint256 i; i < debtRatios.length; i++) {
             require(_new_debt_ratio[i] <= strategyMaxDebtRatio[strategies[i]],"INVALID_NEW_DEBT_RATIO");
             require(_current_debt_ratio[i] == debtRatios[i], "INVALID_CURRENT_DEBT_RATIO");
+            cumulative_new_debt += _new_debt_ratio[i];
         }
+        require(cumulative_new_debt == 10000,"INVALID_NEW_DEBT_RATIO");
     }
 
         

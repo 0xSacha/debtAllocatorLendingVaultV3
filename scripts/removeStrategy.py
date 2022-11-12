@@ -1,6 +1,7 @@
 from brownie import DebtAllocator, accounts
 
+INDEX = 1 
+
 def main():
     acct = accounts.load('sach')
-    tx = DebtAllocator[1].saveSnapshot({'from': acct})
-    print(tx.events)
+    DebtAllocator[1].removeStrategy(INDEX, {'from': acct})

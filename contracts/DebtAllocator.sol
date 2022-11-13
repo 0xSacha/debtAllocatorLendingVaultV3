@@ -273,12 +273,6 @@ contract DebtAllocator is Ownable, Pausable {
         emit NewSnapshot(dataStrategies, calculationStrategies, conditionStrategies,inputHash, block.timestamp);
     }
 
-    
-
-    function wutobo(uint256[] memory programOutput) external{
-        require(1 == 2, "wuttetetetetetettt");
-        uint256 _snapshotTimestamp = snapshotTimestamp[inputHash];
-    }
 
     function verifySolution(uint256[] memory programOutput) external whenNotPaused returns(bytes32){
         // NOTE: Check current snapshot not stale

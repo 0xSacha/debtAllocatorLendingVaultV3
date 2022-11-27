@@ -1,8 +1,10 @@
 //SPDX-License-Identifier: UNLICENSED
 
-import "OpenZeppelin/openzeppelin-contracts@4.8.0/contracts/access/Ownable.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.8.0/contracts/security/Pausable.sol";
+import "@openzeppelin/access/Ownable.sol";
+import "@openzeppelin/security/Pausable.sol";
 
+// import "OpenZeppelin/openzeppelin-contracts@4.8.0/contracts/access/Ownable.sol";
+// import "OpenZeppelin/openzeppelin-contracts@4.8.0/contracts/security/Pausable.sol";
 
 pragma solidity >=0.7.0 <0.9.0;
 

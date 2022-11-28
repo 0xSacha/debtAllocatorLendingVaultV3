@@ -40,7 +40,7 @@ contract DebtAllocator is Ownable, Pausable {
     mapping(uint256 => uint256) public snapshotTimestamp;
 
     uint256 public staleSnapshotPeriod = 3 * 3600;
-    // uint256 public stalePeriod = 24 * 3600;
+    uint256 public stalePeriod = 24 * 3600;
 
 
     // 100% APY = 10^27, minimum increased = 10^23 = 0,01%
@@ -52,12 +52,12 @@ contract DebtAllocator is Ownable, Pausable {
     }
 
     event NewSnapshot(uint256[][] dataStrategies, uint256[][] calculation, uint256[][] condition,uint256 inputHash, uint256 timestamp);
-    event NewStrategy(address newStrategy, uint16 strategyMaxDebtRatio,address[] strategyContracts,bytes[] strategyCheckData, uint256[] strategyCalculation);
-    event StrategyUpdated(address newStrategy, uint16 strategyMaxDebtRatio,address[] strategyContracts,bytes[] strategyCheckData, uint256[] strategyCalculation);
+    event NewStrategy(address newStrategy, uint16 strategyMaxDebtRatio,address[] strategyContracts,bytes[] strategyCheckData, uint256[] strategyOffset, uint256[] strategyCalculation, uint256[] strategyCondition);
+    event StrategyUpdated(address currentStrategy, uint16 strategyMaxDebtRatio,address[] strategyContracts,bytes[] strategyCheckData, uint256[] strategyOffset,uint256[] strategyCalculation, uint256[] strategyCondition);
     event StrategyRemoved(address strategyRemoved);
     event NewCairoProgramHash(bytes32 newCairoProgramHash);
     event NewCairoVerifier(address newCairoVerifier);
-    // event NewStalePeriod(uint256 newStalePeriod);
+    event NewStalePeriod(uint256 newStalePeriod);
     event NewStaleSnapshotPeriod(uint256 newStaleSnapshotPeriod);
     event NewSolution(uint256 newApy, uint256[] newDebtRatio, address proposer, uint256 proposerPerformance,uint256 timestamp);
     event debtRatioForced(uint256[] newDebtRatio);
@@ -81,26 +81,25 @@ contract DebtAllocator is Ownable, Pausable {
         emit NewCairoVerifier(_cairoVerifier);
     }
 
-    // function updateStalePeriod(uint256 _stalePeriod) public {
-    //     // TODO: put some limits?
-    //     stalePeriod = _stalePeriod;
-    //     emit NewStalePeriod(_stalePeriod);
-    // }
+    function updateStalePeriod(uint256 _stalePeriod) public onlyOwner {
+        stalePeriod = _stalePeriod;
+        emit NewStalePeriod(_stalePeriod);
+    }
 
     function updateStaleSnapshotPeriod(uint256 _staleSnapshotPeriod) public onlyOwner {
-        // TODO: put some limits?
         staleSnapshotPeriod = _staleSnapshotPeriod;
         emit NewStaleSnapshotPeriod(_staleSnapshotPeriod);
     }
 
     function forceDebtRatio(uint256[] memory _new_debt_ratio) public onlyOwner whenPaused {
-        require(_new_debt_ratio.length == debtRatios.length, "INVALIDE_LENGTH");
+        require(strategies.length != 0, "STRATEGY_NUL");
+        require(_new_debt_ratio.length == strategies.length, "INVALIDE_LENGTH");
         uint256 cumulative_debt_ratio = 0;
         for(uint256 j; j < strategies.length; j++) {
             debtRatios[j] = _new_debt_ratio[j];
             cumulative_debt_ratio += _new_debt_ratio[j];
         }
-        require(_new_debt_ratio.length == debtRatios.length, "INVALIDE_DEBT_RATIO_SUM");
+        require(cumulative_debt_ratio == 10000, "INVALID_DEBT_RATIO_SUM");
         emit debtRatioForced(_new_debt_ratio);
     }
 
@@ -108,7 +107,7 @@ contract DebtAllocator is Ownable, Pausable {
         strategies.push(strategy);
         require(strategyMaxDebtRatio[strategy] == 0, "STRATEGY_EXISTS");
         require(contracts.length == checkdata.length, "INVALID_TAB_LEN_1");
-        require(contracts.length == offset.length, "INVALID_TAB_LEN_1");
+        require(contracts.length == offset.length, "INVALID_TAB_LEN_2");
         for(uint256 i; i < contracts.length; i++) {
             strategyContracts[strategy].push(contracts[i]);
             strategyCheckdata[strategy].push(checkdata[i]);
@@ -130,13 +129,13 @@ contract DebtAllocator is Ownable, Pausable {
 
         debtRatios.push(0);
 
-        emit NewStrategy(strategy, strategyMaxDebtRatio[strategy] ,strategyContracts[strategy], strategyCheckdata[strategy], strategyCalculation[strategy]);
+        emit NewStrategy(strategy, strategyMaxDebtRatio[strategy] ,strategyContracts[strategy], strategyCheckdata[strategy], strategyOffset[strategy], strategyCalculation[strategy], strategyCondition[strategy]);
     }
 
     function updateStrategy(address strategy, uint16 maxDebtRatio,address[] memory contracts, bytes[] memory checkdata, uint256[] memory offset, uint256[] memory calculations, uint256[] memory conditions) external onlyOwner {
-        require(strategyMaxDebtRatio[strategy] != 0, "Strategy not found");
+        require(strategyMaxDebtRatio[strategy] != 0, "STRATEGY_NOT_FOUND");
         require(contracts.length == checkdata.length, "INVALID_TAB_LEN_1");
-        require(contracts.length == offset.length, "INVALID_TAB_LEN_1");
+        require(contracts.length == offset.length, "INVALID_TAB_LEN_2");
         delete strategyContracts[strategy];
         delete strategyCheckdata[strategy];
         delete strategyOffset[strategy];
@@ -162,7 +161,7 @@ contract DebtAllocator is Ownable, Pausable {
         }
 
         strategyMaxDebtRatio[strategy] = maxDebtRatio;
-        emit StrategyUpdated(strategy, strategyMaxDebtRatio[strategy] ,strategyContracts[strategy], strategyCheckdata[strategy], strategyCalculation[strategy]);
+        emit StrategyUpdated(strategy, strategyMaxDebtRatio[strategy] ,strategyContracts[strategy], strategyCheckdata[strategy], strategyOffset[strategy], strategyCalculation[strategy], strategyCondition[strategy]);
     }
 
     function removeStrategy(uint256 index) external onlyOwner{
@@ -220,7 +219,7 @@ contract DebtAllocator is Ownable, Pausable {
     }
 
     function saveSnapshot() external {
-        require(strategies.length > 0, "no strategies registered");
+        require(strategies.length > 0, "STRATEGY_NUL");
 
         uint256[][] memory dataStrategies = getStrategiesData(); 
 

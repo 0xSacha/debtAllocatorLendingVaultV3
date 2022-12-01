@@ -9,3 +9,5 @@ def main():
     contract = project.DebtAllocator.deploy(CAIRO_VERIFIER, CAIRO_PROGRAM_HASH, sender=account)
     project.track_deployment(contract)
 
+
+## 0xa6cf8E6eBF43d69E0c20d8E8a3c66dfb5B384C6B

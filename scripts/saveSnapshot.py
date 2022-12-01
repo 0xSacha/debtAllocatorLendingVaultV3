@@ -5,8 +5,8 @@ import json
 
 
 def main():
-    account = accounts.load("sacha")
-    contract = project.DebtAllocator.at("0x11Bff0E8f8cAe5b5E697EABCbaa379787DfdBC83")
+    account = accounts.load("sach")
+    contract = project.DebtAllocator.at("0xDcAA40F17cEce7c7aB9c37E6e54754aA6985DEe1")
     tx = contract.saveSnapshot(sender=account)
     logs = list(tx.decode_logs(contract.NewSnapshot))
     print(logs)

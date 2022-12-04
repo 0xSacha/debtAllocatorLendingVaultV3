@@ -116,8 +116,22 @@ def owner2(accounts):
 def debt_allo(project, owner):
     return owner.deploy(project.DebtAllocator, CAIRO_VERIFIER, CAIRO_PROGRAM_HASH)
 
-    
-def test_deployment(debt_allo, owner):
+@pytest.fixture
+def rewards_payer(accounts):
+    return accounts[2]
+
+@pytest.fixture
+def rewards_token(project, owner):
+    return owner.deploy(project.dependencies["LlamaPay"]["master"].MockToken, 18)
+
+@pytest.fixture
+def rewards_streamer(project, rewards_payer, rewards_token, owner):
+    factory = owner.deploy(project.dependencies["LlamaPay"]["master"].LlamaPayFactory)
+    tx = factory.createLlamaPayContract(rewards_token, {'from': owner})
+    event = list(tx.decode_logs(factory.LlamaPayCreated))
+    return project.dependencies["LlamaPay"]["master"].LlamaPay.contract_type.at(event[0].llamaPay)
+
+def test_deployment(debt_allo):
     assert debt_allo.cairoVerifier() == CAIRO_VERIFIER
     assert debt_allo.cairoProgramHash() == bytes.fromhex("018261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f494")
 
@@ -313,4 +327,16 @@ def test_update_stale_snapshot_period_2(debt_allo, owner):
 def saveSnapshot_1(debt_allo, owner):
     with reverts("STRATEGY_NUL"):
         debt_allo.saveSnapshot_1(sender=owner2)
+
+
+# TODO: WIP
+def test_rewards(debt_allo, owner, rewards_streamer, rewards_payer, rewards_token, rewards_per_week):
+    tx = rewards_streamer.createStream(debt_allo.address, rewards_per_week)
+    event = list(tx.decode_logs(rewards_streamer.StreamCreated))
+    stream_id = event[0].streamId
+    
+    assert rewards_streamer.streamToStart(stream_id) > 0
+
+
+
 

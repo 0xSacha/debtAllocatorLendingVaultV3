@@ -3,6 +3,10 @@ dependencies:
   - name: OpenZeppelin
     github: OpenZeppelin/openzeppelin-contracts
     version: 4.8.0
+  - name: LlamaPay
+    github: LlamaPay/llamapay
+    branch: master
+
 solidity: 
   import_remapping:
     - "@openzeppelin=OpenZeppelin/4.8.0"

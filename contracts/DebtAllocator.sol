@@ -2,7 +2,8 @@
 
 import "@openzeppelin/access/Ownable.sol";
 import "@openzeppelin/security/Pausable.sol";
-
+import "@openzeppelin/token/ERC20/IERC20.sol";
+import "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
 // import "OpenZeppelin/openzeppelin-contracts@4.8.0/contracts/access/Ownable.sol";
 // import "OpenZeppelin/openzeppelin-contracts@4.8.0/contracts/security/Pausable.sol";
 
@@ -13,7 +14,16 @@ interface ICairoVerifier {
     function isValid(bytes32) external view returns (bool);
 }
 
+interface IStreamer {
+    function token() external view returns (IERC20);
+    function streamToStart(bytes32) external view returns (uint256);
+    function withdraw(address from, address to, uint216 amountPerSec) external;
+    function getStreamId(address from, address to, uint216 amountPerSec) external view returns (bytes32);
+}
+
 contract DebtAllocator is Ownable, Pausable {
+
+    using SafeERC20 for IERC20;
 
     ICairoVerifier public cairoVerifier = ICairoVerifier(address(0));
     bytes32 public cairoProgramHash = 0x0;
@@ -42,6 +52,10 @@ contract DebtAllocator is Ownable, Pausable {
     uint256 public staleSnapshotPeriod = 3 * 3600;
     uint256 public stalePeriod = 24 * 3600;
 
+    // Rewards config
+    address public rewardsPayer;
+    address public rewardsStreamer;
+    uint216 public rewardsPerSec;
 
     // 100% APY = 10^27, minimum increased = 10^23 = 0,01%
     uint256 public minimumApyIncreaseForNewSolution = 100000000000000000000000;
@@ -62,6 +76,14 @@ contract DebtAllocator is Ownable, Pausable {
     event NewSolution(uint256 newApy, uint256[] newDebtRatio, address proposer, uint256 proposerPerformance,uint256 timestamp);
     event debtRatioForced(uint256[] newDebtRatio);
     // TODO: add role based access control to invoke those functions
+
+    function updateRewardsConfig(address _rewardsPayer, address _rewardsStreamer, uint216 _rewardsPerSec) external onlyOwner {
+        bytes32 streamId = IStreamer(_rewardsStreamer).getStreamId(_rewardsPayer, address(this), _rewardsPerSec);
+        require(IStreamer(_rewardsStreamer).streamToStart(streamId) > 0, "stream does not exist");
+        rewardsPayer = _rewardsPayer;
+        rewardsStreamer = _rewardsStreamer;
+        rewardsPerSec = _rewardsPerSec;
+    }
 
     function updateCairoProgramHash(bytes32 _cairoProgramHash) public onlyOwner {
         cairoProgramHash = _cairoProgramHash;
@@ -301,6 +323,8 @@ contract DebtAllocator is Ownable, Pausable {
         currentAPY = new_solution;
         debtRatios = new_debt_ratio;
         lastUpdate = block.timestamp;
+
+        sendRewardsToCurrentProposer();
         proposer = msg.sender;
         proposerPerformance = new_solution - current_solution;
 
@@ -334,7 +358,30 @@ contract DebtAllocator is Ownable, Pausable {
         require(cumulative_new_debt == 10000,"INVALID_NEW_DEBT_RATIO");
     }
 
-        
+    function sendRewardsToCurrentProposer() internal {
+        IStreamer _rewardsStreamer = IStreamer(rewardsStreamer);
+        if(address(_rewardsStreamer) == address(0)){
+            return;
+        }
+        bytes32 streamId = _rewardsStreamer.getStreamId(rewardsPayer, address(this), rewardsPerSec);
+        if(_rewardsStreamer.streamToStart(streamId) == 0) {
+            // stream does not exist
+            return;
+        }
+        IERC20 _rewardsToken = IERC20(_rewardsStreamer.token());
+        // NOTE: if the stream does not have enough to pay full amount, it will pay less than expected
+        // WARNING: if this happens and the proposer is changed, the old proposer will lose the rewards
+        // TODO: create a way to ensure previous proposer gets the rewards even when payers balance is not enough (by saving how much he's owed)
+        _rewardsStreamer.withdraw(rewardsPayer, address(this), rewardsPerSec);
+        uint256 rewardsBalance = _rewardsToken.balanceOf(address(this));
+        _rewardsToken.safeTransfer(proposer, rewardsBalance);
+    }
+
+    function claimRewards() external {
+        require(msg.sender == proposer, "not allowed");
+        sendRewardsToCurrentProposer();
+    }
+
     function bytesToBytes32(bytes memory b, uint offset) private pure returns (bytes32) {
         bytes32 out;
         for (uint i = 0; i < 32; i++) {

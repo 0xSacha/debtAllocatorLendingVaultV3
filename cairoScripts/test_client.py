@@ -7,7 +7,12 @@ from typing import List, Optional
 import json
 import os
 
+
+# To Set
 BIN_DIR = '/Users/sacha/cairo_venv/bin'
+
+
+
 RPC= 'https://mainnet.infura.io/v3/eebdf8732cd044f0a52f976af7781260'
 CAIRO_PROGRAM_PATH = './test_sharp.cairo'
 CAIRO_PROGRAM_INPUT_PATH = './test_sharp_input.json'

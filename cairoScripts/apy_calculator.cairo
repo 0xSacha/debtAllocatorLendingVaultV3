@@ -22,7 +22,6 @@ func serialize_word_from_pointer{output_ptr: felt*}(word) {
     return ();
 }
 
-
 func perform_calculation{ range_check_ptr }(
         _operand1: felt,
         _operand2: felt,

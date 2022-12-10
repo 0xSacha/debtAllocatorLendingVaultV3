@@ -59,6 +59,10 @@ AAVE_STRATEGYY_CALCULATION = [1, 2, 0, 10000, 3, 0, 2, 3, 0, 10002, 100000000000
 AAVE_CALCULATION_CONDITION = [1, 2, 0, 10000, 3, 0, 2, 3, 0, 10002, 1000000000000000000000020000, 2, 10003, 10001, 3, 10004, 4, 31, 27]
 
 def main():
-    account = accounts.load("sach")
-    contract = project.DebtAllocator.at("0x8aD42486109e5Ec080eFe015830d2c9B806631d0")
+    f = open("./scripts/config.json")
+    config_dict = json.load(f)
+    f.close()
+    account = accounts.load(config_dict["account"])
+    contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
+
     contract.addStrategy(AAVE_STRATEGY_ADDRESS, AAVE_MAX_STRATEGY_DEBT_RATIO, AAVE_STRATEGY_CONTRACTS, AAVE_STRATEGYY_CHECKDATA, AAVE_STRATEGYY_OFFSET, AAVE_STRATEGYY_CALCULATION, AAVE_CALCULATION_CONDITION,sender=account)

@@ -1,4 +1,13 @@
 {
   "account": "v3_deployer",
-  "debt_allocator_address": "0xAd5c389c992906Be1787139FfADbD4f9081D5411"
+  "debt_allocator_address": "0xAd5c389c992906Be1787139FfADbD4f9081D5411",
+  "verifier_address": "0xAB43bA48c9edF4C2C4bB01237348D1D7B28ef168",
+  "bin_path": "./bin",
+  "cairo_program_hash": "0x18261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f494",
+  "rpc": "https://mainnet.infura.io/v3/eebdf8732cd044f0a52f976af7781260",
+  "cairo_program_path": "./cairoScripts/apy_calculator.cairo",
+  "cairo_program_input_path": "./cairoScripts/input/apy_calculator_lender_input.json",
+  "cairo_program_output_path": "./cairoScripts/output/apy_calculator.pie", 
+  "new_allocation_array": [0, 10000]
 }
+

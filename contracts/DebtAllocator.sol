@@ -49,7 +49,7 @@ contract DebtAllocator is Ownable, Pausable {
     uint256 public inputHash;
     mapping(uint256 => uint256) public snapshotTimestamp;
 
-    uint256 public staleSnapshotPeriod = 3 * 3600;
+    uint256 public staleSnapshotPeriod = 24 * 3600;
     uint256 public stalePeriod = 24 * 3600;
 
     // Rewards config

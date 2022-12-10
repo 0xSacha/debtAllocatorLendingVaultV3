@@ -1,6 +1,7 @@
 import click 
 from ape import accounts, project
 
+# TODO: replace this hardcoding with a reading from the cairo output
 PROGRAM_OUTPUT= [273822300930268542190909985240014354946, 289686421479239889190470738038045525506, 2, 0, 0, 2, 5000, 5000, 0, 5149393346585344287115867]
 
 def main():

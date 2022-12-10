@@ -1,6 +1,6 @@
 %builtins output range_check bitwise 
 
-from starkware.cairo.common.math import unsigned_div_re
+from starkware.cairo.common.math import unsigned_div_rem
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.serialize import serialize_word, serialize_array
 from starkware.cairo.common.alloc import alloc

@@ -2,7 +2,7 @@ from ape import accounts, project
 from starkware.cairo.sharp.client_lib import CairoPie, ClientLib
 from starkware.cairo.sharp.fact_checker import FactChecker
 from starkware.cairo.bootloaders.generate_fact import get_program_output
-from starkware.cairo.sharp.sharp_client import SharpClient, init_client
+from starkware.cairo.sharp.sharp_client import SharpClient
 from starkware.cairo.lang.compiler.assembler import Program
 from typing import List, Optional
 import json
@@ -10,23 +10,24 @@ import os
 import time
 
 def main():
-    f = open("./scripts/config.json")
-    config_dict = json.load(f)
-    f.close()
+    # Load configuration file.
+    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
+    with open(CONFIG_PATH, "r") as config_file:
+        config = json.load(config_file)
 
-    account = accounts.load(config_dict["account"])
-    contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
+    account = accounts.load(config["account"])
+    contract = project.DebtAllocator.at(config["debt_allocator_address"])
 
-    save_snapshot(account, contract, config_dict["new_allocation_array"])
+    save_snapshot(account, contract, config["new_allocation_array"])
 
     #### START CLIENT ####
-    client = init_client(config_dict["bin_path"], [config_dict["rpc"]])
+    client = init_client(config["bin_path"], [config["rpc"]])
 
     #### RUN THE CAIRO PROGRAM ####
-    compiled_program = client.compile_cairo(config_dict["cairo_program_path"])
-    cairo_pie = client.run_program(compiled_program, config_dict["cairo_program_input_path"])
+    compiled_program = client.compile_cairo(config["cairo_program_path"])
+    cairo_pie = client.run_program(compiled_program, config["cairo_program_input_path"])
     # save cairo pie
-    cairo_pie.to_file(config_dict["cairo_program_output_path"])
+    cairo_pie.to_file(config["cairo_program_output_path"])
     program_output = get_program_output(cairo_pie)
 
     #### SUBMIT FOR VERIFICATION ####
@@ -90,3 +91,29 @@ def save_snapshot(account, contract, new_allocation = [0, 0]):
     print("SNAPSHOT RESULT:")
     print(result)
 
+def init_client(bin_dir: str, node_rpc_url: Optional[str] = None) -> SharpClient:
+    """
+    Initialized a SharpClient instance, with or without node access.
+    """
+    # Load configuration file.
+    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
+    with open(CONFIG_PATH, "r") as config_file:
+        config = json.load(config_file)
+
+    # Get Cairo toolchain executable paths.
+    CAIRO_COMPILE_EXE = os.path.join(os.path.join(bin_dir, "cairo-compile"))
+    CAIRO_RUN_EXE = os.path.join(os.path.join(bin_dir, "cairo-run"))
+
+    # Initialize the SharpClient.
+    client = SharpClient(
+        service_client=ClientLib(config["prover_url"]),
+        contract_client=FactChecker(
+            fact_registry_address=config["verifier_address"],
+            node_rpc_url=node_rpc_url if node_rpc_url is not None else "",
+        ),
+        steps_limit=config["steps_limit"],
+        cairo_compiler_path=CAIRO_COMPILE_EXE,
+        cairo_run_path=CAIRO_RUN_EXE,
+    )
+
+    return client

@@ -8,6 +8,7 @@
   "cairo_program_path": "./cairoScripts/apy_calculator.cairo",
   "cairo_program_input_path": "./cairoScripts/input/apy_calculator_lender_input.json",
   "cairo_program_output_path": "./cairoScripts/output/apy_calculator.pie", 
-  "new_allocation_array": [0, 10000]
+  "new_allocation_array": [0, 10000],
+  "prover_url": "https://testnet.provingservice.io",
+  "steps_limit": 1000000
 }
-

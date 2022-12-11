@@ -203,9 +203,6 @@ contract DebtAllocator is Ownable, Pausable {
         emit StrategyRemoved(strategy);
     }
 
-
-
-
     //Can't set only view, .call potentially modify state (should not arrive)
     function getStrategiesData() public returns(uint256[][] memory _dataStrategies) {
         uint256[][] memory dataStrategies = new uint256[][](strategies.length);

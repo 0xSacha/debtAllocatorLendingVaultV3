@@ -49,7 +49,7 @@ contract DebtAllocator is Ownable, Pausable {
     uint256 public inputHash;
     mapping(uint256 => uint256) public snapshotTimestamp;
 
-    uint256 public staleSnapshotPeriod = 3 * 3600;
+    uint256 public staleSnapshotPeriod = 24 * 3600;
     uint256 public stalePeriod = 24 * 3600;
 
     // Rewards config
@@ -202,9 +202,6 @@ contract DebtAllocator is Ownable, Pausable {
         debtRatios.pop();
         emit StrategyRemoved(strategy);
     }
-
-
-
 
     //Can't set only view, .call potentially modify state (should not arrive)
     function getStrategiesData() public returns(uint256[][] memory _dataStrategies) {

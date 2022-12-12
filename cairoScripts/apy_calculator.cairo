@@ -1,11 +1,10 @@
 %builtins output range_check bitwise 
 
-from starkware.cairo.common.math import unsigned_div_rem, assert_le_felt
+from starkware.cairo.common.math import unsigned_div_rem
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.serialize import serialize_word, serialize_array
 from starkware.cairo.common.alloc import alloc
 from starkware.cairo.common.registers import get_label_location
-// from keccak import keccak_felts, finalize_keccak
 from starkware.cairo.common.cairo_builtins import BitwiseBuiltin
 from starkware.cairo.common.memcpy import memcpy
 from starkware.cairo.common.uint256 import Uint256
@@ -16,14 +15,12 @@ const SUB = 1;
 const MUL = 2;
 const DIV = 3; 
 const POW = 4;
-// const SQUARE = 5;
 
 func serialize_word_from_pointer{output_ptr: felt*}(word) {
     assert [output_ptr] = [word];
     let output_ptr = output_ptr + 1;
     return ();
 }
-
 
 func perform_calculation{ range_check_ptr }(
         _operand1: felt,
@@ -112,9 +109,6 @@ func calcul_score_strategy{ range_check_ptr }(
     }
 
     let (result_) = perform_calculation(op1_, op2_, _calcul_strat[3 * _step_len + 2]);
-    %{  
-        print(ids.result_)
-    %}
     assert _step[_step_len] = result_;
     return calcul_score_strategy(_data_strat_len, _data_strat, _calcul_strat_len, _calcul_strat, _step_len + 1, _step);
 }
@@ -167,11 +161,6 @@ func prepare_calcul{ range_check_ptr }(
         }
     }
 
-    // %{  
-    //     print(ids.op1_)
-    //     print(ids.op2_)
-    // %}
-
     if(_conditions_strat_len == _step_len){
         let is_le_ = is_le(op1_, op2_);
         if(is_le_ == 1){
@@ -184,9 +173,6 @@ func prepare_calcul{ range_check_ptr }(
     }
 
     let (result_) = perform_calculation(op1_, op2_, _conditions_strat[3 * _step_len + 2]);
-    //     %{  
-    //     print(ids.result_)
-    // %}
     assert _step[_step_len] = result_;
 
     return prepare_calcul(_data_strat_len, _data_strat, _conditions_strat_len, _conditions_strat, _step_len + 1, _step, _calcul_strat_len, _calcul_strat, _to_prepare);
@@ -219,25 +205,6 @@ func run_input{ range_check_ptr }(
     ){
     alloc_locals;
     if(tab_len_ == _strat_amount){
-    // %{  
-    //     print("data strat : ")
-    //     print(ids._cumulative_data_strat_array_len)
-    //     cumulative_data_strat_array = ids._cumulative_data_strat_array
-    //     for i in range(ids._cumulative_data_strat_array_len):
-    //          print(memory[cumulative_data_strat_array + i]) 
-
-    //     print("calcul : ")
-    //     print(ids._cumulative_calculation_strat_array_len)
-    //     cumulative_calculation_strat_array = ids._cumulative_calculation_strat_array
-    //     for i in range(ids._cumulative_calculation_strat_array_len):
-    //          print(memory[cumulative_calculation_strat_array + i]) 
-
-    //     print("conditions : ")
-    //     print(ids._cumulative_strat_condtions_array_len)
-    //     cumulative_strat_condtions_array = ids._cumulative_strat_condtions_array
-    //     for i in range(ids._cumulative_strat_condtions_array_len):
-    //          print(memory[cumulative_strat_condtions_array + i]) 
-    // %}
         memcpy(_cumulative_data_strat_array + _cumulative_data_strat_array_len, _cumulative_calculation_strat_array, _cumulative_calculation_strat_array_len);
         memcpy(_cumulative_data_strat_array + _cumulative_data_strat_array_len + _cumulative_calculation_strat_array_len, _cumulative_strat_condtions_array, _cumulative_strat_condtions_array_len);
         let (input_hash_) = keccak_felts(_cumulative_data_strat_array_len + _cumulative_calculation_strat_array_len + _cumulative_strat_condtions_array_len, _cumulative_data_strat_array);
@@ -257,15 +224,6 @@ func run_input{ range_check_ptr }(
         _calcul_strat + 1,
         calcul_strat_after_condition_);
 
-    // %{  
-    //     print("after prepare")
-    //     print(ids.calcul_strat_after_condition_len_)
-    //     calcul_strat_after_condition_ = ids.calcul_strat_after_condition_
-    //     for i in range(ids.calcul_strat_after_condition_len_ * 3):
-    //          print(memory[calcul_strat_after_condition_ + i]) 
-    // %}
-
-
     let (local steps : felt*) = alloc();
     let (strategy_apy_) = calcul_score_strategy(
         _data_strat[0],
@@ -278,12 +236,6 @@ func run_input{ range_check_ptr }(
     let current_score_ = strategy_apy_ *  _current_debt_ratio[0];
     let new_score_ = strategy_apy_ *  _new_debt_ratio[0];
 
-    // %{  
-    //     print(ids.current_score_)
-    //     print(ids.new_score_)
-    // %}
-
-    // memcpy(dst: felt*, src: felt*, len)
     memcpy(_cumulative_data_strat_array + _cumulative_data_strat_array_len, _data_strat + 1,  _data_strat[0]);
     memcpy(_cumulative_calculation_strat_array + _cumulative_calculation_strat_array_len, _calcul_strat + 1,  _calcul_strat[0]*3);
     memcpy(_cumulative_strat_condtions_array + _cumulative_strat_condtions_array_len, _condtions_strat + 1, _condtions_strat[0]*3 + 4);

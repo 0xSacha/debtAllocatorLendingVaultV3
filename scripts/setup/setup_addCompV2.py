@@ -1,7 +1,7 @@
 import click
 from ape.cli import network_option, NetworkBoundCommand
 from ape import accounts, project
-
+import json
 
 #
 ## COMPOUND 
@@ -74,6 +74,9 @@ COMPOUND_CALCULATION_CONDITION = [0, 1, 0, 10000, 2, 1, 1, 1000000000000020000, 
 
 
 def main():
-    account = accounts.load("sach")
-    contract = project.DebtAllocator.at("0x8aD42486109e5Ec080eFe015830d2c9B806631d0")
+    f = open("./scripts/config.json")
+    config_dict = json.load(f)
+    f.close()
+    account = accounts.load(config_dict["account"])
+    contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
     contract.addStrategy(COMPOUND_STRATEGY_ADDRESS, COMPOUND_MAX_STRATEGY_DEBT_RATIO, COMPOUND_STRATEGY_CONTRACTS, COMPOUND_STRATEGYY_CHECKDATA, COMPOUND_STRATEGYY_OFFSET, COMPOUND_STRATEGYY_CALCULATION, COMPOUND_CALCULATION_CONDITION,sender=account)

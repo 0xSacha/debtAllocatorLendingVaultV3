@@ -4,3 +4,8 @@ __pycache__
 .hypothesis/
 build/
 reports/
+cairoScripts/certs
+bin/
+lib/
+pyvenv.cfg
+share/

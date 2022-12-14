@@ -1,18 +1,3 @@
-from starkware.cairo.sharp.client_lib import CairoPie, ClientLib
-from starkware.cairo.sharp.fact_checker import FactChecker
-from starkware.cairo.bootloaders.generate_fact import get_program_output
-from starkware.cairo.lang.compiler.assembler import Program
-from typing import List, Optional
-import json
-import os
-
-
-# To Set
-BIN_DIR = '../../bin'
-
-RPC= 'https://mainnet.infura.io/v3/eebdf8732cd044f0a52f976af7781260'
-CAIRO_PROGRAM_PATH = './test_sharp.cairo'
-CAIRO_PROGRAM_INPUT_PATH = './test_sharp_input.json'
 #!/usr/bin/env python3
 
 import argparse
@@ -23,12 +8,14 @@ import sys
 import tempfile
 from typing import List, Optional
 
+from dotenv import load_dotenv
 from starkware.cairo.bootloaders.generate_fact import get_cairo_pie_fact_info
 from starkware.cairo.bootloaders.hash_program import compute_program_hash_chain
 from starkware.cairo.lang.compiler.assembler import Program
 from starkware.cairo.lang.vm.crypto import get_crypto_lib_context_manager
 from starkware.cairo.sharp.client_lib import CairoPie
 from starkware.cairo.sharp.fact_checker import FactChecker
+from sharp.client_lib import ClientLib
 
 
 class SharpClient:
@@ -57,7 +44,9 @@ class SharpClient:
         self.cairo_compiler_path = cairo_compiler_path
         self.cairo_run_path = cairo_run_path
 
-    def compile_cairo(self, source_code_path: str, flags: Optional[List[str]] = None) -> Program:
+    def compile_cairo(
+        self, source_code_path: str, flags: Optional[List[str]] = None
+    ) -> Program:
         """
         Compiles the cairo source code at the provided path,
         and returns the compiled program.
@@ -73,17 +62,21 @@ class SharpClient:
                 ]
                 + used_flags
             )
-            program = Program.load(data=json.load(open(compiled_program_file.name, "r")))
+            program = Program.load(
+                data=json.load(open(compiled_program_file.name, "r"))
+            )
         return program
 
-    def run_program(self, program: Program, program_input_path: Optional[str]) -> CairoPie:
+    def run_program(
+        self, program: Program, program_input_path: Optional[str]
+    ) -> CairoPie:
         """
         Runs the program, with the provided input,
         and returns the Cairo PIE (Position Independent Execution).
         """
-        with tempfile.NamedTemporaryFile("w") as cairo_pie_file, tempfile.NamedTemporaryFile(
+        with tempfile.NamedTemporaryFile(
             "w"
-        ) as program_file:
+        ) as cairo_pie_file, tempfile.NamedTemporaryFile("w") as program_file:
             json.dump(program.dump(), program_file, indent=4, sort_keys=True)
             program_file.flush()
             cairo_run_cmd = list(
@@ -156,23 +149,18 @@ def init_client(bin_dir: str, node_rpc_url: Optional[str] = None) -> SharpClient
     """
     Initialized a SharpClient instance, with or without node access.
     """
-    # Load configuration file.
-    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
-    with open(CONFIG_PATH, "r") as config_file:
-        config = json.load(config_file)
-
     # Get Cairo toolchain executable paths.
     CAIRO_COMPILE_EXE = os.path.join(os.path.join(bin_dir, "cairo-compile"))
     CAIRO_RUN_EXE = os.path.join(os.path.join(bin_dir, "cairo-run"))
 
     # Initialize the SharpClient.
     client = SharpClient(
-        service_client=ClientLib(config["prover_url"]),
+        service_client=ClientLib(os.environ["GATEWAY_URL"]),
         contract_client=FactChecker(
-            fact_registry_address=config["verifier_address"],
+            fact_registry_address=os.environ["VERIFIER_ADDRESS"],
             node_rpc_url=node_rpc_url if node_rpc_url is not None else "",
         ),
-        steps_limit=config["steps_limit"],
+        steps_limit=int(os.environ["STEPS_LIMIT"]),
         cairo_compiler_path=CAIRO_COMPILE_EXE,
         cairo_run_path=CAIRO_RUN_EXE,
     )
@@ -196,13 +184,18 @@ def submit(args, command_args):
     parser.add_argument(
         "--program_input", type=str, required=False, help="A path to the program input."
     )
-    parser.add_argument("--cairo_pie", type=str, required=False, help="A path to the Cairo PIE.")
+    parser.add_argument(
+        "--cairo_pie", type=str, required=False, help="A path to the Cairo PIE."
+    )
 
     parser.parse_args(command_args, namespace=args)
 
     is_not_none = lambda x: 1 if x is not None else 0
     assert (
-        is_not_none(args.source) + is_not_none(args.program) + is_not_none(args.cairo_pie) == 1
+        is_not_none(args.source)
+        + is_not_none(args.program)
+        + is_not_none(args.cairo_pie)
+        == 1
     ), "Exactly one of --source, --program, --cairo_pie must be specified."
 
     client = init_client(bin_dir=args.bin_dir)
@@ -221,7 +214,9 @@ def submit(args, command_args):
             program = client.compile_cairo(source_code_path=args.source)
 
         print("Running...", file=sys.stderr)
-        cairo_pie = client.run_program(program=program, program_input_path=args.program_input)
+        cairo_pie = client.run_program(
+            program=program, program_input_path=args.program_input
+        )
 
     fact = client.get_fact(cairo_pie)
     print("Submitting to SHARP...", file=sys.stderr)
@@ -236,7 +231,9 @@ def submit(args, command_args):
 
 
 def get_job_status(args, command_args):
-    parser = argparse.ArgumentParser(description="Retreive the status of a SHARP Cairo job.")
+    parser = argparse.ArgumentParser(
+        description="Retreive the status of a SHARP Cairo job."
+    )
     parser.add_argument("job_key", type=str, help="The key identifying the job.")
 
     parser.parse_args(command_args, namespace=args)
@@ -257,10 +254,16 @@ def is_verified(args, command_args):
     )
     parser.add_argument("fact", type=str, help="The fact to verify if registered.")
     parser.add_argument(
-        "--node_url", required=True, type=str, help="URL for a Goerli Ethereum node RPC API."
+        "--node_url",
+        required=False,
+        type=str,
+        help="URL for a Goerli Ethereum node RPC API.",
     )
 
     parser.parse_args(command_args, namespace=args)
+
+    if args.node_url == None:
+        args.node_url = os.environ["NODE_URL"]
 
     client = init_client(bin_dir=args.bin_dir, node_rpc_url=args.node_url)
     print(client.fact_registered(args.fact))
@@ -268,104 +271,40 @@ def is_verified(args, command_args):
     return 0
 
 
-import base64
-import json
+def main():
+    load_dotenv()
+    subparsers = {
+        "submit": submit,
+        "status": get_job_status,
+        "is_verified": is_verified,
+    }
 
-import urllib3
-import certifi
-
-class ClientLib:
-    """
-    Communicates with the SHARP.
-    This is a slim wrapper around the SHARP API.
-    """
-
-    def __init__(self, service_url: str):
-        """
-        service_url is the SHARP url.
-        """
-        self.service_url = service_url
-
-    def add_job(self, cairo_pie: CairoPie) -> str:
-        """
-        Sends a job to the SHARP.
-        cairo_pie is the product of running the corresponding Cairo program locally
-        (using cairo-run --cairo_pie_output).
-        Returns job_key - a unique id of the job in the SHARP system.
-        """
-
-        res = self._send(
-            "add_job", {"cairo_pie": base64.b64encode(cairo_pie.serialize()).decode("ascii")}
-        )
-        assert "cairo_job_key" in res, f"Error when sending job to SHARP: {res}."
-        return res["cairo_job_key"]
-
-    def get_status(self, job_key: str) -> str:
-        """
-        Fetches the job status from the SHARP.
-        job_key: used to query the state of the job in the system - returned by 'add_job'.
-        """
-
-        res = self._send("get_status", {"cairo_job_key": job_key})
-        assert "status" in res, f"Error when checking status of job with key '{job_key}': {res}."
-        return res["status"]
-
-    def _send(self, action: str, payload: dict) -> dict:
-        """
-        Auxiliary function used to communicate with the SHARP.
-        action: the action to be sent to the SHARP.
-        payload: action specific parameters.
-        """
-
-        data = {
-            "action": action,
-            "request": payload,
-        }
-
-        http = urllib3.PoolManager(cert_reqs="CERT_NONE", cert_file='user.crt', key_file='user.key')
-        res = http.request(
-            method="POST", url=self.service_url, body=json.dumps(data).encode("utf-8") 
-        )
-        return json.loads(res.data.decode("utf-8"))
-
-
-
-    
-def init_client(bin_dir: str, node_rpc_url: Optional[str] = None) -> SharpClient:
-    """
-    Initialized a SharpClient instance, with or without node access.
-    """
-    # Load configuration file.
-    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
-    with open(CONFIG_PATH, "r") as config_file:
-        config = json.load(config_file)
-
-    # Get Cairo toolchain executable paths.
-    CAIRO_COMPILE_EXE = os.path.join(os.path.join(bin_dir, "cairo-compile"))
-    CAIRO_RUN_EXE = os.path.join(os.path.join(bin_dir, "cairo-run"))
-
-    # Initialize the SharpClient.
-    client = SharpClient(
-        service_client=ClientLib(config["prover_url"]),
-        contract_client=FactChecker(
-            fact_registry_address=config["verifier_address"],
-            node_rpc_url=node_rpc_url if node_rpc_url is not None else "",
-        ),
-        steps_limit=config["steps_limit"],
-        cairo_compiler_path=CAIRO_COMPILE_EXE,
-        cairo_run_path=CAIRO_RUN_EXE,
+    parser = argparse.ArgumentParser(description="A tool to communicate with SHARP.")
+    parser.add_argument("command", choices=subparsers.keys())
+    parser.add_argument(
+        "--bin_dir",
+        type=str,
+        default="",
+        help="The path to a directory that contains the cairo-compile and cairo-run scripts. "
+        "If not specified, files are assumed to be in the system's PATH.",
+    )
+    parser.add_argument(
+        "--flavor",
+        type=str,
+        default="Release",
+        choices=["Debug", "Release", "RelWithDebInfo"],
+        help="Build flavor",
     )
 
-    return client
+    args, unknown = parser.parse_known_args()
 
-client = init_client(BIN_DIR, [RPC])
-compiled_program = client.compile_cairo(CAIRO_PROGRAM_PATH)
-cairo_pie = client.run_program(compiled_program, CAIRO_PROGRAM_INPUT_PATH)
-print(f"Program output : {get_program_output(cairo_pie)}")
-print(f"Submitting to sharp")
-fact = client.get_fact(cairo_pie)
-job_key = client.submit_cairo_pie(cairo_pie=cairo_pie)
-print(f"Job key: {job_key}")
-print(f"Fact: {fact}")
-    
+    with get_crypto_lib_context_manager(args.flavor):
+        try:
+            # Invoke the requested command.
+            return subparsers[args.command](args, unknown)
+        except Exception as exc:
+            print(f"Error: {exc}", file=sys.stderr)
 
+
+if __name__ == "__main__":
+    sys.exit(main())

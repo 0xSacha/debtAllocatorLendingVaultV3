@@ -1,4 +1,3 @@
-import click
 from ape.cli import network_option, NetworkBoundCommand
 from ape import accounts, project
 import json

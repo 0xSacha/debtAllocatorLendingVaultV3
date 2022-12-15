@@ -81,12 +81,7 @@ def main():
     addresses = logs[0].Strategies
     callLen = logs[0].StrategiesCallLen
     contracts = logs[0].Contracts
-    checkdata = logs[0].Checkdata
-    data = []
-    index=0
-    for i in range(len(contracts)):
-        string = (bytearray(checkdata[i]).hex() )
-        data.append(string)
+    checkdata += AAVE_STRATEGYY_CHECKDATA
     
     offset = logs[0].Offset
     calculationsLen = logs[0].CalculationsLen
@@ -97,7 +92,7 @@ def main():
     result["addresses"] = addresses
     result["callLen"] = callLen
     result["contracts"] = contracts
-    result["checkdata"] = data
+    result["checkdata"] = checkdata
     result["offset"] = offset
     result["calculationsLen"] = calculationsLen
     result["calculations"] = calculations

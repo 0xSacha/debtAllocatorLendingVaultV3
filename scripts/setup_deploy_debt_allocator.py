@@ -4,11 +4,14 @@ import json
 import os
 import time
 
-CAIRO_VERIFIER = "0xAB43bA48c9edF4C2C4bB01237348D1D7B28ef168"
-CAIRO_PROGRAM_HASH = "0x18261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f494"
-
 def main():
     CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_testnet.json")
+    with open(CONFIG_PATH, "r") as config_file:
+        config = json.load(config_file)
+    
+    CAIRO_PROGRAM_HASH = config["cairo_program_hash"]
+    CAIRO_VERIFIER = config["verifier_address"]
+
     with open(CONFIG_PATH, "r") as config_file:
         config = json.load(config_file)
     account = accounts.load(config["account"])

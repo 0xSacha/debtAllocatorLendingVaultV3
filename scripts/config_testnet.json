@@ -1,6 +1,8 @@
 {
-  "account": "v3_deployer",
-  "debt_allocator_address": "0xAd5c389c992906Be1787139FfADbD4f9081D5411",
+  "account": "sacha",
+  "debt_allocator_address": "0x99F3a48a9e7174995de9f33D4bA3B99B922f0171",
+  "strategy_aave_address": "0xEbc69526A626F66397949c972de5D5227Dc8d8Af",
+  "strategy_compound_address": "0x53A3FB71a9Eb07Eee11d63273780Ed5e43f77359",
   "verifier_address": "0xAB43bA48c9edF4C2C4bB01237348D1D7B28ef168",
   "bin_path": "./bin",
   "cairo_program_hash": "0x18261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f494",

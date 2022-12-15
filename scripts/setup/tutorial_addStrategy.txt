@@ -1,0 +1,741 @@
+AAVE 
+
+
+## Supply rate = Ut * (SBt*St + VBt*Vt) * (1 - Rt)
+# Ut, the utilisation ratio
+# SBt, the share of stable borrows
+# St, the average stable rate
+# VBt, the share of variable borrows
+# Vt, the variable rate
+# Rt, the reserve factor
+
+# average stable rate St = R0 + (Ut/Uo)* R1 if Ut < Uo, R0 + R1 + (Ut - Uo)/ (1 - Uo)R2s else
+# R0, Base Variable Borrow Rate
+# R1, stable Rate Slope 1
+# R2, stable Rate Slope 2
+# R2, stable Rate Slope 2
+# Uo, optimal utilization rate
+
+# average variable rate Vt = R0 + (Ut/Uo)* R1 if Ut < Uo, R0 + R1 + (Ut - Uo)/ (1 - Uo)R2v else
+# R0, Base Variable Borrow Rate
+# R1, Variable Rate Slope 1
+# R2, Variable Rate Slope 2
+# R2, Variable Rate Slope 2
+# Uo, optimal utilization rate
+
+## Ut = available liquidity / (available liquidity + stable debt + variable debt)
+## Sbt = stable debt / (stable debt + variable debt)
+## VBt = variable debt / (stable debt + variable debt)
+
+## Head to https://docs.aave.com/developers/v/2.0/deployed-contracts/deployed-contracts, get the protocol data provider address and call getReserveConfigurationData(address)  providing the token address, and get the reserveFactor (5th from the tupple), 
+## In the same conract call getReserveData(address) providing the token address and get: available liquidity (first), totalStableDebt (second), totalVariableDebt (third)
+
+## Head to https://docs.aave.com/developers/v/2.0/deployed-contracts/deployed-contracts, get the lending pool address, call  getReserveData(address) providing the token address, and get the ReserveInterestRateStrategy adress
+## (penultimate data from the returned tupple). From this contract, you'll have access to variableRateSlope1, variableRateSlope2, baseVariableBorrowRate, OPTIMAL_UTILIZATION_RATE, stableRateSlope1 and stableRateSlope2
+
+
+## The following data is valid for Goerli, with WETH ASSET
+WETH = "0xCCa7d1416518D095E729904aAeA087dBA749A4dC"
+PROTOCOL_DATA_PROVIDER = "0x927F584d4321C1dCcBf5e2902368124b02419a1E"
+RESERVE_INTEREST_RATE_STRATEGY= "0x5ecE040038c822d7228F24D9F2e1Fd41bc77A3c4"
+
+## Reserve Data
+CONTRACT_ADDRESS_0 = PROTOCOL_DATA_PROVIDER
+## 0x3e150141 (selector from getReserveConfigurationData(address)) + 000000000000000000000000CCa7d1416518D095E729904aAeA087dBA749A4dC wethadress to byte32
+CHECKDATA_0 = "0x3e150141000000000000000000000000CCa7d1416518D095E729904aAeA087dBA749A4dC"
+## 5th arg so (5-1)*32 
+STRATEGYY_OFFSET_0 = 128
+
+## Available Liquidity
+CONTRACT_ADDRESS_1 = PROTOCOL_DATA_PROVIDER
+## 0x35ea6a75 (selector from getReserveData(address)) + 000000000000000000000000CCa7d1416518D095E729904aAeA087dBA749A4dC wethadress to byte32
+CHECKDATA_1 = "0x35ea6a75000000000000000000000000CCa7d1416518D095E729904aAeA087dBA749A4dC"
+## first arg so 0
+STRATEGYY_OFFSET_1 = 0
+
+## totalStableDebt 
+CONTRACT_ADDRESS_2 = PROTOCOL_DATA_PROVIDER
+## 0x35ea6a75 (selector from getReserveData(address)) + 000000000000000000000000CCa7d1416518D095E729904aAeA087dBA749A4dC wethadress to byte32
+CHECKDATA_2 = "0x35ea6a75000000000000000000000000CCa7d1416518D095E729904aAeA087dBA749A4dC"
+## second arg so 32
+STRATEGYY_OFFSET_2 = 32
+
+## totalVariableDebt 
+CONTRACT_ADDRESS_3 = PROTOCOL_DATA_PROVIDER
+## 0x35ea6a75 (selector from getReserveData(address)) + 000000000000000000000000CCa7d1416518D095E729904aAeA087dBA749A4dC wethadress to byte32
+CHECKDATA_3 = "0x35ea6a75000000000000000000000000CCa7d1416518D095E729904aAeA087dBA749A4dC"
+## third arg so 64
+STRATEGYY_OFFSET_3 = 64
+
+## totalVariableDebt 
+CONTRACT_ADDRESS_4 = RESERVE_INTEREST_RATE_STRATEGY
+## 0x35ea6a75 (selector from OPTIMAL_UTILIZATION_RATE() ) 
+CHECKDATA_4 = "0xa15f30ac"
+STRATEGYY_OFFSET_4 = 0
+
+CONTRACT_ADDRESS_5 = RESERVE_INTEREST_RATE_STRATEGY
+## 0x0bdf953f (selector from stableRateSlope1() ) 
+CHECKDATA_5 = "0x0bdf953f"
+STRATEGYY_OFFSET_5 = 0
+
+CONTRACT_ADDRESS_6 = RESERVE_INTEREST_RATE_STRATEGY
+## 0xccab01a3 (selector from stableRateSlope2() ) 
+CHECKDATA_6 = "0xccab01a3"
+STRATEGYY_OFFSET_6 = 0
+
+CONTRACT_ADDRESS_7 = RESERVE_INTEREST_RATE_STRATEGY
+## 0x7b832f58 (selector from variableRateSlope1() ) 
+CHECKDATA_7 = "0x7b832f58"
+STRATEGYY_OFFSET_7 = 0
+
+CONTRACT_ADDRESS_8 = RESERVE_INTEREST_RATE_STRATEGY
+## 0x65614f81 (selector from variableRateSlope2() ) 
+CHECKDATA_8 = "0x65614f81"
+STRATEGYY_OFFSET_8 = 0
+
+CONTRACT_ADDRESS_9 = RESERVE_INTEREST_RATE_STRATEGY
+## 0xb2589544 (selector from baseVariableBorrowRate() ) 
+CHECKDATA_9 = "0xb2589544"
+STRATEGYY_OFFSET_9 = 0
+
+
+# concerned strategy address
+STRATEGY_ADDRESS= "0x76aFA2b6C29E1B277A3BB1CD320b2756c1674c91" 
+
+MAX_STRATEGY_DEBT_RATIO = 10000
+
+# contracts to get data from
+STRATEGY_CONTRACTS = [CONTRACT_ADDRESS_0, CONTRACT_ADDRESS_1, CONTRACT_ADDRESS_2, CONTRACT_ADDRESS_3, CONTRACT_ADDRESS_4, CONTRACT_ADDRESS_5, CONTRACT_ADDRESS_6, CONTRACT_ADDRESS_7, CONTRACT_ADDRESS_8, CONTRACT_ADDRESS_9]
+
+# checkdata (selector + neccessary args bytes32)
+STRATEGYY_CHECKDATA = [CHECKDATA_0, CHECKDATA_1, CHECKDATA_2, CHECKDATA_3, CHECKDATA_4, CHECKDATA_5, CHECKDATA_6, CHECKDATA_7, CHECKDATA_8, CHECKDATA_9]
+
+# offset, which args we need from the data received from the call, 0 by default
+STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, STRATEGYY_OFFSET_3, STRATEGYY_OFFSET_4, STRATEGYY_OFFSET_5, STRATEGYY_OFFSET_6, STRATEGYY_OFFSET_7, STRATEGYY_OFFSET_8, STRATEGYY_OFFSET_9]
+
+
+
+# ////////////////Supply rate = Ut * (SBt*St + VBt*Vt) * (1 - Rt)
+
+# ////////CASE Ut > Uo
+
+# calcul availableLiq +/- allocation change
+# Step0 = 1, 0, 5                                   //available Liq step 0
+
+# calcul availableLiq + stable debt
+# Step1 = 10000, 2, 0
+
+# calcul totalLiq : Step1 + var_debt                        //totalLiq step 2
+# Step2= 10001, 3, 0
+
+# calcul total borrowed : stable debt + var debt
+# Step3 = 2, 3, 0                                                total borrowed Step 3
+
+# calcul  total borrowed x Precison (10^27)
+# Step4 = 10003, 1000000000000000000000020000, 2
+
+# calcul Ut(10^27) :  Step4 / Step2                         Ut(10^27) step 5
+# Step5 = 10004, 10002, 3
+
+# calcul Ut - Uo
+# Step6 = 10005, 4, 1
+
+# calcul  1 - Uo
+# Step7 = 1000000000000000000000020000, 4, 1            
+
+# calcul (Ut - Uo) x Precision
+# Step8 = 10006, 1000000000000000000000020000, 2
+
+# calcul (Ut - Uo)(10^27) / (1 - Uo)
+# step9 = 10008, 10007, 3                           (Ut - Uo)(10^27) / (1 - Uo) Step 9
+
+
+#  average stable rate St= R0 + R1s + (Ut - Uo)/ (1 - Uo)R2s
+
+# calcul R2s * step9 * (10^27)
+# Step10 = 10009, 6, 2
+
+# calcul R2s * (Ut - Uo)/ (1 - Uo)
+# Step11 = 10010, 1000000000000000000000020000, 3
+
+
+# calcul R2s * (Ut - Uo)/ (1 - Uo) + R1s
+# Step12 = 10011, 5, 0
+
+# calcul R2s * (Ut - Uo)/ (1 - Uo) + R1s + R0
+# Step13 = 10012, 9, 0                                            St= R0 + R1s + (Ut - Uo)/ (1 - Uo)R2s   Step 11
+
+# calcul stable_debt * Precision
+# Step14 = 2, 1000000000000000000000020000, 2
+
+# calcul SBt(10^27) =  stable_debt * Precision / total borrowed
+# Step15 = 10014, 10003, 3                                                SBt(10^27) step 15
+
+# calcul SBt * St (10^27) =  Step 12 * step 15
+# Step16 = 10012, 10015, 2
+
+# calcul SBt * St =  Step 16/ precision
+# Step17 = 10016, 1000000000000000000000020000, 3                                       SBt * St  Step 17
+    
+#  average variable rate Vt= R0 + R1v + (Ut - Uo)/ (1 - Uo)R2v
+
+# calcul R2v * step8 * (10^27)
+# Step18 = 10009, 8, 2
+
+# calcul R2v * (Ut - Uo)/ (1 - Uo)
+# Step19 = 10018, 1000000000000000000000020000, 3
+
+# calcul R2v * (Ut - Uo)/ (1 - Uo) + R1v
+# Step20 = 10019, 7, 0
+
+# calcul R2v * (Ut - Uo)/ (1 - Uo) + R1v + R0
+# Step21 = 10020, 9, 0                                            Vt= R0 + R1v + (Ut - Uo)/ (1 - Uo)R2v   Step 21
+
+# calcul variable_debt * Precision
+# Step22 = 3, 1000000000000000000000020000, 2
+
+# calcul VBt(10^27) =  variable_debt * Precision / total borrowed
+# Ste23 = 10022, 10003, 3                                                VBt(10^27) step 23
+
+
+# calcul Vt * VBt (10^27) =  Step 21 * step 23
+# Step24 = 10021, 10023, 2
+
+# calcul Vt * VBt =  Step23/ precision
+# Step25 = 10024, 1000000000000000000000020000, 3                                       VBt * Vt  Step 25
+    
+# calcul (SBt * St) + (Vt * VBt) =  step 17 + step 26
+# Step26 = 10017, 10025, 0                                                (SBt * St) + (VBt * Vt) Step 26
+
+# !! Reserve factor /10000 = reserve factor !! 
+# calcul (1 - Rt)(10^4)  : 10000 - Rt
+# Step27 = 30000, 0, 1     
+
+# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt)(10^4)  : Step 26 *  Step 27
+# Step28 = 10026, 10027, 2    
+
+# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt)  : Step 28 / precision
+# Step29 = 10028, 30000, 3  
+
+# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt) * Ut(10^27): Step29 * Step5
+# Step30 = 10029, 10005, 2    
+
+# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt) * Ut: Step30 / precision(10^27)
+# Step31 = 10030, 1000000000000000000000020000, 3                                                   🧪🧪🧪 conditon NOT OK Supply rate STEP 31 🧪🧪🧪 (32 Length )
+
+# [1, 0, 5, 10000, 2, 0, 10001, 3, 0, 2, 3, 0, 10003, 1000000000000000000000020000, 2,10004, 10002, 3, 10005, 4, 1, 1000000000000000000000020000, 4, 1, 10006, 1000000000000000000000020000, 2, 10008, 10007, 3, 10009, 6, 2, 10010, 1000000000000000000000020000, 3,
+# 10011, 5, 0, 10012, 9, 0, 2, 1000000000000000000000020000, 2, 10014, 10003, 3, 10012, 10015, 2, 10016, 1000000000000000000000020000, 3, 10009, 8, 2, 10018, 1000000000000000000000020000, 3, 10019, 7, 0, 10020, 9, 0,
+# 3, 1000000000000000000000020000, 2, 10022, 10003, 3, 10021, 10023, 2, 10024, 1000000000000000000000020000, 3, 10017, 10025, 0, 30000, 0, 1, 10026, 10027, 2, 10028, 30000, 3, 10029, 10005, 2, 10030, 1000000000000000000000020000, 3]
+
+# ////////CASE Ut <= Uo
+
+# calcul availableLiq +/- allocation change
+# Step0 = 1, 0, 5                                   //available Liq step 0
+
+# calcul availableLiq + stable debt
+# Step1 = 10000, 2, 0
+
+# calcul totalLiq : Step1 + var_debt                        //totalLiq step 2
+# Step2= 10001, 3, 0
+
+# calcul total borrowed : stable debt + var debt
+# Step3 = 2, 3, 0                                                total borrowed Step 3
+
+# calcul  total borrowed x Precison (10^27)
+# Step4 = 10003, 1000000000000000000000020000, 2
+
+# calcul Ut(10^27) :  Step4 / Step2                         Ut(10^27) step 5
+# Step5 = 10004, 10002, 3
+
+###
+
+# calcul Ut x Precison (10^27)
+# Step6 = 10005, 1000000000000000000000020000, 2
+
+# calcul Ut/Uo
+# Step7 = 10006, 4, 3              Ut(10^27)/Uo step 7
+
+
+#  average stable rate St = R0 + (Ut/Uo)* R1s
+# calcul (Ut(10^27)/Uo)* R1s 
+# Step8 = 10007, 5, 2
+
+# calcul (Ut/Uo)* R1s
+# Step9 = 10008, 1000000000000000000000020000, 3
+
+# calcul St = R0 + (Ut/Uo)* R1s          
+# Step10 = 10009, 9, 0                                      St step 10
+
+# calcul stable x Precison (10^27)
+# Step11 = 2, 1000000000000000000000020000, 2
+
+# calcul SBt(10^27) : stable_debt(10^27)/ totalborrow step 2      
+# Step12 = 10011, 10003, 3                                  SBt(10^27) step 12
+
+# calcul SBt(10^27) * St : step12 * step10    
+# Step13 = 10012, 10010, 2   
+
+# calcul SBt * St : step13 / Precision  
+# Step14 = 10013, 1000000000000000000000020000, 3                           SBt * St Step 14   
+
+# average variable rate Vt = R0 + (Ut/Uo)* R1v
+# calcul (Ut(10^27)/Uo)* R1v
+# Step15 = 10007, 7, 2
+
+# calcul (Ut/Uo)* R1v
+# Step16 = 10015, 1000000000000000000000020000, 3
+
+# calcul Vt = R0 + (Ut/Uo)* R1v
+# Step17 = 10016, 9, 0                                     Vt STEP 17
+
+# calcul variable_debt x Precison (10^27)
+# Step18 = 3, 1000000000000000000000020000, 2
+
+# calcul variable_debt(10^27) / Step 3
+# Step19 = 10018, 10003, 3                                VBt(10^27) step 19
+
+# calcul VBt(10^27) * Vt : step17 * Step19   
+# Step20 = 10017, 10019, 2   
+
+# calcul VBt * Vt : step20 / Precision   
+# Step21 = 10020, 1000000000000000000000020000, 3                           VBt * Vt Step 21 
+
+
+# calcul (SBt * St) + (VBt * Vt)  : step14 + step21
+# Step22 = 10014, 10021, 0                                (SBt * St) + (VBt * Vt) Step 22 
+
+
+# !! Reserve factor /10000 = reserve factor !! 
+# calcul (1 - Rt)(10^4)  : 10000 - Rt
+# Step23 = 30000, 0, 1     
+
+# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt)(10^4)  : Step 22 *  Step23
+# Step24 = 10022, 10023, 2     
+
+# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt)  : Step 24 / precision(10^4)
+# Step25 = 10024, 30000, 3                                                    (SBt * St) + (VBt * Vt) * (1 - Rt) step25
+
+# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt) * Ut(10^27): Step24 * Step5
+# Step26 = 10025, 10005, 2    
+
+# calcul  (SBt * St) + (VBt * Vt) * (1 - Rt) * Ut: Step26 / precision(10^27)
+# Step27 = 10026, 1000000000000000000000020000, 3                                                   🧪🧪🧪 conditon OK Supply rate STEP 27 🧪🧪🧪 (28 Length )
+
+# [1, 0, 5, 10000, 2, 0, 10001, 3, 0, 2, 3, 0, 10003, 1000000000000000000000020000, 2, 10004, 10002, 3, 10005, 1000000000000000000000020000, 2, 10006, 4, 3, 10007, 5, 2, 10008, 1000000000000000000000020000, 3, 10009, 9, 0, 2, 1000000000000000000000020000, 2,
+# 10011, 10003, 3, 10012, 10010, 2, 10013, 1000000000000000000000020000, 3, 10007, 7, 2, 10015, 1000000000000000000000020000, 3, 10016, 9, 0, 3, 1000000000000000000000020000, 2, 10018, 10003, 3, 10017, 10019, 2, 10020, 1000000000000000000000020000, 3,
+# 10014, 10021, 0, 30000, 0, 1, 10022, 10023, 2, 10024, 30000, 3, 10025, 10005, 2, 10026, 1000000000000000000000020000, 3]
+
+# Total Length (32 + 28 = 60) + NOT OK Solution + OK Solution
+
+STRATEGYY_CALCULATION = [1, 0, 5, 10000, 2, 0, 10001, 3, 0, 2, 3, 0, 10003, 1000000000000000000000020000, 2,10004, 10002, 3, 10005, 4, 1, 1000000000000000000000020000, 4, 1, 10006, 1000000000000000000000020000, 2, 10008, 10007, 3, 10009, 6, 2, 10010, 1000000000000000000000020000, 3,
+10011, 5, 0, 10012, 9, 0, 2, 1000000000000000000000020000, 2, 10014, 10003, 3, 10012, 10015, 2, 10016, 1000000000000000000000020000, 3, 10009, 8, 2, 10018, 1000000000000000000000020000, 3, 10019, 7, 0, 10020, 9, 0,
+3, 1000000000000000000000020000, 2, 10022, 10003, 3, 10021, 10023, 2, 10024, 1000000000000000000000020000, 3, 10017, 10025, 0, 30000, 0, 1, 10026, 10027, 2, 10028, 30000, 3, 10029, 10005, 2, 10030, 1000000000000000000000020000, 3, 
+1, 0, 5, 10000, 2, 0, 10001, 3, 0, 2, 3, 0, 10003, 1000000000000000000000020000, 2, 10004, 10002, 3, 10005, 1000000000000000000000020000, 2, 10006, 4, 3, 10007, 5, 2, 10008, 1000000000000000000000020000, 3, 10009, 9, 0, 2, 1000000000000000000000020000, 2,
+10011, 10003, 3, 10012, 10010, 2, 10013, 1000000000000000000000020000, 3, 10007, 7, 2, 10015, 1000000000000000000000020000, 3, 10016, 9, 0, 3, 1000000000000000000000020000, 2, 10018, 10003, 3, 10017, 10019, 2, 10020, 1000000000000000000000020000, 3,
+10014, 10021, 0, 30000, 0, 1, 10022, 10023, 2, 10024, 30000, 3, 10025, 10005, 2, 10026, 1000000000000000000000020000, 3]
+                    ## 60 !! add len for the cairo script input
+ 
+# Condition : if Ut <= Uo : jump 32
+
+# calcul availableLiq +/- allocation change
+# Step0 = 1, 0, 5                                   //available Liq step 0
+
+# calcul availableLiq + stable debt
+# Step1 = 10000, 2, 0
+
+# calcul totalLiq : Step0 + var_debt                        //totalLiq step 2
+# Step2= 10001, 3, 0
+
+# calcul total borrowed : stable debt + var debt
+# Step3 = 2, 3, 0                                                total borrowed Step 3
+
+# calcul  total borrowed x Precison (10^27)
+# Step4 = 10003, 1000000000000000000000020000, 2
+
+# calcul Ut(10^27) :  Step3 / Step1                         Ut(10^27) step 5
+# Step5 = 10004, 10002, 3
+
+# Final: if step5 (Ut) <= stratData 4 (Uo) : go index 32 and 28 length
+# FinalStep = 10005, 4, 32, 28
+
+# Total Length (without finalStep): 4 (steps length) + steps + final step
+CALCULATION_CONDITION = [1, 0, 5, 10000, 2, 0, 10001, 3, 0, 2, 3, 0, 10003, 1000000000000000000000020000, 2, 10004, 10002, 3, 10005, 4, 32, 28]
+## !! add len for the cairo script input: 6
+
+
+Compound
+
+
+## Supply rate = Ut *  Vt * (1 - Rt)
+# Ut, the utilisation ratio
+# Vt, the variable rate
+# Rt, the reserve factor
+
+# average variable rate Vt = R0 + (Ut/Uo)* R1 if Ut < Uo, R0 + R1 + (Ut - Uo)/ (1 - Uo)R2v else
+# R0, Base Variable Borrow Rate
+# R1, Variable Rate Slope 1
+# R2, Variable Rate Slope 2
+# Uo, optimal utilization rate
+
+## Ut = available liquidity / (available liquidity  + variable debt - reservepool)
+
+## Head to https://docs.compound.finance/v2/#networks, get the wanted cToken address and call getCash(), totalBorrows(), totalReserves(), reserveFactorMantissa()
+
+## Head to https://docs.compound.finance/v2/#networks, get the wanted cToken address get the interest rate contract address and call  kink(), multiplierPerBlock(), jumpMultiplierPerBlock(), baseRatePerBlock()
+
+## Head to https://docs.compound.finance/v2/#networks, get the wanted Comptroller address get the compSupplySpeeds
+
+## Head to https://docs.chain.link/docs/data-feeds/price-feeds/addresses/ get the oracle pair COMP/USD, call() pair and the 
+
+
+## The following data is valid for Goerli, with cUSDC ASSET, implementation for weth differ from mainet
+WANTED_TOKEN = "0x07865c6E87B9F70255377e024ace6630C1Eaa37F"
+cTOKEN = "0x73506770799Eb04befb5AaE4734e58C2C624F493"
+INTEREST_RATE_cTOKEN = "0xef5ae06093bdFc54Fbc804C7627B15dAE98Ca5e7"
+Comptroller = "0x05Df6C772A563FfB37fD3E04C1A279Fb30228621"
+## not available on goerli so DAI/USD is taken 
+COMP_USD = "0x0d79df66BE487753B02D015Fb622DED7f0E9798d"
+## usdc token as wanted token
+WANTED_TOKEN_USD = "0xAb5c49580294Aff77670F839ea425f5b78ab3Ae7"
+
+
+## getCash
+CONTRACT_ADDRESS_0 = cTOKEN
+## 0x3b1d21a2 (selector from getCash())
+CHECKDATA_0 = "0x3b1d21a2"
+STRATEGYY_OFFSET_0 = 0
+
+## totalBorrows()
+CONTRACT_ADDRESS_1 = cTOKEN
+## 0x47bd3718 (selector from totalBorrows()) 
+CHECKDATA_1 = "0x47bd3718"
+STRATEGYY_OFFSET_1 = 0
+
+## totalReserves() 
+CONTRACT_ADDRESS_2 = cTOKEN
+## 0x8f840ddd (selector from totalReserves())
+CHECKDATA_2 = "0x8f840ddd"
+STRATEGYY_OFFSET_2 = 0
+
+## reserveFactorMantissa() 
+CONTRACT_ADDRESS_3 = cTOKEN
+## 0x173b9904 (selector from reserveFactorMantissa()) 
+CHECKDATA_3 = "0x173b9904"
+STRATEGYY_OFFSET_3 = 0
+
+## Optimal utilization rate  
+CONTRACT_ADDRESS_4 = INTEREST_RATE_cTOKEN
+## 0x35ea6a75 (selector from kink() ) 
+CHECKDATA_4 = "0xfd2da339"
+STRATEGYY_OFFSET_4 = 0
+
+## multiplierPerBlock R1
+CONTRACT_ADDRESS_5 = INTEREST_RATE_cTOKEN
+## 0x8726bb89 (selector from multiplierPerBlock() ) 
+CHECKDATA_5 = "0x8726bb89"
+STRATEGYY_OFFSET_5 = 0
+
+## jumpMultiplierPerBlock R2
+CONTRACT_ADDRESS_6 = INTEREST_RATE_cTOKEN
+## 0xb9f9850a (selector from jumpMultiplierPerBlock() ) 
+CHECKDATA_6 = "0xb9f9850a"
+STRATEGYY_OFFSET_6 = 0
+
+## baseRatePerBlock R0
+CONTRACT_ADDRESS_7 = INTEREST_RATE_cTOKEN
+## 0xf14039de (selector from baseRatePerBlock() ) 
+CHECKDATA_7 = "0xf14039de"
+STRATEGYY_OFFSET_7 = 0
+
+## blocksPerYear() R0
+CONTRACT_ADDRESS_8 = INTEREST_RATE_cTOKEN
+## 0xa385fb96 (selector from blocksPerYear() ) 
+CHECKDATA_8 = "0xa385fb96"
+STRATEGYY_OFFSET_8 = 0
+
+##compSupplySpeeds(address)
+CONTRACT_ADDRESS_9 = Comptroller
+## 0x6aa875b5 (selector from compSupplySpeeds(address) ) 
+CHECKDATA_9 = "0x6aa875b500000000000000000000000073506770799Eb04befb5AaE4734e58C2C624F493"
+STRATEGYY_OFFSET_9 = 0
+
+##latestAnswer()
+CONTRACT_ADDRESS_10 = COMP_USD
+## 0x50d25bcd (selector from latestAnswer() ) 
+CHECKDATA_10 = "0x50d25bcd"
+STRATEGYY_OFFSET_10 = 0
+
+##decimals()
+CONTRACT_ADDRESS_11 = COMP_USD
+## 0x313ce567 (selector from decimals() ) 
+CHECKDATA_11 = "0x313ce567"
+STRATEGYY_OFFSET_11 = 0
+
+##latestAnswer()
+CONTRACT_ADDRESS_12 = WANTED_TOKEN_USD
+## 0x50d25bcd (selector from latestAnswer() ) 
+CHECKDATA_12 = "0x50d25bcd"
+STRATEGYY_OFFSET_12 = 0
+
+##decimals()
+CONTRACT_ADDRESS_13 = WANTED_TOKEN_USD
+## 0x313ce567 (selector from decimals() ) 
+CHECKDATA_13 = "0x313ce567"
+STRATEGYY_OFFSET_13 = 0
+
+##decimals()
+CONTRACT_ADDRESS_14 = WANTED_TOKEN
+## 0x313ce567 (selector from decimals() ) 
+CHECKDATA_14 = "0x313ce567"
+STRATEGYY_OFFSET_14 = 0
+
+# concerned strategy address
+STRATEGY_ADDRESS= "0x76aFA2b8C29E1B277A3BB1CD320b2756c1674c91" 
+
+MAX_STRATEGY_DEBT_RATIO = 10000
+
+# contracts to get data from
+STRATEGY_CONTRACTS = [CONTRACT_ADDRESS_0, CONTRACT_ADDRESS_1, CONTRACT_ADDRESS_2, CONTRACT_ADDRESS_3, CONTRACT_ADDRESS_4, CONTRACT_ADDRESS_5, CONTRACT_ADDRESS_6, CONTRACT_ADDRESS_7, CONTRACT_ADDRESS_8, CONTRACT_ADDRESS_9, CONTRACT_ADDRESS_10, CONTRACT_ADDRESS_11, CONTRACT_ADDRESS_12, CONTRACT_ADDRESS_13, CONTRACT_ADDRESS_14]
+
+# checkdata (selector + neccessary args bytes32)
+STRATEGYY_CHECKDATA = [CHECKDATA_0, CHECKDATA_1, CHECKDATA_2, CHECKDATA_3, CHECKDATA_4, CHECKDATA_5, CHECKDATA_6, CHECKDATA_7, CHECKDATA_8, CHECKDATA_9, CHECKDATA_10, CHECKDATA_11, CHECKDATA_12, CHECKDATA_13, CHECKDATA_14]
+
+# offset, which args we need from the data received from the call, 0 by default
+STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, STRATEGYY_OFFSET_3, STRATEGYY_OFFSET_4, STRATEGYY_OFFSET_5, STRATEGYY_OFFSET_6, STRATEGYY_OFFSET_7,STRATEGYY_OFFSET_8, STRATEGYY_OFFSET_9, STRATEGYY_OFFSET_10, STRATEGYY_OFFSET_11, STRATEGYY_OFFSET_12,STRATEGYY_OFFSET_13, STRATEGYY_OFFSET_14]
+
+
+# ////////CASE Ut > Uo
+
+## Precision 10^18 kink, reserve factor  
+
+# calcul cash +/- allocation change
+# Step0 = 0, 0, 5 
+
+# calcul cash + total borrow
+# Step1 = 10000, 1, 0
+
+# calcul step1 - reserve     total supply asset
+# Step2 = 10001, 2, 1
+
+# calcul totalBorrow * precision 10^18
+# Step3 = 1, 1000000000000020000, 2
+
+# calcul Step2 / step 1                         
+# Step4 = 10003, 10002, 3             Step4: Ut (10^18)
+
+# calcul kink x R1
+# Step5 = 4, 5, 2
+
+# calcul step 5 / Precision         R1*kink
+# Step6 = 10005, 1000000000000020000, 3     
+
+# calcul step 6 + RO
+# Step7 = 10006, 7, 0           R1*kink + RO
+
+# calcul Ut(10^18) - Uo (kink)
+# Step8 = 10004, 4, 1
+
+# calcul step8 * R2
+# Step9 = 10008, 6, 2      
+
+# calcul Step9 / Precision
+# Step10 = 10009, 1000000000000020000, 3      R2(Ut - Uo)
+
+# calcul R1*kink + RO + R2(Ut - Uo)
+# Step11 = 10010, 10007, 0                     Vt = R1*kink + RO + R2(Ut - Uo) Step 11
+
+
+
+# Calcul ( 10^18 - reserveFactorMantissa) 
+# Step12 = 1000000000000020000, 3, 1
+
+# Calcul ( VT * step12*(10^18)) 
+# Step13 = 10011, 10012, 2
+
+# Calcul ( VT * step13) 
+# Step14 = 10013, 1000000000000020000, 3                      Supply rate per block step 14 
+
+# Calcul Step14 * Ut (10^18)
+# Step15 = 10014, 10004, 2
+
+# Calcul Step15 / Precision
+# Step16 = 10015, 1000000000000020000, 3
+
+# Calcul Step16 * blockperyear
+# Step17 = 10016, 8, 2                          APR supply * 10^18
+
+###### LiquidityMining APY`
+
+# Calcul compSupplySpeeds() per year ( * block/year) 
+# Step18 = 9, 8, 2                                  COMP for supplier per Year step 17
+
+# Calcul 10^wantedtoken decimals
+# Step19 = 20010, 14, 4
+
+# Calcul step 17 * 10^wantedtoken decimals 
+# Step20 = 10018, 10019, 2
+
+# Calcul  comp in a year / total in supply =         APR in COMP step 21
+# Step21 = 10020, 10002, 3   
+
+# Calcul Step 20 in USD * 10^oracle decimals
+# Step22 = 10021, 10, 2                    
+
+# Calcul 10^decimals oracle comp usd
+# Step23 = 20010, 11, 4
+
+# Calcul  Step 18 in USD
+# Step24 = 10022, 10023, 3                              APR in USD step 24
+
+# Calcul 10^decimals oracle wanted token usd
+# Step25 = 20010, 13, 4
+
+# Calcul Step24 * 10^oracle decimals 
+# Step26 = 10024, 10025, 2
+
+# Calcul Step 18 in Wanted token
+# Step27 = 10026, 12, 3                                 APR in WANTED token Step 27 (10^18)
+
+# Calcul totoal apr 10^18           TOTAL APR (10^18)
+# Step28 = 10027, 10017, 0 
+
+# Calcul (total APR 10^27)                          TOTAL APR (10^27)
+# Step29 = 10028, 1000020000, 2 
+
+## 29 step      LEN = 30
+
+# 2, 5 and 3 last 
+# [0, 0, 5, 10000, 1, 0, 
+# 10001, 2, 1, 1, 1000000000000020000, 2, 10003, 10002, 3, 4, 5, 2, 10005, 1000000000000020000, 3,
+# 10006, 7, 0, 10004, 4, 1, 10008, 6, 2, 10009, 1000000000000020000, 3, 10010, 10007, 0, 
+# 1000000000000020000, 3, 1, 10011, 10012, 2, 10013, 1000000000000020000, 3, 10014, 10004, 2, 10015, 1000000000000020000, 3,
+# 10016, 8, 2, 9, 8, 2, 20010, 14, 4, 10018, 10019, 2, 10020, 10002, 3,
+# 10021, 10, 2, 20010, 11, 4, 10022, 10023, 3, 20010, 13, 4, 10024, 10025, 2,
+# 10026, 12, 3, 10027, 10017, 0 , 10028, 1000020000, 2]
+
+
+# ////////CASE Ut <= Uo
+
+
+# calcul cash +/- allocation change
+# Step0 = 0, 0, 5 
+
+# calcul cash + total borrow
+# Step1 = 10000, 1, 0
+
+# calcul step1 - reserve
+# Step2 = 10001, 2, 1
+
+# calcul totalBorrow * precision 10^18
+# Step3 = 1, 1000000000000020000, 2
+
+# calcul Step3 / step 2                         
+# Step4 = 10003, 10002, 3             Step3: Ut (10^18)
+
+# calcul Step4 * R1                   
+# Step5 = 10004, 5, 2
+
+# calcul Step5 / Precision                   
+# Step6 = 10005, 1000000000000020000, 3
+
+# calcul Step6 + RO                    
+# Step7 = 10006, 7, 0                   Step7: Ut*R1 + R0 
+
+# Calcul ( 10^18 - reserveFactorMantissa) 
+# Step8 = 1000000000000020000, 3, 1
+
+# Calcul (Ut*R1 + R0) * (1 - Rt) *(10^18)
+# Step9 = 10008, 10007, 2
+
+# Calcul Step9 / Precision
+# Step10 = 10009, 1000000000000020000, 3    
+
+# Calcul Step10 * Ut (10^18)
+# Step11 = 10010, 10004, 2
+
+# Calcul Step11 / Precision
+# Step12 = 10011, 1000000000000020000, 3
+
+# Calcul Step12 * blockperyear
+# Step13 = 10012, 8, 2                          APR supply * 10^18
+
+###### LiquidityMining APY`
+
+# Calcul compSupplySpeeds() per year ( * block/year) 
+# Step14 = 9, 8, 2                                  COMP for supplier per Year step 14
+
+# Calcul 10^wantedtoken decimals
+# Step15 = 20010, 14, 4
+
+# Calcul step 13 * 10^wantedtoken decimals 
+# Step16 = 10014, 10015, 2
+
+# Calcul  comp in a year / total in supply =         APR in COMP step 17
+# Step17 = 10016, 10002, 3   
+
+# Calcul Step 17 in USD * 10^oracle decimals
+# Step18 = 10017, 10, 2                    
+
+# Calcul 10^decimals oracle comp usd
+# Step19 = 20010, 11, 4
+
+# Calcul  Step 18 in USD
+# Step20 = 10018, 10019, 3                              APR in USD step 20
+
+# Calcul 10^decimals oracle wanted token usd
+# Step21 = 20010, 13, 4
+
+# Calcul  step20* 10^oracle decimals 
+# Step22 = 10020, 10021, 2
+
+# Calcul Step 18 in Wanted token
+# Step23 = 10022, 12, 3                                 APR in WANTED token Step 23 (10^18)
+
+# Calcul totoal apr 10^18           TOTAL APR (10^18)
+# Step24 = 10023, 10013, 0 
+
+# Calcul (total APR 10^27)                          TOTAL APR (10^27)
+# Step25 = 10024, 1000020000, 2 
+
+
+## 25 step      LEN = 26
+
+[0, 0, 5, 10000, 1, 0, 
+10001, 2, 1, 1, 1000000000000020000, 2, 10003, 10002, 3, 10004, 5, 2, 10005, 1000000000000020000, 3,
+10006, 7, 0, 1000000000000020000, 3, 1, 10008, 10007, 2, 10009, 1000000000000020000, 3, 10010, 10004, 2,
+10011, 1000000000000020000, 3, 10012, 8, 2, 9, 8, 2, 20010, 14, 4, 10014, 10015, 2,
+10016, 10002, 3, 10017, 10, 2, 20010, 11, 4, 10018, 10019, 3, 20010, 13, 4,
+10020, 10021, 2, 10022, 12, 3, 10023, 10013, 0, 10024, 1000020000, 2]
+
+
+
+## Not ok len = 30 + ok len 26 tot 56, offset 30
+
+
+STRATEGYY_CALCULATION = [0, 0, 5, 10000, 1, 0, 10001, 2, 1, 1, 1000000000000020000, 2, 10003, 10002, 3, 4, 5, 2, 10005, 1000000000000020000, 3, 10006, 7, 0, 10004, 4, 1, 10008, 6, 2, 10009, 1000000000000020000, 3, 10010, 10007, 0, 
+1000000000000020000, 3, 1, 10011, 10012, 2, 10013, 1000000000000020000, 3, 10014, 10004, 2, 10015, 1000000000000020000, 3, 10016, 8, 2, 9, 8, 2, 20010, 14, 4, 10018, 10019, 2, 10020, 10002, 3, 10021, 10, 2, 20010, 11, 4, 10022, 10023, 3, 20010, 13, 4, 10024, 10025, 2,
+10026, 12, 3, 10027, 10017, 0 , 10028, 1000020000, 2, 0, 0, 5, 10000, 1, 0, 10001, 2, 1, 1, 1000000000000020000, 2, 10003, 10002, 3, 10004, 5, 2, 10005, 1000000000000020000, 3,
+10006, 7, 0, 1000000000000020000, 3, 1, 10008, 10007, 2, 10009, 1000000000000020000, 3, 10010, 10004, 2, 10011, 1000000000000020000, 3, 10012, 8, 2, 9, 8, 2, 20010, 14, 4, 10014, 10015, 2,
+10016, 10002, 3, 10017, 10, 2, 20010, 11, 4, 10018, 10019, 3, 20010, 13, 4, 10020, 10021, 2, 10022, 12, 3, 10023, 10013, 0, 10024, 1000020000, 2]
+## ! add len 56 script cairo
+
+# calcul cash +/- allocation change
+# Step0 = 0, 0, 5 
+
+# calcul cash + total borrow
+# Step1 = 10000, 1, 0
+
+# calcul step2 - reserve
+# Step2 = 10001, 2, 1
+
+# calcul totalBorrow * precision 10^18
+# Step3 = 1, 1000000000000020000, 2
+
+# calcul Step2 / step 1                         
+# Step4 = 10003, 10002, 3             Step3: Ut (10^18)
+
+# final Step                        
+# finalStep = 10004, 4, 30, 26            
+
+CALCULATION_CONDITION = [0, 0, 5, 10000, 1, 0, 10001, 2, 1, 1, 1000000000000020000, 2, 10003, 10002, 3, 10004, 4, 30, 26]
+## add len 5 for cairo script 

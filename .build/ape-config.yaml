@@ -11,8 +11,8 @@ solidity:
   import_remapping:
     - "@openzeppelin=OpenZeppelin/4.8.0"
 
-# default_ecosystem: <goerli>
-# <goerli>:
-#   default_network: <goerli-network>
-#   <goerli-network>:
-#     default_provider: <https://goerli.infura.io/v3/>
+default_ecosystem: <goerli>
+<goerli>:
+  default_network: <goerli-network>
+  <goerli-network>:
+    default_provider: <https://goerli.infura.io/v3/>

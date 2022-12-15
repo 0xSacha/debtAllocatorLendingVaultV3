@@ -10,3 +10,13 @@ contract MockStrategy {
 
 }
 
+contract MockStrategy2 {
+    uint256 public apiVersion = 2;
+    uint256 public totalAssets = 10*10**18;
+
+    function updateTotalAssets() public {
+        totalAssets = 500*10**18;
+    }
+
+}
+

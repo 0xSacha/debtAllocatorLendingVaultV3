@@ -89,7 +89,7 @@ contract DebtAllocator is Ownable, Pausable {
     event StrategyRemoved(address[] Strategies,uint256[] StrategiesCallLen, address[] Contracts, bytes4[] Checkdata, uint256[] Offset, uint256[] CalculationsLen, uint256[] Calculations, uint256[] ConditionsLen, uint256[] Conditions);
 
 
-    event NewSnapshot(uint256[] dataStrategies, uint256[] calculation, uint256[] condition,uint256 inputHash, uint256[] targetAllocation, uint256 timestamp);
+    event NewSnapshot(uint256[] dataStrategies, uint256[] calculation, uint256[] condition);
     event NewSolution(uint256 newApy, uint256[] newTargetAllocation, address proposer, uint256 proposerPerformance,uint256 timestamp);
 
     event NewCairoProgramHash(bytes32 newCairoProgramHash);
@@ -102,7 +102,7 @@ contract DebtAllocator is Ownable, Pausable {
 
     function updateRewardsConfig(address _rewardsPayer, address _rewardsStreamer, uint216 _rewardsPerSec) external onlyOwner {
         bytes32 streamId = IStreamer(_rewardsStreamer).getStreamId(_rewardsPayer, address(this), _rewardsPerSec);
-        require(IStreamer(_rewardsStreamer).streamToStart(streamId) > 0, "stream does not exist");
+        require(IStreamer(_rewardsStreamer).streamToStart(streamId) > 0, "INVALID_STREAM");
         rewardsPayer = _rewardsPayer;
         rewardsStreamer = _rewardsStreamer;
         rewardsPerSec = _rewardsPerSec;
@@ -137,7 +137,7 @@ contract DebtAllocator is Ownable, Pausable {
     }
 
     function forceTargetAllocation(uint256[] memory _newTargetAllocation) public onlyOwner whenPaused {
-        require(strategiesHash != 0, "NO_STRATEGIES_REGISTERED");   
+        require(strategiesHash != 0, "NO_STRATEGIES");   
         require(_newTargetAllocation.length == targetAllocation.length, "INVALIDE_LENGTH");
         for(uint256 j; j < _newTargetAllocation.length; j++) {
             targetAllocation[j] = _newTargetAllocation[j];
@@ -259,7 +259,7 @@ contract DebtAllocator is Ownable, Pausable {
             uint256 indexStrategyToUpdate,
             StrategyParam memory _newStrategyParam) external onlyOwner {
         // Checks at least one strategy is registered
-        require(strategiesHash != 0, "NO_STRATEGIES_REGISTERED");   
+        require(strategiesHash != 0, "NO_STRATEGIES");   
 
         // Checks strategies data is valid 
         bytes4[] memory checkdata = new bytes4[](_packedStrategies.checkdata.length);
@@ -291,6 +291,7 @@ contract DebtAllocator is Ownable, Pausable {
         uint256[] memory conditions = new uint256[](_packedStrategies.conditions.length - _packedStrategies.conditionsLen[indexStrategyToUpdate] + _newStrategyParam.conditionsLen);
         uint256 offsetCalldata = indexStrategyToUpdate;
         if(indexStrategyToUpdate == _packedStrategies.addresses.length - 1){
+            
             for(uint256 i = 0 ; i < offsetCalldata; i++) {
                 strategiesCallLen[i] = _packedStrategies.callLen[i];
             }
@@ -326,6 +327,7 @@ contract DebtAllocator is Ownable, Pausable {
             for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
                 offset[i + offsetCalldata] = _newStrategyParam.offset[i];
             }
+
             
             offsetCalldata = 0;
             for(uint256 i = 0 ; i < indexStrategyToUpdate; i++) {
@@ -338,6 +340,7 @@ contract DebtAllocator is Ownable, Pausable {
                 calculations[i + offsetCalldata] = _newStrategyParam.calculations[i];
             }
 
+
             offsetCalldata = 0;
             for(uint256 i = 0 ; i < indexStrategyToUpdate; i++) {
                 offsetCalldata += _packedStrategies.conditionsLen[i];
@@ -348,6 +351,7 @@ contract DebtAllocator is Ownable, Pausable {
             for(uint256 i = 0 ; i <  _newStrategyParam.conditionsLen; i++) {
                 conditions[i + offsetCalldata] = _newStrategyParam.conditions[i];
             }
+
         } else {
             for(uint256 i = 0 ; i < offsetCalldata; i++) {
                 strategiesCallLen[i] = _packedStrategies.callLen[i];
@@ -409,13 +413,13 @@ contract DebtAllocator is Ownable, Pausable {
                 offset[i + offsetCalldata + _newStrategyParam.callLen] = _packedStrategies.offset[offsetCalldataAfter + i];
             }
 
-            uint256 totalCalculationsLen = 0;
+            totalCallLen = 0;
             offsetCalldata = 0;
             for(uint256 i = 0 ; i < _packedStrategies.addresses.length; i++) {
                 if(i == indexStrategyToUpdate){
-                    offsetCalldata = totalCalculationsLen;
+                    offsetCalldata = totalCallLen;
                 }
-                totalCalculationsLen += _packedStrategies.calculationsLen[i];
+                totalCallLen += _packedStrategies.calculationsLen[i];
             }
             offsetCalldataAfter = offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToUpdate];
             for(uint256 i = 0 ; i < offsetCalldata; i++) {
@@ -424,18 +428,17 @@ contract DebtAllocator is Ownable, Pausable {
             for(uint256 i = 0 ; i <  _newStrategyParam.calculationsLen; i++) {
                 calculations[i + offsetCalldata] = _newStrategyParam.calculations[i];
             }
-            for(uint256 i = 0 ; i < totalCalculationsLen - offsetCalldataAfter; i++) {
+            for(uint256 i = 0 ; i < totalCallLen - offsetCalldataAfter; i++) {
                 calculations[i + offsetCalldata + _newStrategyParam.calculationsLen] = _packedStrategies.calculations[offsetCalldataAfter + i];
             }
 
-
-            uint256 totalConditionsLen = 0;
+            totalCallLen = 0;
             offsetCalldata = 0;
             for(uint256 i = 0 ; i < _packedStrategies.addresses.length; i++) {
                 if(i == indexStrategyToUpdate){
-                    offsetCalldata = totalConditionsLen;
+                    offsetCalldata = totalCallLen;
                 }
-                totalConditionsLen += _packedStrategies.conditionsLen[i];
+                totalCallLen += _packedStrategies.conditionsLen[i];
             }
             offsetCalldataAfter = offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToUpdate];
             for(uint256 i = 0 ; i < offsetCalldata; i++) {
@@ -444,11 +447,13 @@ contract DebtAllocator is Ownable, Pausable {
             for(uint256 i = 0 ; i <  _newStrategyParam.conditionsLen; i++) {
                 conditions[i + offsetCalldata] = _newStrategyParam.conditions[i];
             }
-            for(uint256 i = 0 ; i < totalConditionsLen - offsetCalldataAfter; i++) {
+            for(uint256 i = 0 ; i < totalCallLen - offsetCalldataAfter; i++) {
                 conditions[i + offsetCalldata + _newStrategyParam.conditionsLen] = _packedStrategies.conditions[offsetCalldataAfter + i];
             }
         }
+
         strategiesHash = uint256(keccak256(abi.encodePacked(_packedStrategies.addresses, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen ,conditions)));
+
         emit StrategyUpdated(_packedStrategies.addresses, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions);
     }
 
@@ -457,7 +462,7 @@ contract DebtAllocator is Ownable, Pausable {
             PackedStrategies memory _packedStrategies,
             uint256 indexStrategyToRemove) external onlyOwner {
         // Checks at least one strategy is registered
-        require(strategiesHash != 0, "NO_STRATEGIES_REGISTERED");   
+        require(strategiesHash != 0, "NO_STRATEGIES");   
 
         bytes4[] memory checkdata = new bytes4[](_packedStrategies.checkdata.length);
         for(uint256 i = 0 ; i < _packedStrategies.checkdata.length; i++) {
@@ -527,33 +532,32 @@ contract DebtAllocator is Ownable, Pausable {
             offset[i + offsetCalldata] = _packedStrategies.offset[offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove] + i];
         }
 
-        uint256 totalCalculationsLen = 0;
+        totalCallLen = 0;
         offsetCalldata = 0;
         for(uint256 i = 0 ; i < _packedStrategies.addresses.length; i++) {
             if(i == indexStrategyToRemove){
-                offsetCalldata = totalCalculationsLen;
+                offsetCalldata = totalCallLen;
             }
-            totalCalculationsLen += _packedStrategies.calculationsLen[i];
+            totalCallLen += _packedStrategies.calculationsLen[i];
         }
         for(uint256 i = 0 ; i < offsetCalldata; i++) {
             calculations[i] = _packedStrategies.calculations[i];
         }
-        for(uint256 i = 0 ; i < totalCalculationsLen - (offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToRemove]); i++) {
+        for(uint256 i = 0 ; i < totalCallLen - (offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToRemove]); i++) {
             calculations[i + offsetCalldata] = _packedStrategies.calculations[offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToRemove] + i];
         }
-
-        uint256 totalConditionsLen = 0;
+        totalCallLen = 0;
         offsetCalldata = 0;
         for(uint256 i = 0 ; i < _packedStrategies.addresses.length; i++) {
             if(i == indexStrategyToRemove){
-                offsetCalldata = totalConditionsLen;
+                offsetCalldata = totalCallLen;
             }
-            totalConditionsLen += _packedStrategies.conditionsLen[i];
+            totalCallLen += _packedStrategies.conditionsLen[i];
         }
         for(uint256 i = 0 ; i < offsetCalldata; i++) {
             conditions[i] = _packedStrategies.conditions[i];
         }
-        for(uint256 i = 0 ; i < totalConditionsLen - (offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToRemove]); i++) {
+        for(uint256 i = 0 ; i < totalCallLen - (offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToRemove]); i++) {
             conditions[i + offsetCalldata] = _packedStrategies.conditions[offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToRemove] + i];
         }
         
@@ -569,8 +573,7 @@ contract DebtAllocator is Ownable, Pausable {
             uint256[] memory offset) public returns(uint256[] memory dataStrategies) {
         uint256[] memory dataStrategies_ = new uint256[](contracts.length);
         for(uint256 j; j < contracts.length; j++) {
-            (bool success, bytes memory data) = contracts[j].call(checkdata[j]);
-            require(success == true, "call didn't succeed");
+            (, bytes memory data) = contracts[j].call(checkdata[j]);
             dataStrategies_[j] = uint256(bytesToBytes32(data, offset[j]));
         }
        return(dataStrategies_);
@@ -609,7 +612,7 @@ contract DebtAllocator is Ownable, Pausable {
 
     function saveSnapshot(PackedStrategies memory _packedStrategies) external {
         // Checks at least one strategy is registered
-        require(strategiesHash != 0, "NO_STRATEGIES_REGISTERED");   
+        require(strategiesHash != 0, "NO_STRATEGIES");   
 
         bytes4[] memory checkdata = new bytes4[](_packedStrategies.checkdata.length);
         for(uint256 i = 0 ; i < _packedStrategies.checkdata.length; i++) {
@@ -622,31 +625,31 @@ contract DebtAllocator is Ownable, Pausable {
         uint256[] memory dataStrategies = getStrategiesData(_packedStrategies.contracts, _packedStrategies.checkdata, _packedStrategies.offset);
         inputHash = uint256(keccak256(abi.encodePacked(dataStrategies, _packedStrategies.calculations, _packedStrategies.conditions)));
         snapshotTimestamp[inputHash] = block.timestamp;
-        emit NewSnapshot(dataStrategies, _packedStrategies.calculations, _packedStrategies.conditions, inputHash, targetAllocation, block.timestamp);
+        emit NewSnapshot(dataStrategies, _packedStrategies.calculations, _packedStrategies.conditions);
     }
 
 
     function verifySolution(uint256[] memory programOutput) external whenNotPaused returns(bytes32){
         // NOTE: Check current snapshot not stale
         uint256 _snapshotTimestamp = snapshotTimestamp[inputHash];
-        require(_snapshotTimestamp + staleSnapshotPeriod > block.timestamp, "STALE_SNAPSHOT_PERIOD");
+        require(_snapshotTimestamp + staleSnapshotPeriod > block.timestamp, "STALE_SNAPSHOT");
 
         // NOTE: We get the data from parsing the program output
         (uint256 inputHash_,  uint256[] memory current_target_allocation, uint256[] memory new_target_allocation, uint256 current_solution, uint256 new_solution) = parseProgramOutput(programOutput); 
         
         // check inputs
-        require(inputHash_==inputHash, "INVALID_INPUTS");
+        require(inputHash_==inputHash, "INVALID_HASH");
 
         // check target allocation len
         require(targetAllocation.length == current_target_allocation.length && targetAllocation.length == new_target_allocation.length,"INVALID_TARGET_ALLOCATION_LENGTH");
             
         // check if the new solution better than previous one
-        require(new_solution - minimumApyIncreaseForNewSolution >= current_solution,"NEW_SOLUTION_TOO_BAD");
+        require(new_solution - minimumApyIncreaseForNewSolution >= current_solution,"TOO_BAD");
         
         // Check with cairoVerifier
         bytes32 outputHash = keccak256(abi.encodePacked(programOutput));
         bytes32 fact = keccak256(abi.encodePacked(cairoProgramHash, outputHash));
-        require(cairoVerifier.isValid(fact), "MISSING_CAIRO_PROOF");
+        require(cairoVerifier.isValid(fact), "MISSING_PROOF");
 
         // check no one has improven it in stale period (in case market conditions deteriorated)
         // require(_newSolution > currentAPY || block.timestamp - lastUpdate >= stalePeriod, "WRONG_SOLUTION");
@@ -697,7 +700,7 @@ contract DebtAllocator is Ownable, Pausable {
     }
 
     function claimRewards() external {
-        require(msg.sender == proposer, "not allowed");
+        require(msg.sender == proposer, "NOT_ALLOWED");
         sendRewardsToCurrentProposer();
     }
 

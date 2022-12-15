@@ -1,9 +1,12 @@
 //SPDX-License-Identifier: UNLICENSED
 
-import "@openzeppelin/access/Ownable.sol";
-import "@openzeppelin/security/Pausable.sol";
-import "@openzeppelin/token/ERC20/IERC20.sol";
-import "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
+import "./.cache/OpenZeppelin/v4.8.0/access/Ownable.sol";
+import "./.cache/OpenZeppelin/v4.8.0/security/Pausable.sol";
+import "./.cache/OpenZeppelin/v4.8.0/token/ERC20/IERC20.sol";
+import "./.cache/OpenZeppelin/v4.8.0/token/ERC20/utils/SafeERC20.sol";
+import {IStrategy} from "./interfaces/IStrategy.sol";
+
+
 // import "OpenZeppelin/openzeppelin-contracts@4.8.0/contracts/access/Ownable.sol";
 // import "OpenZeppelin/openzeppelin-contracts@4.8.0/contracts/security/Pausable.sol";
 
@@ -25,27 +28,43 @@ contract DebtAllocator is Ownable, Pausable {
 
     using SafeERC20 for IERC20;
 
+    uint256 PRECISION = 10**18;
+
     ICairoVerifier public cairoVerifier = ICairoVerifier(address(0));
     bytes32 public cairoProgramHash = 0x0;
 
-    address[] public strategies;
-    uint256[] public debtRatios;
+    struct PackedStrategies{
+    	address[] addresses;
+        uint256[] callLen;
+        address[] contracts; 
+        bytes[] checkdata; 
+        uint256[] offset; 
+        uint256[]  calculationsLen;
+        uint256[]  calculations; 
+        uint256[] conditionsLen;
+        uint256[] conditions;
+    }
 
-    //mapping to get strategy inputs, contracts address+selector
-    mapping(address => address[]) public strategyContracts;
-    mapping(address => bytes[]) public strategyCheckdata;
-    mapping(address => uint256[]) public strategyOffset;
-    mapping(address => uint256[]) public strategyCalculation;
-    mapping(address => uint256[]) public strategyCondition;
+    struct StrategyParam{
+        uint256 callLen;
+        address[] contracts; 
+        bytes[] checkdata; 
+        uint256[] offset; 
+        uint256 calculationsLen;
+        uint256[]  calculations; 
+        uint256  conditionsLen;
+        uint256[]  conditions;
+    }
 
-    //Some strategies may be risky or involve lock, their allocation should be limited in the vault
-    mapping(address => uint16) public strategyMaxDebtRatio;
+
+    uint256[] public targetAllocation;
 
     // Everyone is free to propose a new solution, the address is stored so the user can get rewarded
     address public proposer;
     uint256 public proposerPerformance;
     uint256 public currentAPY;
     uint256 public lastUpdate;
+    uint256 public strategiesHash;
     uint256 public inputHash;
     mapping(uint256 => uint256) public snapshotTimestamp;
 
@@ -65,16 +84,20 @@ contract DebtAllocator is Ownable, Pausable {
         updateCairoProgramHash(_cairoProgramHash);
     }
 
-    event NewSnapshot(uint256[][] dataStrategies, uint256[][] calculation, uint256[][] condition,uint256 inputHash, uint256 timestamp);
-    event NewStrategy(address newStrategy, uint16 strategyMaxDebtRatio,address[] strategyContracts,bytes[] strategyCheckData, uint256[] strategyOffset, uint256[] strategyCalculation, uint256[] strategyCondition);
-    event StrategyUpdated(address currentStrategy, uint16 strategyMaxDebtRatio,address[] strategyContracts,bytes[] strategyCheckData, uint256[] strategyOffset,uint256[] strategyCalculation, uint256[] strategyCondition);
-    event StrategyRemoved(address strategyRemoved);
+    event StrategyAdded(address[] Strategies,uint256[] StrategiesCallLen, address[] Contracts, bytes4[] Checkdata, uint256[] Offset, uint256[] CalculationsLen, uint256[] Calculations, uint256[] ConditionsLen, uint256[] Conditions);
+    event StrategyUpdated(address[] Strategies,uint256[] StrategiesCallLen, address[] Contracts, bytes4[] Checkdata, uint256[] Offset, uint256[] CalculationsLen, uint256[] Calculations, uint256[] ConditionsLen, uint256[] Conditions);
+    event StrategyRemoved(address[] Strategies,uint256[] StrategiesCallLen, address[] Contracts, bytes4[] Checkdata, uint256[] Offset, uint256[] CalculationsLen, uint256[] Calculations, uint256[] ConditionsLen, uint256[] Conditions);
+
+
+    event NewSnapshot(uint256[] dataStrategies, uint256[] calculation, uint256[] condition,uint256 inputHash, uint256[] targetAllocation, uint256 timestamp);
+    event NewSolution(uint256 newApy, uint256[] newTargetAllocation, address proposer, uint256 proposerPerformance,uint256 timestamp);
+
     event NewCairoProgramHash(bytes32 newCairoProgramHash);
     event NewCairoVerifier(address newCairoVerifier);
     event NewStalePeriod(uint256 newStalePeriod);
     event NewStaleSnapshotPeriod(uint256 newStaleSnapshotPeriod);
-    event NewSolution(uint256 newApy, uint256[] newDebtRatio, address proposer, uint256 proposerPerformance,uint256 timestamp);
-    event debtRatioForced(uint256[] newDebtRatio);
+    event targetAllocationForced(uint256[] newTargetAllocation);
+
     // TODO: add role based access control to invoke those functions
 
     function updateRewardsConfig(address _rewardsPayer, address _rewardsStreamer, uint216 _rewardsPerSec) external onlyOwner {
@@ -113,184 +136,411 @@ contract DebtAllocator is Ownable, Pausable {
         emit NewStaleSnapshotPeriod(_staleSnapshotPeriod);
     }
 
-    function forceDebtRatio(uint256[] memory _new_debt_ratio) public onlyOwner whenPaused {
-        require(strategies.length != 0, "STRATEGY_NUL");
-        require(_new_debt_ratio.length == strategies.length, "INVALIDE_LENGTH");
-        uint256 cumulative_debt_ratio = 0;
-        for(uint256 j; j < strategies.length; j++) {
-            debtRatios[j] = _new_debt_ratio[j];
-            cumulative_debt_ratio += _new_debt_ratio[j];
+    function forceTargetAllocation(uint256[] memory _newTargetAllocation) public onlyOwner whenPaused {
+        require(strategiesHash != 0, "NO_STRATEGIES_REGISTERED");   
+        require(_newTargetAllocation.length == targetAllocation.length, "INVALIDE_LENGTH");
+        for(uint256 j; j < _newTargetAllocation.length; j++) {
+            targetAllocation[j] = _newTargetAllocation[j];
         }
-        require(cumulative_debt_ratio == 10000, "INVALID_DEBT_RATIO_SUM");
-        emit debtRatioForced(_new_debt_ratio);
+        emit targetAllocationForced(_newTargetAllocation);
     }
 
-    function addStrategy(address strategy, uint16 maxDebtRatio,address[] memory contracts, bytes[] memory checkdata, uint256[] memory offset, uint256[] memory calculations, uint256[] memory conditions) external onlyOwner{
-        strategies.push(strategy);
-        require(strategyMaxDebtRatio[strategy] == 0, "STRATEGY_EXISTS");
-        require(contracts.length == checkdata.length, "INVALID_TAB_LEN_1");
-        require(contracts.length == offset.length, "INVALID_TAB_LEN_2");
-        for(uint256 i; i < contracts.length; i++) {
-            strategyContracts[strategy].push(contracts[i]);
-            strategyCheckdata[strategy].push(checkdata[i]);
+    function addStrategy(
+            PackedStrategies memory _packedStrategies,
+            address _newStrategy,
+            StrategyParam memory _newStrategyParam) external onlyOwner{
+        // Checks previous strategies data valid 
+        bytes4[] memory checkdata = new bytes4[](_packedStrategies.checkdata.length);
+        for(uint256 i = 0 ; i < _packedStrategies.checkdata.length; i++) {
+            checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
         }
 
-        for(uint256 j; j < offset.length; j++) {
-            strategyOffset[strategy].push(offset[j]);
+        if(strategiesHash != 0){         
+            require(strategiesHash == uint256(keccak256(abi.encodePacked(_packedStrategies.addresses, _packedStrategies.callLen, _packedStrategies.contracts, checkdata, _packedStrategies.offset, _packedStrategies.calculationsLen, _packedStrategies.calculations, _packedStrategies.conditionsLen, _packedStrategies.conditions))), "INVALID_DATA");   
+        }
+    
+        // Checks strategy is yearn v3
+        try IStrategy(_newStrategy).apiVersion() returns (uint256) {} catch {
+            revert("INVALID_STRATEGY");
         }
 
-        for(uint256 k; k < calculations.length; k++) {
-            strategyCalculation[strategy].push(calculations[k]);
+        // Checks call data valid
+        require(_newStrategyParam.callLen == _newStrategyParam.callLen && _newStrategyParam.callLen == _newStrategyParam.checkdata.length && _newStrategyParam.callLen == _newStrategyParam.offset.length && _newStrategyParam.calculationsLen == _newStrategyParam.calculations.length && _newStrategyParam.conditionsLen == _newStrategyParam.conditions.length, "INVALID_ARRAY_LEN");
+        for (uint256 i = 0; i < _newStrategyParam.callLen; i++) {
+            (bool success,) = _newStrategyParam.contracts[i].call(_newStrategyParam.checkdata[i]);
+                require(success == true, "INVALID_CALLDATA");
+            // Should we check for offset?
         }
 
-        for(uint256 l; l < conditions.length; l++) {
-            strategyCondition[strategy].push(conditions[l]);
+        // Build new arrays for the Strategy Hash and the Event
+        address[] memory strategies = new address[](_packedStrategies.addresses.length + 1);
+        for(uint256 i = 0 ; i < _packedStrategies.addresses.length; i++) {
+            strategies[i] = _packedStrategies.addresses[i];
+        }
+        strategies[_packedStrategies.addresses.length] = _newStrategy;
+
+        uint256[] memory strategiesCallLen = new uint256[](_packedStrategies.callLen.length + 1);
+        for(uint256 i = 0 ; i < _packedStrategies.callLen.length; i++) {
+            strategiesCallLen[i] = _packedStrategies.callLen[i];
+        }
+        strategiesCallLen[_packedStrategies.callLen.length] = _newStrategyParam.callLen;
+
+        address[] memory contracts = new address[](_packedStrategies.contracts.length + _newStrategyParam.callLen);
+        for(uint256 i = 0 ; i < _packedStrategies.contracts.length; i++) {
+            contracts[i] = _packedStrategies.contracts[i];
+        }
+        for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
+            contracts[i + _packedStrategies.contracts.length] = _newStrategyParam.contracts[i];
         }
 
-        strategyMaxDebtRatio[strategy] = maxDebtRatio;
+        checkdata = new bytes4[](_packedStrategies.checkdata.length + _newStrategyParam.callLen);
+        for(uint256 i = 0 ; i < _packedStrategies.checkdata.length; i++) {
+            checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
+        }
 
-        debtRatios.push(0);
+        for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
+            checkdata[i + _packedStrategies.checkdata.length] = bytes4(_newStrategyParam.checkdata[i]);
+        }
 
-        emit NewStrategy(strategy, strategyMaxDebtRatio[strategy] ,strategyContracts[strategy], strategyCheckdata[strategy], strategyOffset[strategy], strategyCalculation[strategy], strategyCondition[strategy]);
+        uint256[] memory offset = new uint256[](_packedStrategies.offset.length + _newStrategyParam.callLen);
+        for(uint256 i = 0 ; i < _packedStrategies.offset.length; i++) {
+            offset[i] = _packedStrategies.offset[i];
+        }
+        for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
+            offset[i + _packedStrategies.offset.length] = _newStrategyParam.offset[i];
+        }
+
+        uint256[] memory calculationsLen = new uint256[](_packedStrategies.calculationsLen.length + 1);
+        for(uint256 i = 0 ; i < _packedStrategies.calculationsLen.length; i++) {
+            calculationsLen[i] = _packedStrategies.calculationsLen[i];
+        }
+        calculationsLen[_packedStrategies.calculationsLen.length] = _newStrategyParam.calculationsLen;
+
+        uint256[] memory calculations = new uint256[](_packedStrategies.calculations.length + _newStrategyParam.calculationsLen);
+        for(uint256 i = 0 ; i < _packedStrategies.calculations.length; i++) {
+            calculations[i] = _packedStrategies.calculations[i];
+        }
+        for(uint256 i = 0 ; i < _newStrategyParam.calculationsLen; i++) {
+            calculations[i + _packedStrategies.calculations.length] = _newStrategyParam.calculations[i];
+        }
+
+        uint256[] memory conditionsLen = new uint256[](_packedStrategies.conditionsLen.length + 1);
+        for(uint256 i = 0 ; i < _packedStrategies.conditionsLen.length; i++) {
+            conditionsLen[i] = _packedStrategies.conditionsLen[i];
+        }
+        conditionsLen[_packedStrategies.conditionsLen.length] = _newStrategyParam.conditionsLen;
+
+        uint256[] memory conditions = new uint256[](_packedStrategies.conditions.length + _newStrategyParam.conditionsLen);
+        for(uint256 i = 0 ; i < _packedStrategies.conditions.length; i++) {
+            conditions[i] = _packedStrategies.conditions[i];
+        }
+        for(uint256 i = 0 ; i < _newStrategyParam.conditionsLen; i++) {
+            conditions[i + _packedStrategies.conditions.length] = _newStrategyParam.conditions[i];
+        }
+
+        strategiesHash = uint256(keccak256(abi.encodePacked(strategies, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen ,conditions)));
+
+        // New strategy allocation always set to 0, people can then send new solution
+        targetAllocation.push(0);
+
+        emit StrategyAdded(strategies, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions);
     }
 
-    function updateStrategy(address strategy, uint16 maxDebtRatio,address[] memory contracts, bytes[] memory checkdata, uint256[] memory offset, uint256[] memory calculations, uint256[] memory conditions) external onlyOwner {
-        require(strategyMaxDebtRatio[strategy] != 0, "STRATEGY_NOT_FOUND");
-        require(contracts.length == checkdata.length, "INVALID_TAB_LEN_1");
-        require(contracts.length == offset.length, "INVALID_TAB_LEN_2");
-        delete strategyContracts[strategy];
-        delete strategyCheckdata[strategy];
-        delete strategyOffset[strategy];
-        delete strategyCalculation[strategy];
-        delete strategyCondition[strategy];
-        delete strategyMaxDebtRatio[strategy];
+    function updateStrategy(
+            PackedStrategies memory _packedStrategies,
+            uint256 indexStrategyToUpdate,
+            StrategyParam memory _newStrategyParam) external onlyOwner {
+        // Checks at least one strategy is registered
+        require(strategiesHash != 0, "NO_STRATEGIES_REGISTERED");   
 
-        for(uint256 i; i < contracts.length; i++) {
-            strategyContracts[strategy].push(contracts[i]);
-            strategyCheckdata[strategy].push(checkdata[i]);
+        // Checks strategies data is valid 
+        bytes4[] memory checkdata = new bytes4[](_packedStrategies.checkdata.length);
+        for(uint256 i = 0 ; i < _packedStrategies.checkdata.length; i++) {
+            checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
+        }
+        require(strategiesHash == uint256(keccak256(abi.encodePacked(_packedStrategies.addresses, _packedStrategies.callLen, _packedStrategies.contracts, checkdata, _packedStrategies.offset, _packedStrategies.calculationsLen, _packedStrategies.calculations, _packedStrategies.conditionsLen, _packedStrategies.conditions))), "INVALID_DATA");   
+        
+        // Checks index in range
+        require(indexStrategyToUpdate < _packedStrategies.addresses.length);
+
+        // Checks call data valid
+        require(_newStrategyParam.callLen == _newStrategyParam.contracts.length && _newStrategyParam.callLen == _newStrategyParam.checkdata.length && _newStrategyParam.callLen == _newStrategyParam.offset.length && _newStrategyParam.calculationsLen == _newStrategyParam.calculations.length && _newStrategyParam.conditionsLen == _newStrategyParam.conditions.length, "INVALID_ARRAY_LEN");
+        for (uint256 i = 0; i < _newStrategyParam.callLen; i++) {
+            (bool success,) = _newStrategyParam.contracts[i].call(_newStrategyParam.checkdata[i]);
+                require(success == true, "INVALID_CALLDATA");
+            // Should we check for offset?
         }
 
-        for(uint256 j; j < offset.length; j++) {
-            strategyOffset[strategy].push(offset[j]);
+
+        // Build new arrays for the Strategy Hash and the Event
+        uint256 offsetCalldata = indexStrategyToUpdate;
+        uint256[] memory strategiesCallLen = new uint256[](_packedStrategies.callLen.length);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            strategiesCallLen[i] = _packedStrategies.callLen[i];
+        }
+        strategiesCallLen[offsetCalldata] = _newStrategyParam.callLen;
+        for(uint256 i = offsetCalldata + 1 ; i < _packedStrategies.callLen.length; i++) {
+            strategiesCallLen[i] = _packedStrategies.callLen[i];
+        }
+        uint256[] memory calculationsLen = new uint256[](_packedStrategies.calculationsLen.length);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            calculationsLen[i] = _packedStrategies.calculationsLen[i];
+        }
+        calculationsLen[offsetCalldata] = _newStrategyParam.calculationsLen;
+        for(uint256 i = offsetCalldata + 1 ; i < _packedStrategies.calculationsLen.length; i++) {
+            calculationsLen[i] = _packedStrategies.calculationsLen[i];
+        }
+        uint256[] memory conditionsLen = new uint256[](_packedStrategies.conditionsLen.length);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            conditionsLen[i] = _packedStrategies.conditionsLen[i];
+        }
+        conditionsLen[offsetCalldata] = _newStrategyParam.conditionsLen;
+        for(uint256 i = offsetCalldata + 1 ; i < _packedStrategies.conditionsLen.length; i++) {
+            conditionsLen[i] = _packedStrategies.conditionsLen[i];
         }
 
-        for(uint256 k; k < calculations.length; k++) {
-            strategyCalculation[strategy].push(calculations[k]);
+
+        offsetCalldata = 0;
+        for(uint256 i = 0 ; i < indexStrategyToUpdate; i++) {
+            offsetCalldata += _packedStrategies.callLen[i];
+        }
+        address[] memory contracts = new address[](_packedStrategies.contracts.length - _packedStrategies.callLen[indexStrategyToUpdate] + _newStrategyParam.callLen);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            contracts[i] = _packedStrategies.contracts[i];
+        }
+        for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
+            contracts[i + offsetCalldata] = _newStrategyParam.contracts[i];
+        }
+        for(uint256 i = 0 ; i < _packedStrategies.contracts.length - (offsetCalldata + _packedStrategies.callLen[indexStrategyToUpdate]); i++) {
+            contracts[i + offsetCalldata + _newStrategyParam.callLen] = _packedStrategies.contracts[i + offsetCalldata + _packedStrategies.callLen[indexStrategyToUpdate]];
+        }
+        
+        checkdata = new bytes4[](_packedStrategies.checkdata.length - _packedStrategies.callLen[indexStrategyToUpdate] + _newStrategyParam.callLen);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
+        }
+        for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
+            checkdata[i + offsetCalldata] = bytes4(_newStrategyParam.checkdata[i]);
+        }
+        for(uint256 i = 0 ; i < _packedStrategies.checkdata.length - (offsetCalldata + _packedStrategies.callLen[indexStrategyToUpdate]); i++) {
+            checkdata[i + offsetCalldata + _newStrategyParam.callLen] = bytes4(_packedStrategies.checkdata[i + offsetCalldata + _packedStrategies.callLen[indexStrategyToUpdate]]);
+        }
+        uint256[] memory offset = new uint256[](_packedStrategies.offset.length - _packedStrategies.callLen[indexStrategyToUpdate] + _newStrategyParam.callLen);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            offset[i] = _packedStrategies.offset[i];
+        }
+        for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
+            offset[i + offsetCalldata] = _newStrategyParam.offset[i];
+        }
+        for(uint256 i = 0 ; i < _packedStrategies.offset.length - (offsetCalldata + _packedStrategies.callLen[indexStrategyToUpdate]); i++) {
+            offset[i + offsetCalldata + _newStrategyParam.callLen] = _packedStrategies.offset[i + offsetCalldata + _packedStrategies.callLen[indexStrategyToUpdate]];
         }
 
-        for(uint256 l; l < conditions.length; l++) {
-            strategyCondition[strategy].push(conditions[l]);
+
+        offsetCalldata = 0;
+        for(uint256 i = 0 ; i < indexStrategyToUpdate; i++) {
+            offsetCalldata += _packedStrategies.calculationsLen[i];
+        }
+        uint256[] memory calculations = new uint256[](_packedStrategies.calculations.length - _packedStrategies.calculationsLen[indexStrategyToUpdate] + _newStrategyParam.calculationsLen);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            calculations[i] = _packedStrategies.calculations[i];
+        }
+        for(uint256 i = 0 ; i <  _newStrategyParam.calculationsLen; i++) {
+            calculations[i + offsetCalldata] = _newStrategyParam.calculations[i];
+        }
+        for(uint256 i = 0 ; i < _packedStrategies.calculations.length - (offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToUpdate]); i++) {
+            calculations[i + offsetCalldata + _newStrategyParam.calculationsLen] = _packedStrategies.calculations[i + offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToUpdate]];
         }
 
-        strategyMaxDebtRatio[strategy] = maxDebtRatio;
-        emit StrategyUpdated(strategy, strategyMaxDebtRatio[strategy] ,strategyContracts[strategy], strategyCheckdata[strategy], strategyOffset[strategy], strategyCalculation[strategy], strategyCondition[strategy]);
+
+        offsetCalldata = 0;
+        for(uint256 i = 0 ; i < indexStrategyToUpdate; i++) {
+            offsetCalldata += _packedStrategies.conditionsLen[i];
+        }
+        uint256[] memory conditions = new uint256[](_packedStrategies.conditions.length - _packedStrategies.calculationsLen[indexStrategyToUpdate] + _newStrategyParam.conditionsLen);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            conditions[i] = _packedStrategies.conditions[i];
+        }
+        for(uint256 i = 0 ; i <  _newStrategyParam.conditionsLen; i++) {
+            conditions[i + offsetCalldata] = _newStrategyParam.conditions[i];
+        }
+        for(uint256 i = 0 ; i < _packedStrategies.calculations.length - (offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToUpdate]); i++) {
+            conditions[i + offsetCalldata + _newStrategyParam.conditionsLen] = _packedStrategies.conditions[i + offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToUpdate]];
+        }
+
+        strategiesHash = uint256(keccak256(abi.encodePacked(_packedStrategies.addresses, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen ,conditions)));
+        emit StrategyUpdated(_packedStrategies.addresses, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions);
     }
 
-    function removeStrategy(uint256 index) external onlyOwner{
-        require(index < strategies.length && index >= 0, "INDEX_OUT_OF_RANGE");
-        require(debtRatios[index] == 0, "DEBT_RATIO_NOT_NUL");
-        address strategy = strategies[index];
-        delete strategyContracts[strategy];
-        delete strategyCheckdata[strategy];
-        delete strategyOffset[strategy];
-        delete strategyCalculation[strategy];
-        delete strategyCondition[strategy];
-        delete strategyMaxDebtRatio[strategy];
-        strategies[index] = strategies[strategies.length-1];
-        debtRatios[index] = debtRatios[strategies.length-1];
-        strategies.pop();
-        debtRatios.pop();
-        emit StrategyRemoved(strategy);
+
+    function removeStrategy(
+            PackedStrategies memory _packedStrategies,
+            uint256 indexStrategyToRemove) external onlyOwner {
+        // Checks at least one strategy is registered
+        require(strategiesHash != 0, "NO_STRATEGIES_REGISTERED");   
+
+        bytes4[] memory checkdata = new bytes4[](_packedStrategies.checkdata.length);
+        for(uint256 i = 0 ; i < _packedStrategies.checkdata.length; i++) {
+            checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
+        }
+
+        // Checks strategies data is valid 
+        require(strategiesHash == uint256(keccak256(abi.encodePacked(_packedStrategies.addresses, _packedStrategies.callLen, _packedStrategies.contracts, checkdata, _packedStrategies.offset, _packedStrategies.calculationsLen, _packedStrategies.calculations, _packedStrategies.conditionsLen, _packedStrategies.conditions))), "INVALID_DATA");   
+        
+        // Checks index in range
+        require(indexStrategyToRemove < _packedStrategies.addresses.length);
+
+        // Build new arrays for the Strategy Hash and the Event
+        uint256 offsetCalldata = indexStrategyToRemove;
+        uint256[] memory strategiesCallLen = new uint256[](_packedStrategies.callLen.length - 1);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            strategiesCallLen[i] = _packedStrategies.callLen[i];
+        }
+        for(uint256 i = offsetCalldata; i < _packedStrategies.callLen.length; i++) {
+            strategiesCallLen[i] = _packedStrategies.callLen[i];
+        }
+        uint256[] memory calculationsLen = new uint256[](_packedStrategies.calculationsLen.length - 1);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            calculationsLen[i] = _packedStrategies.calculationsLen[i];
+        }
+        for(uint256 i = offsetCalldata; i < _packedStrategies.calculationsLen.length; i++) {
+            calculationsLen[i] = _packedStrategies.calculationsLen[i];
+        }
+        uint256[] memory conditionsLen = new uint256[](_packedStrategies.conditionsLen.length - 1);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            conditionsLen[i] = _packedStrategies.conditionsLen[i];
+        }
+        for(uint256 i = offsetCalldata; i < _packedStrategies.conditionsLen.length; i++) {
+            conditionsLen[i] = _packedStrategies.conditionsLen[i];
+        }
+
+
+        offsetCalldata = 0;
+        for(uint256 i = 0 ; i < indexStrategyToRemove; i++) {
+            offsetCalldata += _packedStrategies.callLen[i];
+        }
+
+        address[] memory contracts = new address[](_packedStrategies.contracts.length - _packedStrategies.callLen[indexStrategyToRemove]);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            contracts[i] = _packedStrategies.contracts[i];
+        }
+        for(uint256 i = 0 ; i < _packedStrategies.contracts.length - (offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]); i++) {
+            contracts[i + offsetCalldata] = _packedStrategies.contracts[i + offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]];
+        }
+        checkdata = new bytes4[](_packedStrategies.checkdata.length - _packedStrategies.callLen[indexStrategyToRemove]);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
+        }
+        for(uint256 i = 0 ; i < _packedStrategies.checkdata.length - (offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]); i++) {
+            checkdata[i + offsetCalldata] = bytes4(_packedStrategies.checkdata[i + offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]]);
+        }
+        uint256[] memory offset = new uint256[](_packedStrategies.offset.length - _packedStrategies.callLen[indexStrategyToRemove]);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            offset[i] = _packedStrategies.offset[i];
+        }
+        for(uint256 i = 0 ; i < _packedStrategies.offset.length - (offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]); i++) {
+            offset[i + offsetCalldata] = _packedStrategies.offset[i + offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]];
+        }
+
+        offsetCalldata = 0;
+        for(uint256 i = 0 ; i < indexStrategyToRemove; i++) {
+            offsetCalldata += _packedStrategies.calculationsLen[i];
+        }
+        uint256[] memory calculations = new uint256[](_packedStrategies.calculations.length - _packedStrategies.calculationsLen[indexStrategyToRemove]);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            calculations[i] = _packedStrategies.calculations[i];
+        }
+        for(uint256 i = 0 ; i < _packedStrategies.calculations.length - (offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToRemove]); i++) {
+            calculations[i + offsetCalldata] = _packedStrategies.calculations[i + offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToRemove]];
+        }
+
+        offsetCalldata = 0;
+        for(uint256 i = 0 ; i < indexStrategyToRemove; i++) {
+            offsetCalldata += _packedStrategies.conditionsLen[i];
+        }
+        uint256[] memory conditions = new uint256[](_packedStrategies.conditions.length - _packedStrategies.calculationsLen[indexStrategyToRemove]);
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            conditions[i] = _packedStrategies.conditions[i];
+        }
+        for(uint256 i = 0 ; i < _packedStrategies.calculations.length - (offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToRemove]); i++) {
+            conditions[i + offsetCalldata] = _packedStrategies.conditions[i + offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToRemove]];
+        }
+
+        strategiesHash = uint256(keccak256(abi.encodePacked(_packedStrategies.addresses, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen ,conditions)));
+        emit StrategyRemoved(_packedStrategies.addresses, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions);
     }
+
 
     //Can't set only view, .call potentially modify state (should not arrive)
-    function getStrategiesData() public returns(uint256[][] memory _dataStrategies) {
-        uint256[][] memory dataStrategies = new uint256[][](strategies.length);
-        for(uint256 i; i < dataStrategies.length; i++) {
-            bytes[] memory checkdata = strategyCheckdata[strategies[i]];
-            uint256[] memory offset = strategyOffset[strategies[i]];
-            address[] memory contracts = strategyContracts[strategies[i]];
-            uint256[] memory dataStrategy = new uint256[](contracts.length);
-            for(uint256 j; j < checkdata.length; j++) {
-                (bool success, bytes memory data) = contracts[j].call(checkdata[j]);
-                require(success == true, "call didn't succeed");
-                dataStrategy[j] = uint256(bytesToBytes32(data, offset[j]));
-            }
-            dataStrategies[i] = dataStrategy;
+    function getStrategiesData(
+            address[] memory contracts, 
+            bytes[] memory checkdata, 
+            uint256[] memory offset) public returns(uint256[] memory dataStrategies) {
+        uint256[] memory dataStrategies_ = new uint256[](contracts.length);
+        for(uint256 j; j < contracts.length; j++) {
+            (bool success, bytes memory data) = contracts[j].call(checkdata[j]);
+            require(success == true, "call didn't succeed");
+            dataStrategies_[j] = uint256(bytesToBytes32(data, offset[j]));
         }
-       return(dataStrategies);
+       return(dataStrategies_);
     }
 
-    function getStrategiesCalculation() public view returns(uint256[][] memory _calculationStrategies) {
-        uint256[][] memory calculationStrategies = new uint256[][](strategies.length);
-        for(uint256 i; i < calculationStrategies.length; i++) {
-            calculationStrategies[i] = strategyCalculation[strategies[i]];
+     function updateTargetAllocation(address[] memory strategies) internal {
+        uint256[] memory realAllocations = new uint256[](strategies.length);
+        uint256 cumulativeAmountRealAllocations = 0;
+        uint256 cumulativeAmountTargetAllocations = 0;
+        for(uint256 j; j < strategies.length; j++) {
+            realAllocations[j] = IStrategy(strategies[j]).totalAssets();
+            cumulativeAmountRealAllocations += realAllocations[j];
+            cumulativeAmountTargetAllocations += targetAllocation[j];
         }
-       return(calculationStrategies);
+
+        if(cumulativeAmountTargetAllocations == 0){
+            targetAllocation = realAllocations;
+        } else {
+            if(cumulativeAmountTargetAllocations <= cumulativeAmountRealAllocations){
+            uint256 diff = cumulativeAmountRealAllocations - cumulativeAmountTargetAllocations;
+            // We need to add this amount respecting the different strategies allocation ratio 
+            for (uint256 i = 0; i < strategies.length; i++) {
+                uint256 strategyAllocationRatio = (PRECISION * targetAllocation[i]) / cumulativeAmountTargetAllocations;
+                targetAllocation[i] += (strategyAllocationRatio * diff) / PRECISION;
+            }
+        } else {
+            uint256 diff = cumulativeAmountTargetAllocations - cumulativeAmountRealAllocations;
+            // We need to substract this amount respecting the different strategies allocation ratio 
+            for (uint256 i = 0; i < strategies.length; i++) {
+                uint256 strategyAllocationRatio = (PRECISION * targetAllocation[i]) / cumulativeAmountTargetAllocations;
+                targetAllocation[i] -= (strategyAllocationRatio * diff) / PRECISION;
+            }
+        }
+        }
     }
 
-    function getStrategiesCondition() public view returns(uint256[][] memory _conditionStrategies) {
-        uint256[][] memory conditionStrategies = new uint256[][](strategies.length);
-        for(uint256 i; i < conditionStrategies.length; i++) {
-            conditionStrategies[i] = strategyCondition[strategies[i]];
-        }
-       return(conditionStrategies);
-    }
+    function saveSnapshot(
+            address[] memory strategies,
+            uint256[] memory strategiesCallLen,
+            address[] memory contracts, 
+            bytes[] memory _checkdata, 
+            uint256[] memory offset, 
+            uint256[] memory calculationsLen,
+            uint256[] memory calculations, 
+            uint256[] memory conditionsLen,
+            uint256[] memory conditions) external {
+        // Checks at least one strategy is registered
+        require(strategiesHash != 0, "NO_STRATEGIES_REGISTERED");   
 
-    function saveSnapshot() external {
-        require(strategies.length > 0, "STRATEGY_NUL");
-
-        uint256[][] memory dataStrategies = getStrategiesData(); 
-
-        uint256 dataStratTotalLen = 0;
-        for(uint256 i; i < dataStrategies.length; i++) {
-            dataStratTotalLen += dataStrategies[i].length;
-        }
-
-        uint256 index1 = 0;
-        uint256[] memory dataStrategiesConcat = new uint256[](dataStratTotalLen);
-        for(uint256 k = 0; k < dataStrategies.length; k++) {
-            for(uint256 l = 0; l < dataStrategies[k].length; l++) {
-                dataStrategiesConcat[index1] = dataStrategies[k][l];
-                index1++;
-            }
+        bytes4[] memory checkdata = new bytes4[](_checkdata.length);
+        for(uint256 i = 0 ; i < checkdata.length; i++) {
+            checkdata[i] = bytes4(_checkdata[i]);
         }
 
-        uint256[][] memory calculationStrategies = getStrategiesCalculation();
-        uint256 calculationStratTotalLen = 0;
-        for(uint256 j; j < calculationStrategies.length; j++) {
-            calculationStratTotalLen += calculationStrategies[j].length;
-        }
-
-        uint256 index2 = 0;
-        uint256[] memory calculationStrategiesConcat = new uint256[](calculationStratTotalLen);
-        for(uint256 m = 0; m < calculationStrategies.length; m++) {
-            for(uint256 n = 0; n < calculationStrategies[m].length; n++) {
-                calculationStrategiesConcat[index2] = calculationStrategies[m][n];
-                index2++;
-            }
-        }
-
-        uint256[][] memory conditionStrategies = getStrategiesCondition();
-        uint256 conditionsStratTotalLen = 0;
-        for(uint256 o; o < conditionStrategies.length; o++) {
-            conditionsStratTotalLen += conditionStrategies[o].length;
-        }
-
-        uint256 index3 = 0;
-        uint256[] memory conditionStrategiesConcat = new uint256[](conditionsStratTotalLen);
-        for(uint256 p = 0; p < conditionStrategies.length; p++) {
-            for(uint256 n = 0; n < conditionStrategies[p].length; n++) {
-                conditionStrategiesConcat[index3] = conditionStrategies[p][n];
-                index3++;
-            }
-        }
-
-        inputHash = uint256(keccak256(abi.encodePacked(dataStrategiesConcat, calculationStrategiesConcat, conditionStrategiesConcat)));
-
+        // Checks strategies data is valid 
+        require(strategiesHash == uint256(keccak256(abi.encodePacked(strategies, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions))), "INVALID_DATA");   
+        updateTargetAllocation(strategies);
+        uint256[] memory dataStrategies = getStrategiesData(contracts, _checkdata, offset);
+        inputHash = uint256(keccak256(abi.encodePacked(dataStrategies, calculations, conditions)));
         snapshotTimestamp[inputHash] = block.timestamp;
-
-        emit NewSnapshot(dataStrategies, calculationStrategies, conditionStrategies,inputHash, block.timestamp);
+        emit NewSnapshot(dataStrategies, calculations, conditions, inputHash, targetAllocation, block.timestamp);
     }
 
 
@@ -300,13 +550,14 @@ contract DebtAllocator is Ownable, Pausable {
         require(_snapshotTimestamp + staleSnapshotPeriod > block.timestamp, "STALE_SNAPSHOT_PERIOD");
 
         // NOTE: We get the data from parsing the program output
-        (uint256 inputHash_,  uint256[] memory current_debt_ratio, uint256[] memory new_debt_ratio, uint256 current_solution, uint256 new_solution) = parseProgramOutput(programOutput); 
+        (uint256 inputHash_,  uint256[] memory current_target_allocation, uint256[] memory new_target_allocation, uint256 current_solution, uint256 new_solution) = parseProgramOutput(programOutput); 
+        
         // check inputs
         require(inputHash_==inputHash, "INVALID_INPUTS");
-            
-        // check current debt ration and new debt ratio
-        checkAllowedDebtRatio(current_debt_ratio, new_debt_ratio);
 
+        // check target allocation len
+        require(targetAllocation.length == current_target_allocation.length && targetAllocation.length == new_target_allocation.length,"INVALID_TARGET_ALLOCATION_LENGTH");
+            
         // check if the new solution better than previous one
         require(new_solution - minimumApyIncreaseForNewSolution >= current_solution,"NEW_SOLUTION_TOO_BAD");
         
@@ -318,41 +569,30 @@ contract DebtAllocator is Ownable, Pausable {
         // check no one has improven it in stale period (in case market conditions deteriorated)
         // require(_newSolution > currentAPY || block.timestamp - lastUpdate >= stalePeriod, "WRONG_SOLUTION");
         currentAPY = new_solution;
-        debtRatios = new_debt_ratio;
+        targetAllocation = new_target_allocation;
         lastUpdate = block.timestamp;
 
         sendRewardsToCurrentProposer();
         proposer = msg.sender;
         proposerPerformance = new_solution - current_solution;
 
-        emit NewSolution(new_solution, new_debt_ratio, msg.sender, proposerPerformance,block.timestamp);
+        emit NewSolution(new_solution, new_target_allocation, msg.sender, proposerPerformance,block.timestamp);
         return(fact);
     }
 
-    function parseProgramOutput(uint256[] memory programOutput) public view returns (uint256 _inputHash, uint256[] memory _current_debt_ration, uint256[] memory _new_debt_ration, uint256 _current_solution, uint256 _new_solution) {
+    function parseProgramOutput(uint256[] memory programOutput) public view returns (uint256 _inputHash, uint256[] memory _current_target_allocation, uint256[] memory _new_target_allocation, uint256 _current_solution, uint256 _new_solution) {
         uint256 inputHashUint256 = programOutput[0] << 128;
         inputHashUint256 += programOutput[1];
-        uint256[] memory current_debt_ratio = new uint256[](strategies.length);
-        uint256[] memory new_debt_ratio = new uint256[](strategies.length);
 
-        for(uint256 i = 0; i < strategies.length ; i++) {
+        uint256[] memory current_target_allocation = new uint256[](programOutput[2]);
+        uint256[] memory new_target_allocation = new uint256[](programOutput[2]);
+
+        for(uint256 i = 0; i < programOutput[2] ; i++) {
             // NOTE: skip the 2 first value + array len 
-            current_debt_ratio[i] = programOutput[i + 3];
-            new_debt_ratio[i] = programOutput[i + 4 + strategies.length];
+            current_target_allocation[i] = programOutput[i + 3];
+            new_target_allocation[i] = programOutput[i + 4 + programOutput[2]];
         }
-        return(inputHashUint256, current_debt_ratio, new_debt_ratio, programOutput[programOutput.length - 2], programOutput[programOutput.length - 1]);
-    }
-
-    function checkAllowedDebtRatio(uint256[] memory _current_debt_ratio, uint256[] memory _new_debt_ratio) public view {
-        require(_current_debt_ratio.length == debtRatios.length,"INVALID_NEW_DEBT_RATIO");
-        require(_new_debt_ratio.length == debtRatios.length,"INVALID_NEW_DEBT_RATIO");
-        uint256 cumulative_new_debt = 0;
-        for(uint256 i; i < debtRatios.length; i++) {
-            require(_new_debt_ratio[i] <= strategyMaxDebtRatio[strategies[i]],"INVALID_NEW_DEBT_RATIO");
-            require(_current_debt_ratio[i] == debtRatios[i], "INVALID_CURRENT_DEBT_RATIO");
-            cumulative_new_debt += _new_debt_ratio[i];
-        }
-        require(cumulative_new_debt == 10000,"INVALID_NEW_DEBT_RATIO");
+        return(inputHashUint256, current_target_allocation, new_target_allocation, programOutput[programOutput.length - 2], programOutput[programOutput.length - 1]);
     }
 
     function sendRewardsToCurrentProposer() internal {

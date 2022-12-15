@@ -1,12 +1,9 @@
-import click
-from ape.cli import network_option, NetworkBoundCommand
 from ape import accounts, project
+from typing import List, Optional
 import json
+import os
+import time
  
-
-
-CAIRO_VERIFIER = "0xAB43bA48c9edF4C2C4bB01237348D1D7B28ef168"
-CAIRO_PROGRAM_HASH = "0x18261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f494"
 
 #
 ## AAVE 
@@ -66,11 +63,9 @@ def main():
     f = open("./scripts/strategies_info.json")
     strategies_info = json.load(f)
     f.close()
-
     account = accounts.load(config_dict["account"])
     contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
     aave_strategy = config_dict["strategy_aave_address"]
-
     addresses = strategies_info["addresses"]
     callLen = strategies_info["callLen"]
     contracts = strategies_info["contracts"]
@@ -81,9 +76,8 @@ def main():
     conditionsLen = strategies_info["conditionsLen"]
     conditions = strategies_info["conditions"]
 
-    tx = contract.addStrategy((addresses, callLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions), aave_strategy, (int(len(AAVE_STRATEGY_CONTRACTS)), AAVE_STRATEGY_CONTRACTS, AAVE_STRATEGYY_CHECKDATA, AAVE_STRATEGYY_OFFSET, int(len(AAVE_STRATEGYY_CALCULATION)), AAVE_STRATEGYY_CALCULATION, int(len(AAVE_CALCULATION_CONDITION)), AAVE_CALCULATION_CONDITION),sender=account, max_priority_fee=max_priority_fee="0.0001 gwei")
+    tx = contract.addStrategy((addresses, callLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions), aave_strategy, (int(len(AAVE_STRATEGY_CONTRACTS)), AAVE_STRATEGY_CONTRACTS, AAVE_STRATEGYY_CHECKDATA, AAVE_STRATEGYY_OFFSET, int(len(AAVE_STRATEGYY_CALCULATION)), AAVE_STRATEGYY_CALCULATION, int(len(AAVE_CALCULATION_CONDITION)), AAVE_CALCULATION_CONDITION),sender=account, max_priority_fee="0.8 gwei")
     logs = list(tx.decode_logs(contract.StrategyAdded))
-
     addresses = logs[0].Strategies
     callLen = logs[0].StrategiesCallLen
     contracts = logs[0].Contracts
@@ -93,19 +87,19 @@ def main():
     calculations = logs[0].Calculations
     ConditionsLen = logs[0].ConditionsLen
     conditions = logs[0].Conditions
-
     result = {}
     result["addresses"] = addresses
     result["callLen"] = callLen
     result["contracts"] = contracts
-    result["checkdata"] = checkdata
+    result["checkdata"] = checkdata.decode('utf-8')
     result["offset"] = offset
     result["calculationsLen"] = calculationsLen
     result["calculations"] = calculations
     result["conditionsLen"] = ConditionsLen
     result["conditions"] = conditions
-    
     f = open("./scripts/strategies_info.json", "w")
     json.dump(result, f)
     f.close()
+    print("new strategies: ")
+    print(result)
  

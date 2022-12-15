@@ -1,6 +1,6 @@
 {
   "account": "sacha",
-  "debt_allocator_address": "0x99F3a48a9e7174995de9f33D4bA3B99B922f0171",
+  "debt_allocator_address": "0xF5c674e5aaDdFa0460c1935131a7d6DE83B10363",
   "strategy_aave_address": "0xEbc69526A626F66397949c972de5D5227Dc8d8Af",
   "strategy_compound_address": "0x53A3FB71a9Eb07Eee11d63273780Ed5e43f77359",
   "verifier_address": "0xAB43bA48c9edF4C2C4bB01237348D1D7B28ef168",

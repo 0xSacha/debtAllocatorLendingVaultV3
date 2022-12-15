@@ -11,7 +11,7 @@ import time
 
 def main():
     # Load configuration file.
-    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
+    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_testnet.json")
     with open(CONFIG_PATH, "r") as config_file:
         config = json.load(config_file)
 
@@ -56,7 +56,20 @@ def main():
     print(logs)
 
 def save_snapshot(account, contract, new_allocation = [0, 0]):
-    tx = contract.saveSnapshot(max_priority_fee="0.0001 gwei", sender=account)
+    f = open("./scripts/strategies_info.json")
+    strategies_info = json.load(f)
+    f.close()
+    aave_strategy = config_dict["strategy_aave_address"]
+    addresses = strategies_info["addresses"]
+    callLen = strategies_info["callLen"]
+    contracts = strategies_info["contracts"]
+    checkdata = strategies_info["checkdata"]
+    offset = strategies_info["offset"]
+    calculationsLen = strategies_info["calculationsLen"]
+    calculations = strategies_info["calculations"]
+    conditionsLen = strategies_info["conditionsLen"]
+    conditions = strategies_info["conditions"]
+    tx = contract.saveSnapshot((addresses, callLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions), max_priority_fee="0.0001 gwei", sender=account)
     logs = list(tx.decode_logs(contract.NewSnapshot))
     
     strategies_data = logs[0].dataStrategies

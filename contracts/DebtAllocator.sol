@@ -150,6 +150,7 @@ contract DebtAllocator is Ownable, Pausable {
             address _newStrategy,
             StrategyParam memory _newStrategyParam) external onlyOwner{
         // Checks previous strategies data valid 
+        
         bytes4[] memory checkdata = new bytes4[](_packedStrategies.checkdata.length);
         for(uint256 i = 0 ; i < _packedStrategies.checkdata.length; i++) {
             checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
@@ -158,14 +159,21 @@ contract DebtAllocator is Ownable, Pausable {
         if(strategiesHash != 0){         
             require(strategiesHash == uint256(keccak256(abi.encodePacked(_packedStrategies.addresses, _packedStrategies.callLen, _packedStrategies.contracts, checkdata, _packedStrategies.offset, _packedStrategies.calculationsLen, _packedStrategies.calculations, _packedStrategies.conditionsLen, _packedStrategies.conditions))), "INVALID_DATA");   
         }
-    
+
+        for(uint256 i = 0 ; i < _packedStrategies.addresses.length; i++) {
+            if(_packedStrategies.addresses[i] == _newStrategy){
+                revert("STRATEGY_EXISTS");
+            }
+        }
+
+
         // Checks strategy is yearn v3
         try IStrategy(_newStrategy).apiVersion() returns (uint256) {} catch {
             revert("INVALID_STRATEGY");
         }
 
         // Checks call data valid
-        require(_newStrategyParam.callLen == _newStrategyParam.callLen && _newStrategyParam.callLen == _newStrategyParam.checkdata.length && _newStrategyParam.callLen == _newStrategyParam.offset.length && _newStrategyParam.calculationsLen == _newStrategyParam.calculations.length && _newStrategyParam.conditionsLen == _newStrategyParam.conditions.length, "INVALID_ARRAY_LEN");
+        require(_newStrategyParam.callLen == _newStrategyParam.contracts.length && _newStrategyParam.callLen == _newStrategyParam.checkdata.length && _newStrategyParam.callLen == _newStrategyParam.offset.length && _newStrategyParam.calculationsLen == _newStrategyParam.calculations.length && _newStrategyParam.conditionsLen == _newStrategyParam.conditions.length, "INVALID_ARRAY_LEN");
         for (uint256 i = 0; i < _newStrategyParam.callLen; i++) {
             (bool success,) = _newStrategyParam.contracts[i].call(_newStrategyParam.checkdata[i]);
                 require(success == true, "INVALID_CALLDATA");
@@ -261,7 +269,7 @@ contract DebtAllocator is Ownable, Pausable {
         require(strategiesHash == uint256(keccak256(abi.encodePacked(_packedStrategies.addresses, _packedStrategies.callLen, _packedStrategies.contracts, checkdata, _packedStrategies.offset, _packedStrategies.calculationsLen, _packedStrategies.calculations, _packedStrategies.conditionsLen, _packedStrategies.conditions))), "INVALID_DATA");   
         
         // Checks index in range
-        require(indexStrategyToUpdate < _packedStrategies.addresses.length);
+        require(indexStrategyToUpdate < _packedStrategies.addresses.length, "INDEX_OUT_OF_RANGE");
 
         // Checks call data valid
         require(_newStrategyParam.callLen == _newStrategyParam.contracts.length && _newStrategyParam.callLen == _newStrategyParam.checkdata.length && _newStrategyParam.callLen == _newStrategyParam.offset.length && _newStrategyParam.calculationsLen == _newStrategyParam.calculations.length && _newStrategyParam.conditionsLen == _newStrategyParam.conditions.length, "INVALID_ARRAY_LEN");
@@ -271,103 +279,175 @@ contract DebtAllocator is Ownable, Pausable {
             // Should we check for offset?
         }
 
-
         // Build new arrays for the Strategy Hash and the Event
-        uint256 offsetCalldata = indexStrategyToUpdate;
+
         uint256[] memory strategiesCallLen = new uint256[](_packedStrategies.callLen.length);
-        for(uint256 i = 0 ; i < offsetCalldata; i++) {
-            strategiesCallLen[i] = _packedStrategies.callLen[i];
-        }
-        strategiesCallLen[offsetCalldata] = _newStrategyParam.callLen;
-        for(uint256 i = offsetCalldata + 1 ; i < _packedStrategies.callLen.length; i++) {
-            strategiesCallLen[i] = _packedStrategies.callLen[i];
-        }
         uint256[] memory calculationsLen = new uint256[](_packedStrategies.calculationsLen.length);
-        for(uint256 i = 0 ; i < offsetCalldata; i++) {
-            calculationsLen[i] = _packedStrategies.calculationsLen[i];
-        }
-        calculationsLen[offsetCalldata] = _newStrategyParam.calculationsLen;
-        for(uint256 i = offsetCalldata + 1 ; i < _packedStrategies.calculationsLen.length; i++) {
-            calculationsLen[i] = _packedStrategies.calculationsLen[i];
-        }
         uint256[] memory conditionsLen = new uint256[](_packedStrategies.conditionsLen.length);
-        for(uint256 i = 0 ; i < offsetCalldata; i++) {
-            conditionsLen[i] = _packedStrategies.conditionsLen[i];
-        }
-        conditionsLen[offsetCalldata] = _newStrategyParam.conditionsLen;
-        for(uint256 i = offsetCalldata + 1 ; i < _packedStrategies.conditionsLen.length; i++) {
-            conditionsLen[i] = _packedStrategies.conditionsLen[i];
-        }
-
-
-        offsetCalldata = 0;
-        for(uint256 i = 0 ; i < indexStrategyToUpdate; i++) {
-            offsetCalldata += _packedStrategies.callLen[i];
-        }
         address[] memory contracts = new address[](_packedStrategies.contracts.length - _packedStrategies.callLen[indexStrategyToUpdate] + _newStrategyParam.callLen);
-        for(uint256 i = 0 ; i < offsetCalldata; i++) {
-            contracts[i] = _packedStrategies.contracts[i];
-        }
-        for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
-            contracts[i + offsetCalldata] = _newStrategyParam.contracts[i];
-        }
-        for(uint256 i = 0 ; i < _packedStrategies.contracts.length - (offsetCalldata + _packedStrategies.callLen[indexStrategyToUpdate]); i++) {
-            contracts[i + offsetCalldata + _newStrategyParam.callLen] = _packedStrategies.contracts[i + offsetCalldata + _packedStrategies.callLen[indexStrategyToUpdate]];
-        }
-        
         checkdata = new bytes4[](_packedStrategies.checkdata.length - _packedStrategies.callLen[indexStrategyToUpdate] + _newStrategyParam.callLen);
-        for(uint256 i = 0 ; i < offsetCalldata; i++) {
-            checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
-        }
-        for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
-            checkdata[i + offsetCalldata] = bytes4(_newStrategyParam.checkdata[i]);
-        }
-        for(uint256 i = 0 ; i < _packedStrategies.checkdata.length - (offsetCalldata + _packedStrategies.callLen[indexStrategyToUpdate]); i++) {
-            checkdata[i + offsetCalldata + _newStrategyParam.callLen] = bytes4(_packedStrategies.checkdata[i + offsetCalldata + _packedStrategies.callLen[indexStrategyToUpdate]]);
-        }
         uint256[] memory offset = new uint256[](_packedStrategies.offset.length - _packedStrategies.callLen[indexStrategyToUpdate] + _newStrategyParam.callLen);
-        for(uint256 i = 0 ; i < offsetCalldata; i++) {
-            offset[i] = _packedStrategies.offset[i];
-        }
-        for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
-            offset[i + offsetCalldata] = _newStrategyParam.offset[i];
-        }
-        for(uint256 i = 0 ; i < _packedStrategies.offset.length - (offsetCalldata + _packedStrategies.callLen[indexStrategyToUpdate]); i++) {
-            offset[i + offsetCalldata + _newStrategyParam.callLen] = _packedStrategies.offset[i + offsetCalldata + _packedStrategies.callLen[indexStrategyToUpdate]];
-        }
-
-
-        offsetCalldata = 0;
-        for(uint256 i = 0 ; i < indexStrategyToUpdate; i++) {
-            offsetCalldata += _packedStrategies.calculationsLen[i];
-        }
         uint256[] memory calculations = new uint256[](_packedStrategies.calculations.length - _packedStrategies.calculationsLen[indexStrategyToUpdate] + _newStrategyParam.calculationsLen);
-        for(uint256 i = 0 ; i < offsetCalldata; i++) {
-            calculations[i] = _packedStrategies.calculations[i];
-        }
-        for(uint256 i = 0 ; i <  _newStrategyParam.calculationsLen; i++) {
-            calculations[i + offsetCalldata] = _newStrategyParam.calculations[i];
-        }
-        for(uint256 i = 0 ; i < _packedStrategies.calculations.length - (offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToUpdate]); i++) {
-            calculations[i + offsetCalldata + _newStrategyParam.calculationsLen] = _packedStrategies.calculations[i + offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToUpdate]];
-        }
+        uint256[] memory conditions = new uint256[](_packedStrategies.conditions.length - _packedStrategies.conditionsLen[indexStrategyToUpdate] + _newStrategyParam.conditionsLen);
+        uint256 offsetCalldata = indexStrategyToUpdate;
+        if(indexStrategyToUpdate == _packedStrategies.addresses.length - 1){
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                strategiesCallLen[i] = _packedStrategies.callLen[i];
+            }
+            strategiesCallLen[offsetCalldata] = _newStrategyParam.callLen;
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                    calculationsLen[i] = _packedStrategies.calculationsLen[i];
+            }
+            calculationsLen[offsetCalldata] = _newStrategyParam.calculationsLen;
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                conditionsLen[i] = _packedStrategies.conditionsLen[i];
+            }
+            conditionsLen[offsetCalldata] = _newStrategyParam.conditionsLen;
+
+            offsetCalldata = 0;
+            for(uint256 i = 0 ; i < indexStrategyToUpdate; i++) {
+                offsetCalldata += _packedStrategies.callLen[i];
+            }
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                contracts[i] = _packedStrategies.contracts[i];
+            }
+            for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
+                contracts[i + offsetCalldata] = _newStrategyParam.contracts[i];
+            }
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
+            }
+            for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
+                checkdata[i + offsetCalldata] = bytes4(_newStrategyParam.checkdata[i]);
+            }
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                offset[i] = _packedStrategies.offset[i];
+            }
+            for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
+                offset[i + offsetCalldata] = _newStrategyParam.offset[i];
+            }
+            
+            offsetCalldata = 0;
+            for(uint256 i = 0 ; i < indexStrategyToUpdate; i++) {
+                offsetCalldata += _packedStrategies.calculationsLen[i];
+            }
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                calculations[i] = _packedStrategies.calculations[i];
+            }
+            for(uint256 i = 0 ; i <  _newStrategyParam.calculationsLen; i++) {
+                calculations[i + offsetCalldata] = _newStrategyParam.calculations[i];
+            }
+
+            offsetCalldata = 0;
+            for(uint256 i = 0 ; i < indexStrategyToUpdate; i++) {
+                offsetCalldata += _packedStrategies.conditionsLen[i];
+            }
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                conditions[i] = _packedStrategies.conditions[i];
+            }
+            for(uint256 i = 0 ; i <  _newStrategyParam.conditionsLen; i++) {
+                conditions[i + offsetCalldata] = _newStrategyParam.conditions[i];
+            }
+        } else {
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                strategiesCallLen[i] = _packedStrategies.callLen[i];
+            }
+            strategiesCallLen[offsetCalldata] = _newStrategyParam.callLen;
+            for(uint256 i = offsetCalldata + 1 ; i < _packedStrategies.callLen.length; i++) {
+                strategiesCallLen[i] = _packedStrategies.callLen[i];
+            }
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                    calculationsLen[i] = _packedStrategies.calculationsLen[i];
+            }
+            calculationsLen[offsetCalldata] = _newStrategyParam.calculationsLen;
+            for(uint256 i = offsetCalldata + 1 ; i < _packedStrategies.calculationsLen.length; i++) {
+                calculationsLen[i] = _packedStrategies.calculationsLen[i];
+            }
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                conditionsLen[i] = _packedStrategies.conditionsLen[i];
+            }
+            conditionsLen[offsetCalldata] = _newStrategyParam.conditionsLen;
+            for(uint256 i = offsetCalldata + 1 ; i < _packedStrategies.conditionsLen.length; i++) {
+                conditionsLen[i] = _packedStrategies.conditionsLen[i];
+            }
 
 
-        offsetCalldata = 0;
-        for(uint256 i = 0 ; i < indexStrategyToUpdate; i++) {
-            offsetCalldata += _packedStrategies.conditionsLen[i];
-        }
-        uint256[] memory conditions = new uint256[](_packedStrategies.conditions.length - _packedStrategies.calculationsLen[indexStrategyToUpdate] + _newStrategyParam.conditionsLen);
-        for(uint256 i = 0 ; i < offsetCalldata; i++) {
-            conditions[i] = _packedStrategies.conditions[i];
-        }
-        for(uint256 i = 0 ; i <  _newStrategyParam.conditionsLen; i++) {
-            conditions[i + offsetCalldata] = _newStrategyParam.conditions[i];
-        }
-        for(uint256 i = 0 ; i < _packedStrategies.calculations.length - (offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToUpdate]); i++) {
-            conditions[i + offsetCalldata + _newStrategyParam.conditionsLen] = _packedStrategies.conditions[i + offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToUpdate]];
-        }
+            uint256 totalCallLen = 0;
+            offsetCalldata = 0;
+            for(uint256 i = 0 ; i < _packedStrategies.addresses.length; i++) {
+                if(i == indexStrategyToUpdate){
+                    offsetCalldata = totalCallLen;
+                }
+                totalCallLen += _packedStrategies.callLen[i];
+            }
+            uint256 offsetCalldataAfter = offsetCalldata + _packedStrategies.callLen[indexStrategyToUpdate];
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                contracts[i] = _packedStrategies.contracts[i];
+            }
+            for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
+                contracts[i + offsetCalldata] = _newStrategyParam.contracts[i];
+            }
+            for(uint256 i = 0 ; i < totalCallLen - offsetCalldataAfter; i++) {
+                contracts[i + offsetCalldata + _newStrategyParam.callLen] = _packedStrategies.contracts[offsetCalldataAfter + i];
+            }
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
+            }
+            for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
+                checkdata[i + offsetCalldata] = bytes4(_newStrategyParam.checkdata[i]);
+            }
+            for(uint256 i = 0 ; i < totalCallLen - offsetCalldataAfter; i++) {
+                checkdata[i + offsetCalldata + _newStrategyParam.callLen] = bytes4(_packedStrategies.checkdata[offsetCalldataAfter + i]);
+            }
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                offset[i] = _packedStrategies.offset[i];
+            }
+            for(uint256 i = 0 ; i < _newStrategyParam.callLen; i++) {
+                offset[i + offsetCalldata] = _newStrategyParam.offset[i];
+            }
+            for(uint256 i = 0 ; i < totalCallLen - offsetCalldataAfter; i++) {
+                offset[i + offsetCalldata + _newStrategyParam.callLen] = _packedStrategies.offset[offsetCalldataAfter + i];
+            }
 
+            uint256 totalCalculationsLen = 0;
+            offsetCalldata = 0;
+            for(uint256 i = 0 ; i < _packedStrategies.addresses.length; i++) {
+                if(i == indexStrategyToUpdate){
+                    offsetCalldata = totalCalculationsLen;
+                }
+                totalCalculationsLen += _packedStrategies.calculationsLen[i];
+            }
+            offsetCalldataAfter = offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToUpdate];
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                calculations[i] = _packedStrategies.calculations[i];
+            }
+            for(uint256 i = 0 ; i <  _newStrategyParam.calculationsLen; i++) {
+                calculations[i + offsetCalldata] = _newStrategyParam.calculations[i];
+            }
+            for(uint256 i = 0 ; i < totalCalculationsLen - offsetCalldataAfter; i++) {
+                calculations[i + offsetCalldata + _newStrategyParam.calculationsLen] = _packedStrategies.calculations[offsetCalldataAfter + i];
+            }
+
+
+            uint256 totalConditionsLen = 0;
+            offsetCalldata = 0;
+            for(uint256 i = 0 ; i < _packedStrategies.addresses.length; i++) {
+                if(i == indexStrategyToUpdate){
+                    offsetCalldata = totalConditionsLen;
+                }
+                totalConditionsLen += _packedStrategies.conditionsLen[i];
+            }
+            offsetCalldataAfter = offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToUpdate];
+            for(uint256 i = 0 ; i < offsetCalldata; i++) {
+                conditions[i] = _packedStrategies.conditions[i];
+            }
+            for(uint256 i = 0 ; i <  _newStrategyParam.conditionsLen; i++) {
+                conditions[i + offsetCalldata] = _newStrategyParam.conditions[i];
+            }
+            for(uint256 i = 0 ; i < totalConditionsLen - offsetCalldataAfter; i++) {
+                conditions[i + offsetCalldata + _newStrategyParam.conditionsLen] = _packedStrategies.conditions[offsetCalldataAfter + i];
+            }
+        }
         strategiesHash = uint256(keccak256(abi.encodePacked(_packedStrategies.addresses, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen ,conditions)));
         emit StrategyUpdated(_packedStrategies.addresses, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions);
     }
@@ -391,81 +471,92 @@ contract DebtAllocator is Ownable, Pausable {
         require(indexStrategyToRemove < _packedStrategies.addresses.length);
 
         // Build new arrays for the Strategy Hash and the Event
-        uint256 offsetCalldata = indexStrategyToRemove;
         uint256[] memory strategiesCallLen = new uint256[](_packedStrategies.callLen.length - 1);
-        for(uint256 i = 0 ; i < offsetCalldata; i++) {
-            strategiesCallLen[i] = _packedStrategies.callLen[i];
-        }
-        for(uint256 i = offsetCalldata; i < _packedStrategies.callLen.length; i++) {
-            strategiesCallLen[i] = _packedStrategies.callLen[i];
-        }
         uint256[] memory calculationsLen = new uint256[](_packedStrategies.calculationsLen.length - 1);
-        for(uint256 i = 0 ; i < offsetCalldata; i++) {
-            calculationsLen[i] = _packedStrategies.calculationsLen[i];
-        }
-        for(uint256 i = offsetCalldata; i < _packedStrategies.calculationsLen.length; i++) {
-            calculationsLen[i] = _packedStrategies.calculationsLen[i];
-        }
         uint256[] memory conditionsLen = new uint256[](_packedStrategies.conditionsLen.length - 1);
+        address[] memory contracts = new address[](_packedStrategies.contracts.length - _packedStrategies.callLen[indexStrategyToRemove]);
+        checkdata = new bytes4[](_packedStrategies.checkdata.length - _packedStrategies.callLen[indexStrategyToRemove]);
+        uint256[] memory offset = new uint256[](_packedStrategies.offset.length - _packedStrategies.callLen[indexStrategyToRemove]);
+        uint256[] memory calculations = new uint256[](_packedStrategies.calculations.length - _packedStrategies.calculationsLen[indexStrategyToRemove]);
+        uint256[] memory conditions = new uint256[](_packedStrategies.conditions.length - _packedStrategies.conditionsLen[indexStrategyToRemove]);
+        uint256 offsetCalldata = indexStrategyToRemove;
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            strategiesCallLen[i] = _packedStrategies.callLen[i];
+        }
+        for(uint256 i = 0 ; i < _packedStrategies.addresses.length - (offsetCalldata + 1); i++) {
+            strategiesCallLen[offsetCalldata + i] = _packedStrategies.callLen[offsetCalldata + 1 + i];
+        }
+        for(uint256 i = 0 ; i < offsetCalldata; i++) {
+            calculationsLen[i] = _packedStrategies.calculationsLen[i];
+        }
+        for(uint256 i = 0 ; i < _packedStrategies.addresses.length - (offsetCalldata + 1); i++) {
+            calculationsLen[offsetCalldata + i] = _packedStrategies.calculationsLen[offsetCalldata + 1 + i];
+        }
         for(uint256 i = 0 ; i < offsetCalldata; i++) {
             conditionsLen[i] = _packedStrategies.conditionsLen[i];
         }
-        for(uint256 i = offsetCalldata; i < _packedStrategies.conditionsLen.length; i++) {
-            conditionsLen[i] = _packedStrategies.conditionsLen[i];
+        for(uint256 i = 0 ; i < _packedStrategies.addresses.length - (offsetCalldata + 1); i++) {
+            conditionsLen[offsetCalldata + i] = _packedStrategies.conditionsLen[offsetCalldata + 1 + i];
         }
 
-
+        uint256 totalCallLen = 0;
         offsetCalldata = 0;
-        for(uint256 i = 0 ; i < indexStrategyToRemove; i++) {
-            offsetCalldata += _packedStrategies.callLen[i];
+        for(uint256 i = 0 ; i < _packedStrategies.addresses.length; i++) {
+            if(i == indexStrategyToRemove){
+                offsetCalldata = totalCallLen;
+            }
+            totalCallLen += _packedStrategies.callLen[i];
         }
 
-        address[] memory contracts = new address[](_packedStrategies.contracts.length - _packedStrategies.callLen[indexStrategyToRemove]);
         for(uint256 i = 0 ; i < offsetCalldata; i++) {
             contracts[i] = _packedStrategies.contracts[i];
         }
-        for(uint256 i = 0 ; i < _packedStrategies.contracts.length - (offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]); i++) {
-            contracts[i + offsetCalldata] = _packedStrategies.contracts[i + offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]];
+        for(uint256 i = 0 ; i < totalCallLen - (offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]); i++) {
+            contracts[i + offsetCalldata] = _packedStrategies.contracts[offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove] + i];
         }
-        checkdata = new bytes4[](_packedStrategies.checkdata.length - _packedStrategies.callLen[indexStrategyToRemove]);
         for(uint256 i = 0 ; i < offsetCalldata; i++) {
             checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
         }
-        for(uint256 i = 0 ; i < _packedStrategies.checkdata.length - (offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]); i++) {
-            checkdata[i + offsetCalldata] = bytes4(_packedStrategies.checkdata[i + offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]]);
+        for(uint256 i = 0 ; i < totalCallLen - (offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]); i++) {
+            checkdata[i + offsetCalldata] = bytes4(_packedStrategies.checkdata[offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove] + i]);
         }
-        uint256[] memory offset = new uint256[](_packedStrategies.offset.length - _packedStrategies.callLen[indexStrategyToRemove]);
         for(uint256 i = 0 ; i < offsetCalldata; i++) {
             offset[i] = _packedStrategies.offset[i];
         }
-        for(uint256 i = 0 ; i < _packedStrategies.offset.length - (offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]); i++) {
-            offset[i + offsetCalldata] = _packedStrategies.offset[i + offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]];
+        for(uint256 i = 0 ; i < totalCallLen - (offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove]); i++) {
+            offset[i + offsetCalldata] = _packedStrategies.offset[offsetCalldata + _packedStrategies.callLen[indexStrategyToRemove] + i];
         }
 
+        uint256 totalCalculationsLen = 0;
         offsetCalldata = 0;
-        for(uint256 i = 0 ; i < indexStrategyToRemove; i++) {
-            offsetCalldata += _packedStrategies.calculationsLen[i];
+        for(uint256 i = 0 ; i < _packedStrategies.addresses.length; i++) {
+            if(i == indexStrategyToRemove){
+                offsetCalldata = totalCalculationsLen;
+            }
+            totalCalculationsLen += _packedStrategies.calculationsLen[i];
         }
-        uint256[] memory calculations = new uint256[](_packedStrategies.calculations.length - _packedStrategies.calculationsLen[indexStrategyToRemove]);
         for(uint256 i = 0 ; i < offsetCalldata; i++) {
             calculations[i] = _packedStrategies.calculations[i];
         }
-        for(uint256 i = 0 ; i < _packedStrategies.calculations.length - (offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToRemove]); i++) {
-            calculations[i + offsetCalldata] = _packedStrategies.calculations[i + offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToRemove]];
+        for(uint256 i = 0 ; i < totalCalculationsLen - (offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToRemove]); i++) {
+            calculations[i + offsetCalldata] = _packedStrategies.calculations[offsetCalldata + _packedStrategies.calculationsLen[indexStrategyToRemove] + i];
         }
 
+        uint256 totalConditionsLen = 0;
         offsetCalldata = 0;
-        for(uint256 i = 0 ; i < indexStrategyToRemove; i++) {
-            offsetCalldata += _packedStrategies.conditionsLen[i];
+        for(uint256 i = 0 ; i < _packedStrategies.addresses.length; i++) {
+            if(i == indexStrategyToRemove){
+                offsetCalldata = totalConditionsLen;
+            }
+            totalConditionsLen += _packedStrategies.conditionsLen[i];
         }
-        uint256[] memory conditions = new uint256[](_packedStrategies.conditions.length - _packedStrategies.calculationsLen[indexStrategyToRemove]);
         for(uint256 i = 0 ; i < offsetCalldata; i++) {
             conditions[i] = _packedStrategies.conditions[i];
         }
-        for(uint256 i = 0 ; i < _packedStrategies.calculations.length - (offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToRemove]); i++) {
-            conditions[i + offsetCalldata] = _packedStrategies.conditions[i + offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToRemove]];
+        for(uint256 i = 0 ; i < totalConditionsLen - (offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToRemove]); i++) {
+            conditions[i + offsetCalldata] = _packedStrategies.conditions[offsetCalldata + _packedStrategies.conditionsLen[indexStrategyToRemove] + i];
         }
-
+        
         strategiesHash = uint256(keccak256(abi.encodePacked(_packedStrategies.addresses, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen ,conditions)));
         emit StrategyRemoved(_packedStrategies.addresses, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions);
     }
@@ -516,31 +607,22 @@ contract DebtAllocator is Ownable, Pausable {
         }
     }
 
-    function saveSnapshot(
-            address[] memory strategies,
-            uint256[] memory strategiesCallLen,
-            address[] memory contracts, 
-            bytes[] memory _checkdata, 
-            uint256[] memory offset, 
-            uint256[] memory calculationsLen,
-            uint256[] memory calculations, 
-            uint256[] memory conditionsLen,
-            uint256[] memory conditions) external {
+    function saveSnapshot(PackedStrategies memory _packedStrategies) external {
         // Checks at least one strategy is registered
         require(strategiesHash != 0, "NO_STRATEGIES_REGISTERED");   
 
-        bytes4[] memory checkdata = new bytes4[](_checkdata.length);
-        for(uint256 i = 0 ; i < checkdata.length; i++) {
-            checkdata[i] = bytes4(_checkdata[i]);
+        bytes4[] memory checkdata = new bytes4[](_packedStrategies.checkdata.length);
+        for(uint256 i = 0 ; i < _packedStrategies.checkdata.length; i++) {
+            checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
         }
 
         // Checks strategies data is valid 
-        require(strategiesHash == uint256(keccak256(abi.encodePacked(strategies, strategiesCallLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions))), "INVALID_DATA");   
-        updateTargetAllocation(strategies);
-        uint256[] memory dataStrategies = getStrategiesData(contracts, _checkdata, offset);
-        inputHash = uint256(keccak256(abi.encodePacked(dataStrategies, calculations, conditions)));
+        require(strategiesHash == uint256(keccak256(abi.encodePacked(_packedStrategies.addresses, _packedStrategies.callLen, _packedStrategies.contracts, checkdata, _packedStrategies.offset, _packedStrategies.calculationsLen, _packedStrategies.calculations, _packedStrategies.conditionsLen, _packedStrategies.conditions))), "INVALID_DATA");
+        updateTargetAllocation(_packedStrategies.addresses);
+        uint256[] memory dataStrategies = getStrategiesData(_packedStrategies.contracts, _packedStrategies.checkdata, _packedStrategies.offset);
+        inputHash = uint256(keccak256(abi.encodePacked(dataStrategies, _packedStrategies.calculations, _packedStrategies.conditions)));
         snapshotTimestamp[inputHash] = block.timestamp;
-        emit NewSnapshot(dataStrategies, calculations, conditions, inputHash, targetAllocation, block.timestamp);
+        emit NewSnapshot(dataStrategies, _packedStrategies.calculations, _packedStrategies.conditions, inputHash, targetAllocation, block.timestamp);
     }
 
 

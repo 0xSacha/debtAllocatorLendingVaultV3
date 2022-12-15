@@ -10,5 +10,5 @@ def main():
     account = accounts.load(config_dict["account"])
     contract = project.MockStrategy.deploy(sender=account)
     project.track_deployment(contract)
-    contract = project.MockStrategy2.deploy(sender=account)
-    project.track_deployment(contract)
+    # contract = project.MockStrategy2.deploy(sender=account)
+    # project.track_deployment(contract)

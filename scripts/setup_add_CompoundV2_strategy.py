@@ -1,13 +1,9 @@
-import click
-from ape.cli import network_option, NetworkBoundCommand
 from ape import accounts, project
+from typing import List, Optional
 import json
-
-#
-## COMPOUND 
-#
-
-## Goerli, with USDC ASSET
+import os
+import time
+ 
 
 WANTED_TOKEN = "0x07865c6E87B9F70255377e024ace6630C1Eaa37F"
 cTOKEN = "0x73506770799Eb04befb5AaE4734e58C2C624F493"
@@ -74,9 +70,55 @@ COMPOUND_CALCULATION_CONDITION = [0, 0, 5, 10000, 1, 0, 10001, 2, 1, 1, 10000000
 
 
 def main():
-    f = open("./scripts/config.json")
+    f = open("./scripts/config_testnet.json")
     config_dict = json.load(f)
+    f.close()
+    f = open("./scripts/strategies_info.json")
+    strategies_info = json.load(f)
     f.close()
     account = accounts.load(config_dict["account"])
     contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
-    contract.addStrategy(COMPOUND_STRATEGY_ADDRESS, COMPOUND_MAX_STRATEGY_DEBT_RATIO, COMPOUND_STRATEGY_CONTRACTS, COMPOUND_STRATEGYY_CHECKDATA, COMPOUND_STRATEGYY_OFFSET, COMPOUND_STRATEGYY_CALCULATION, COMPOUND_CALCULATION_CONDITION,sender=account)
+    compound_strategy = config_dict["strategy_compound_address"]
+    addresses = strategies_info["addresses"]
+    callLen = strategies_info["callLen"]
+    contracts = strategies_info["contracts"]
+    checkdata = strategies_info["checkdata"]
+    offset = strategies_info["offset"]
+    calculationsLen = strategies_info["calculationsLen"]
+    calculations = strategies_info["calculations"]
+    conditionsLen = strategies_info["conditionsLen"]
+    conditions = strategies_info["conditions"]
+
+    tx = contract.addStrategy((addresses, callLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions), compound_strategy, (int(len(COMPOUND_STRATEGY_CONTRACTS)), COMPOUND_STRATEGY_CONTRACTS, COMPOUND_STRATEGYY_CHECKDATA, COMPOUND_STRATEGYY_OFFSET, int(len(COMPOUND_STRATEGYY_CALCULATION)), COMPOUND_STRATEGYY_CALCULATION, int(len(COMPOUND_CALCULATION_CONDITION)), COMPOUND_CALCULATION_CONDITION),sender=account, max_priority_fee="1 gwei")
+    logs = list(tx.decode_logs(contract.StrategyAdded))
+    addresses = logs[0].Strategies
+    callLen = logs[0].StrategiesCallLen
+    contracts = logs[0].Contracts
+    checkdata = logs[0].Checkdata
+    data = []
+    index=0
+    for i in range(len(contracts)):
+        string = (bytearray(checkdata[i]).hex() )
+        data.append(string)
+
+    offset = logs[0].Offset
+    calculationsLen = logs[0].CalculationsLen
+    calculations = logs[0].Calculations
+    ConditionsLen = logs[0].ConditionsLen
+    conditions = logs[0].Conditions
+    result = {}
+    result["addresses"] = addresses
+    result["callLen"] = callLen
+    result["contracts"] = contracts
+    result["checkdata"] = data
+    result["offset"] = offset
+    result["calculationsLen"] = calculationsLen
+    result["calculations"] = calculations
+    result["conditionsLen"] = ConditionsLen
+    result["conditions"] = conditions
+    f = open("./scripts/strategies_info.json", "w")
+    json.dump(result, f)
+    f.close()
+    print("new strategies: ")
+    print(result)
+ 

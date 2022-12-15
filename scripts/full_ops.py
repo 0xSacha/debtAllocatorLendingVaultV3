@@ -20,6 +20,7 @@ def main():
 
     save_snapshot(account, contract, config["new_allocation_array"])
 
+
     #### START CLIENT ####
     client = init_client(config["bin_path"], [config["rpc"]])
 
@@ -55,11 +56,10 @@ def main():
     logs = list(tx.decode_logs(contract.NewSolution))
     print(logs)
 
-def save_snapshot(account, contract, new_allocation = [0, 0]):
+def save_snapshot(account, contract, new_allocation):
     f = open("./scripts/strategies_info.json")
     strategies_info = json.load(f)
     f.close()
-    aave_strategy = config_dict["strategy_aave_address"]
     addresses = strategies_info["addresses"]
     callLen = strategies_info["callLen"]
     contracts = strategies_info["contracts"]
@@ -69,33 +69,50 @@ def save_snapshot(account, contract, new_allocation = [0, 0]):
     calculations = strategies_info["calculations"]
     conditionsLen = strategies_info["conditionsLen"]
     conditions = strategies_info["conditions"]
-    tx = contract.saveSnapshot((addresses, callLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions), max_priority_fee="0.0001 gwei", sender=account)
+    tx = contract.saveSnapshot((addresses, callLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions), max_priority_fee="0.1 gwei", sender=account)
     logs = list(tx.decode_logs(contract.NewSnapshot))
     
     strategies_data = logs[0].dataStrategies
+    cumulative_offset = 0
     strategies_data_result = []
-    for sdata in strategies_data:
-        strategies_data_result.append(int(len(sdata)))
-        strategies_data_result += sdata
+    for i in range(int(len(addresses))):
+        strategies_data_result.append(callLen[i])
+        for j in range(callLen[i]):
+            strategies_data_result.append(strategies_data[cumulative_offset + j])
+        cumulative_offset += callLen[i]
 
     strategies_calculation = logs[0].calculation
+    cumulative_offset = 0
     strategies_calculation_result = []
-    for scalc in strategies_calculation:
-        strategies_calculation_result.append(int(len(scalc)/3))
-        strategies_calculation_result += scalc 
+    for i in range(int(len(addresses))):
+        strategies_calculation_result.append(calculationsLen[i] / 3)
+        for j in range(calculationsLen[i]):
+            strategies_calculation_result.append(strategies_calculation[cumulative_offset + j])
+        cumulative_offset += calculationsLen[i]
+
 
     strategies_condition = logs[0].condition
+    cumulative_offset = 0
     strategies_condition_result = []
-    for scond in strategies_condition:
-        strategies_condition_result.append(int((len(scond)-4)/3))
-        strategies_condition_result += scond 
+    for i in range(int(len(addresses))):
+        strategies_condition_result.append((conditionsLen[i]-4) / 3)
+        for j in range(conditionsLen[i]):
+            strategies_condition_result.append(strategies_condition[cumulative_offset + j])
+        cumulative_offset += conditionsLen[i]
+
+    target_allocation = logs[0].targetAllocations
+    current_allocation_vault = []
+    for i in range(int(len(addresses))):
+        current_allocation_vault.append(target_allocation[i])
+    
 
     result = {}
-    result['current_debt_ratio'] = [contract.debtRatios(0), contract.debtRatios(1)]
-    result['new_debt_ratio'] = new_allocation
+    result['current_allocation'] = current_allocation_vault
+    result['new_allocation'] = new_allocation
     result['strategies_data'] = strategies_data_result
     result['strategies_calculation'] = strategies_calculation_result
     result['strategies_calculation_conditions'] = strategies_condition_result
+
 
     f = open("./cairoScripts/input/apy_calculator_lender_input.json", "w")
     json.dump(result, f)
@@ -104,12 +121,13 @@ def save_snapshot(account, contract, new_allocation = [0, 0]):
     print("SNAPSHOT RESULT:")
     print(result)
 
+
 def init_client(bin_dir: str, node_rpc_url: Optional[str] = None) -> SharpClient:
     """
     Initialized a SharpClient instance, with or without node access.
     """
     # Load configuration file.
-    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
+    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_testnet.json")
     with open(CONFIG_PATH, "r") as config_file:
         config = json.load(config_file)
 

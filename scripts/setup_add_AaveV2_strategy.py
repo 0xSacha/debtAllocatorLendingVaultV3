@@ -76,12 +76,18 @@ def main():
     conditionsLen = strategies_info["conditionsLen"]
     conditions = strategies_info["conditions"]
 
-    tx = contract.addStrategy((addresses, callLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions), aave_strategy, (int(len(AAVE_STRATEGY_CONTRACTS)), AAVE_STRATEGY_CONTRACTS, AAVE_STRATEGYY_CHECKDATA, AAVE_STRATEGYY_OFFSET, int(len(AAVE_STRATEGYY_CALCULATION)), AAVE_STRATEGYY_CALCULATION, int(len(AAVE_CALCULATION_CONDITION)), AAVE_CALCULATION_CONDITION),sender=account, max_priority_fee="0.8 gwei")
+    tx = contract.addStrategy((addresses, callLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions), aave_strategy, (int(len(AAVE_STRATEGY_CONTRACTS)), AAVE_STRATEGY_CONTRACTS, AAVE_STRATEGYY_CHECKDATA, AAVE_STRATEGYY_OFFSET, int(len(AAVE_STRATEGYY_CALCULATION)), AAVE_STRATEGYY_CALCULATION, int(len(AAVE_CALCULATION_CONDITION)), AAVE_CALCULATION_CONDITION),sender=account, max_priority_fee="1 gwei")
     logs = list(tx.decode_logs(contract.StrategyAdded))
     addresses = logs[0].Strategies
     callLen = logs[0].StrategiesCallLen
     contracts = logs[0].Contracts
     checkdata = logs[0].Checkdata
+    data = []
+    index=0
+    for i in range(len(contracts)):
+        string = (bytearray(checkdata[i]).hex() )
+        data.append(string)
+    
     offset = logs[0].Offset
     calculationsLen = logs[0].CalculationsLen
     calculations = logs[0].Calculations
@@ -91,7 +97,7 @@ def main():
     result["addresses"] = addresses
     result["callLen"] = callLen
     result["contracts"] = contracts
-    result["checkdata"] = checkdata.decode('utf-8')
+    result["checkdata"] = data
     result["offset"] = offset
     result["calculationsLen"] = calculationsLen
     result["calculations"] = calculations
@@ -102,4 +108,6 @@ def main():
     f.close()
     print("new strategies: ")
     print(result)
+
+    
  

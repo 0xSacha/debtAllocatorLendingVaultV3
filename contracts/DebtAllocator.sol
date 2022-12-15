@@ -89,14 +89,14 @@ contract DebtAllocator is Ownable, Pausable {
     event StrategyRemoved(address[] Strategies,uint256[] StrategiesCallLen, address[] Contracts, bytes4[] Checkdata, uint256[] Offset, uint256[] CalculationsLen, uint256[] Calculations, uint256[] ConditionsLen, uint256[] Conditions);
 
 
-    event NewSnapshot(uint256[] dataStrategies, uint256[] calculation, uint256[] condition);
+    event NewSnapshot(uint256[] dataStrategies, uint256[] calculation, uint256[] condition, uint256[] targetAllocations);
     event NewSolution(uint256 newApy, uint256[] newTargetAllocation, address proposer, uint256 proposerPerformance,uint256 timestamp);
 
     event NewCairoProgramHash(bytes32 newCairoProgramHash);
     event NewCairoVerifier(address newCairoVerifier);
     event NewStalePeriod(uint256 newStalePeriod);
     event NewStaleSnapshotPeriod(uint256 newStaleSnapshotPeriod);
-    event targetAllocationForced(uint256[] newTargetAllocation);
+    // event targetAllocationForced(uint256[] newTargetAllocation);
 
     // TODO: add role based access control to invoke those functions
 
@@ -136,14 +136,14 @@ contract DebtAllocator is Ownable, Pausable {
         emit NewStaleSnapshotPeriod(_staleSnapshotPeriod);
     }
 
-    function forceTargetAllocation(uint256[] memory _newTargetAllocation) public onlyOwner whenPaused {
-        require(strategiesHash != 0, "NO_STRATEGIES");   
-        require(_newTargetAllocation.length == targetAllocation.length, "INVALIDE_LENGTH");
-        for(uint256 j; j < _newTargetAllocation.length; j++) {
-            targetAllocation[j] = _newTargetAllocation[j];
-        }
-        emit targetAllocationForced(_newTargetAllocation);
-    }
+    // function forceTargetAllocation(uint256[] memory _newTargetAllocation) public onlyOwner whenPaused {
+    //     require(strategiesHash != 0, "NO_STRATEGIES");   
+    //     require(_newTargetAllocation.length == targetAllocation.length, "INVALIDE_LENGTH");
+    //     for(uint256 j; j < _newTargetAllocation.length; j++) {
+    //         targetAllocation[j] = _newTargetAllocation[j];
+    //     }
+    //     emit targetAllocationForced(_newTargetAllocation);
+    // }
 
     function addStrategy(
             PackedStrategies memory _packedStrategies,
@@ -625,7 +625,7 @@ contract DebtAllocator is Ownable, Pausable {
         uint256[] memory dataStrategies = getStrategiesData(_packedStrategies.contracts, _packedStrategies.checkdata, _packedStrategies.offset);
         inputHash = uint256(keccak256(abi.encodePacked(dataStrategies, _packedStrategies.calculations, _packedStrategies.conditions)));
         snapshotTimestamp[inputHash] = block.timestamp;
-        emit NewSnapshot(dataStrategies, _packedStrategies.calculations, _packedStrategies.conditions);
+        emit NewSnapshot(dataStrategies, _packedStrategies.calculations, _packedStrategies.conditions, targetAllocation);
     }
 
 

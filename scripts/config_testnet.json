@@ -1,16 +1,16 @@
 {
   "account": "sacha",
-  "debt_allocator_address": "0xF5c674e5aaDdFa0460c1935131a7d6DE83B10363",
+  "debt_allocator_address": "0xb2A0F3fAAb16FeBd26E2B1F789aEF004Eb25e9a1",
   "strategy_aave_address": "0xEbc69526A626F66397949c972de5D5227Dc8d8Af",
   "strategy_compound_address": "0x53A3FB71a9Eb07Eee11d63273780Ed5e43f77359",
   "verifier_address": "0xAB43bA48c9edF4C2C4bB01237348D1D7B28ef168",
-  "bin_path": "./bin",
+  "bin_path": "./Users/sacha/cairo_venv/bin",
   "cairo_program_hash": "0x18261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f494",
   "rpc": "https://mainnet.infura.io/v3/eebdf8732cd044f0a52f976af7781260",
   "cairo_program_path": "./cairoScripts/test_sharp.cairo",
   "cairo_program_input_path": "./cairoScripts/input/test_sharp_input.json",
   "cairo_program_output_path": "./cairoScripts/output/test_sharp.pie", 
-  "new_allocation_array": [0, 10000],
+  "new_allocation_array": [30000000000000000000, 30000000000000000000],
   "prover_url": "https://testnet.provingservice.io/",
   "steps_limit": 1000000
 }

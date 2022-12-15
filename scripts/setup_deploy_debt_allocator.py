@@ -12,5 +12,5 @@ def main():
     with open(CONFIG_PATH, "r") as config_file:
         config = json.load(config_file)
     account = accounts.load(config["account"])
-    contract = project.DebtAllocator.deploy(CAIRO_VERIFIER, CAIRO_PROGRAM_HASH, sender=account)
+    contract = project.DebtAllocator.deploy(CAIRO_VERIFIER, CAIRO_PROGRAM_HASH, sender=account, max_priority_fee="0.5 gwei")
     project.track_deployment(contract)

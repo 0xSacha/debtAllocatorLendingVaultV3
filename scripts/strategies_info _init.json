@@ -1,12 +1,11 @@
 {
-    "addresses": [],
-    "callLen": [],
-    "contracts": [],
-    "checkdata": [],
-    "offset": [],
-    "calculationsLen": [],
-    "calculations": [],
-    "conditionsLen": [],
-    "conditions": []
+  "addresses": [],
+  "callLen": [],
+  "contracts": [],
+  "checkdata": [],
+  "offset": [],
+  "calculationsLen": [],
+  "calculations": [],
+  "conditionsLen": [],
+  "conditions": []
 }
-  

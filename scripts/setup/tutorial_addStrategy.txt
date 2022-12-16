@@ -1,4 +1,4 @@
-AAVE 
+AAVE V2
 
 
 ## Supply rate = Ut * (SBt*St + VBt*Vt) * (1 - Rt)
@@ -738,3 +738,294 @@ STRATEGYY_CALCULATION = [0, 0, 5, 10000, 1, 0, 10001, 2, 1, 1, 10000000000000200
 
 CALCULATION_CONDITION = [0, 0, 5, 10000, 1, 0, 10001, 2, 1, 1, 1000000000000020000, 2, 10003, 10002, 3, 10004, 4, 30, 26]
 ## add len 5 for cairo script 
+
+
+
+Compound V3
+
+SupplyRate = supplyPerSecondInterestRateBase + supplyPerSecondInterestRateSlopeLow * utilization
+Rewards supply rate = (COMP_USD * supplyspeed *  WANTED_TOKEN_DECIMALS * PF_WANTED_TOKEN_DECIMALS * SECOND PER YEAR * 10^18) / (PF_COMPOUND_TOKEN_DECIMALS * base scale * total supply * USDC_USD )
+
+
+## Else
+
+SupplyRate = supplyPerSecondInterestRateBase + supplyPerSecondInterestRateSlopeLow * supplyKink + supplyPerSecondInterestRateSlopeHigh * (utilization - supplyKink)
+
+# Supply rate : R0 + R1*Ut if ut <= Uo and R0 + R1*Uo + (Ut - Uo)*R2
+# R0, supplyPerSecondInterestRateBase
+# R1, Rate Slope 1
+# R2, Rate Slope 2
+# Ut, utilization rate 
+# Uo, Supply kink
+
+## Ut = total supply / total borrow
+
+## Head to https://docs.compound.finance/, get the comet address and call totalSupply(), totalBorrow(), supplyPerSecondInterestRateBase(), supplyPerSecondInterestRateSlopeLow(), supplyPerSecondInterestRateSlopeHigh(), supplyKink()
+
+## The following data is valid for Goerli, with cUSDC ASSET which is the base token deployed for compound v3
+
+BASE_TOKEN = "0x07865c6E87B9F70255377e024ace6630C1Eaa37F"
+cTOKEN = "0x3EE77595A8459e93C2888b13aDB354017B198188"
+
+## not available on goerli so DAI/USD is taken 
+COMP_USD = "0x0d79df66BE487753B02D015Fb622DED7f0E9798d"
+WANTED_TOKEN_USD = "0xAb5c49580294Aff77670F839ea425f5b78ab3Ae7"
+
+
+## totalSupply()
+CONTRACT_ADDRESS_0 = cTOKEN
+## 0x18160ddd (selector from totalSupply()
+CHECKDATA_0 = "0x18160ddd"
+STRATEGYY_OFFSET_0 = 0
+
+## totalBorrow()
+CONTRACT_ADDRESS_1 = cTOKEN
+## 0x8285ef40 (selector from totalBorrow()) 
+CHECKDATA_1 = "0x8285ef40"
+STRATEGYY_OFFSET_1 = 0
+
+## supplyPerSecondInterestRateBase() Rslop 0
+CONTRACT_ADDRESS_2 = cTOKEN
+## 0x94920cca (selector from supplyPerSecondInterestRateBase() ) 
+CHECKDATA_2 = "0x94920cca"
+STRATEGYY_OFFSET_2 = 0
+
+## supplyPerSecondInterestRateSlopeLow() Rslop 1
+CONTRACT_ADDRESS_3 = cTOKEN
+## 0x5a94b8d1 (selector from supplyPerSecondInterestRateSlopeLow() ) 
+CHECKDATA_3 = "0x5a94b8d1"
+STRATEGYY_OFFSET_3 = 0
+
+## supplyPerSecondInterestRateSlopeHigh() Rslop 2
+CONTRACT_ADDRESS_4 = cTOKEN
+## 0x804de71f (selector from supplyPerSecondInterestRateSlopeHigh() ) 
+CHECKDATA_4 = "0x804de71f"
+STRATEGYY_OFFSET_4 = 0
+
+## supplyKink() Uo
+CONTRACT_ADDRESS_5 = cTOKEN
+## 0xa5b4ff79 (selector from supplyKink() ) 
+CHECKDATA_5 = "0xa5b4ff79"
+STRATEGYY_OFFSET_5 = 0
+
+##baseTrackingSupplySpeed()
+CONTRACT_ADDRESS_6 = cTOKEN
+## 0x189bb2f1 (selector from baseTrackingSupplySpeed() ) 
+CHECKDATA_6 = "0x189bb2f1"
+STRATEGYY_OFFSET_6 = 0
+
+## baseScale()
+CONTRACT_ADDRESS_7 = cTOKEN
+## 0x44c1e5eb (selector from baseScale() ) 
+CHECKDATA_7 = "0x44c1e5eb"
+STRATEGYY_OFFSET_7 = 0
+
+## PriceFEED
+
+##latestAnswer()
+CONTRACT_ADDRESS_8 = COMP_USD
+## 0x50d25bcd (selector from latestAnswer() ) 
+CHECKDATA_8 = "0x50d25bcd"
+STRATEGYY_OFFSET_8 = 0
+
+##decimals()
+CONTRACT_ADDRESS_9 = COMP_USD
+## 0x313ce567 (selector from decimals() ) 
+CHECKDATA_9 = "0x313ce567"
+STRATEGYY_OFFSET_9 = 0
+
+##latestAnswer()
+CONTRACT_ADDRESS_10 = WANTED_TOKEN_USD
+## 0x50d25bcd (selector from latestAnswer() ) 
+CHECKDATA_10 = "0x50d25bcd"
+STRATEGYY_OFFSET_10 = 0
+
+##decimals()
+CONTRACT_ADDRESS_11 = WANTED_TOKEN_USD
+## 0x313ce567 (selector from decimals() ) 
+CHECKDATA_11 = "0x313ce567"
+STRATEGYY_OFFSET_11 = 0
+
+##decimals()
+CONTRACT_ADDRESS_12 = WANTED_TOKEN
+## 0x313ce567 (selector from decimals() ) 
+CHECKDATA_12 = "0x313ce567"
+STRATEGYY_OFFSET_12 = 0
+
+
+
+# contracts to get data from
+STRATEGY_CONTRACTS = [CONTRACT_ADDRESS_0, CONTRACT_ADDRESS_1, CONTRACT_ADDRESS_2, CONTRACT_ADDRESS_3, CONTRACT_ADDRESS_4, CONTRACT_ADDRESS_5, CONTRACT_ADDRESS_6]
+
+# checkdata (selector + neccessary args bytes32)
+STRATEGYY_CHECKDATA = [CHECKDATA_0, CHECKDATA_1, CHECKDATA_2, CHECKDATA_3, CHECKDATA_4, CHECKDATA_5, CHECKDATA_6]
+
+# offset, which args we need from the data received from the call, 0 by default
+STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, STRATEGYY_OFFSET_3, STRATEGYY_OFFSET_4, STRATEGYY_OFFSET_5, STRATEGYY_OFFSET_6]
+
+
+# ////////CASE Ut > Uo
+
+## Precision 10^18 kink, Precision 10^18 
+
+# calcul total supply +/- allocation change 
+# Step0 = 0, 0, 5 
+
+# calcul total borrow * 10^deicmals
+# Step1 = 1, 1000000000000020000, 2
+
+# calcul total borrow / supply               Ut * 10**18 Step 2
+# Step2 = 10001, 10000, 3
+
+# calcul supply kink * R1
+# Step3 = 5, 3, 2
+
+# calcul supply kink * R1
+# Step4 = 10003, 1000000000000020000, 3         U0*R1 Step 4
+
+# calcul Step 4 + Ro
+# Step5 = 10004, 2, 0         R0 + U0*R1 
+
+# calcul Ut - uo)
+# Step6 = 10002, 5, 1         (Ut - Uo)
+
+# calcul Step6*R2
+# Step7 = 10006, 4, 2        
+
+# calcul Step7 / Precision
+# Step8 = 10007, 1000000000000020000, 3         (Ut - Uo)*R2 Step 8
+
+# calcul Step8 + Step 5
+# Step9 = 10008, 10005, 0                       Ro + R1*Uo + (Ut - Uo)*R2  Step 9      
+
+# calcul Step9 * 31536000 (second per year)
+# Step10 = 10009, 31556000, 2                    APR supply 10*18 Step 10
+
+
+# calcul COMP_USD * SUPPLY SPEED
+# Step11 = 8, 6, 2
+
+# calcul WANTED_TOKEN_DECIMALS * PF_WANTED_TOKEN_DECIMALS
+# Step12 = 12, 11, 2
+
+# calcul SECOND PER YEAR * 10^18
+# Step13 = 31556000, 1000000000000020000, 2
+
+# calcul step11 * step 12 
+# Step14 = 10011, 10012, 2
+
+# calcul step14 * step 13 
+# Step15 = 10014, 10013, 2     (COMP_USD * supplyspeed *  WANTED_TOKEN_DECIMALS * PF_WANTED_TOKEN_DECIMALS * SECOND PER YEAR * 10^18) Step 15
+
+# calcul PF_COMPOUND_TOKEN_DECIMALS * base scale
+# Step16 = 9, 7, 2
+
+# calcul Total Supply * USDC_USD
+# Step17 = 10000, 10, 2
+
+# calcul Step 16 * Step 17
+# step18 = 10016, 10017, 2          (PF_COMPOUND_TOKEN_DECIMALS * base scale * total supply * USDC_USD ) Step 17
+
+# calcul Step 15 / Step 18
+# step19 = 10015, 10018, 3            APR SUPPLY REWARDS 10^18 STEP 18
+
+# calcul APR Supply + Rewards        Total APR 10^18 Step 19
+# step20 = 10010, 10019, 0
+
+# calcul Total apr * 10^9                       Total APR 10^27 Step 20
+# step21 = 10020, 1000020000, 2
+
+[0, 0, 5, 1, 1000000000000020000, 2, 10001, 10000, 3, 5, 3, 2, 10003, 1000000000000020000, 3, 10004, 2, 0, 10002, 5, 1, 10006, 4, 2, 10007, 1000000000000020000, 3, 10008, 10005, 0,
+10009, 31556000, 2, 8, 6, 2, 12, 11, 2, 31556000, 1000000000000020000, 2, 10010, 10011, 2, 10013, 10012, 2, 9, 7, 2, 10000, 10, 2, 10015, 10016, 2, 10014, 10017, 3, 10010, 10018, 0, 10019, 1000020000, 2]
+
+## 21 steps      LEN = 22
+
+
+# ////////CASE Ut <= Uo
+
+# calcul total supply +/- allocation change 
+# Step0 = 0, 0, 5 
+
+# calcul total borrow * 10^deicmals
+# Step1 = 1, 1000000000000020000, 2
+
+# calcul total borrow / supply               Ut * 10**18 Step 2
+# Step2 = 10001, 10000, 3
+
+# calcul Ut * R1
+# Step3 = 10002, 3, 2
+
+# calcul utilizarion rate * R1
+# Step4 = 10003, 1000000000000020000, 3         Ut*R1  Step 4
+
+# calcul Step 4 + Ro
+# Step5 = 10004, 2, 0         R0 + Ut*R1          
+
+# calcul Step5 * 31536000 (second per year)
+# Step6 = 10005, 31556000, 2                    Supply Rate 10^19  Step 6
+
+# calcul COMP_USD * SUPPLY SPEED
+# Step7 = 8, 6, 2
+
+# calcul WANTED_TOKEN_DECIMALS * PF_WANTED_TOKEN_DECIMALS
+# Step8 = 12, 11, 2
+
+# calcul SECOND PER YEAR * 10^18
+# Step9 = 31556000, 1000000000000020000, 2
+
+# calcul step7 * step 8 
+# Step10 = 10007, 10008, 2
+
+# calcul step10 * step 9 
+# Step11 = 10010, 10009, 2     (COMP_USD * supplyspeed *  WANTED_TOKEN_DECIMALS * PF_WANTED_TOKEN_DECIMALS * SECOND PER YEAR * 10^18) Step 11
+
+# calcul PF_COMPOUND_TOKEN_DECIMALS * base scale
+# Step12 = 9, 7, 2
+
+# calcul Total Supply * USDC_USD
+# Step13 = 10000, 10, 2
+
+# calcul Step 12 * Step 13
+# step14 = 10012, 10013, 2          (PF_COMPOUND_TOKEN_DECIMALS * base scale * total supply * USDC_USD ) Step 14
+
+# calcul Step 11 / Step 14
+# step15 = 10011, 10014, 3            APR SUPPLY REWARDS 10^18 STEP 15
+
+# calcul APR Supply + Rewards        Total APR 10^18 Step 16
+# step16 = 10006, 10015, 0
+
+# calcul Total apr * 10^9                       Total APR 10^27 Step 21
+# step17 = 10016, 1000020000, 2
+
+
+## 17 step      LEN = 18
+
+[0, 0, 5, 1, 1000000000000020000, 2, 10001, 10000, 3, 10002, 3, 2, 10003, 1000000000000020000, 3, 10004, 2, 0, 10005, 31556000, 2, 8, 6, 2, 12, 11, 2, 31556000, 1000000000000020000, 2,
+10007, 10008, 2, 10010, 10009, 2, 9, 7, 2, 10000, 10, 2, 10012, 10013, 2, 10011, 10014, 3, 10006, 10015, 0, 10016, 1000020000, 2]
+
+
+## Not ok len = 22 + ok len 18 tot 40, offset 22
+
+
+STRATEGYY_CALCULATION = [0, 0, 5, 1, 1000000000000020000, 2, 10001, 10000, 3, 5, 3, 2, 10003, 1000000000000020000, 3, 10004, 2, 0, 10002, 5, 1, 10006, 4, 2, 10007, 1000000000000020000, 3, 10008, 10005, 0,
+10009, 31556000, 2, 8, 6, 2, 12, 11, 2, 31556000, 1000000000000020000, 2, 10010, 10011, 2, 10013, 10012, 2, 9, 7, 2, 10000, 10, 2, 10015, 10016, 2, 10014, 10017, 3, 10010, 10018, 0, 10019, 1000020000, 2,
+0, 0, 5, 1, 1000000000000020000, 2, 10001, 10000, 3, 10002, 3, 2, 10003, 1000000000000020000, 3, 10004, 2, 0, 10005, 31556000, 2, 8, 6, 2, 12, 11, 2, 31556000, 1000000000000020000, 2,
+10007, 10008, 2, 10010, 10009, 2, 9, 7, 2, 10000, 10, 2, 10012, 10013, 2, 10011, 10014, 3, 10006, 10015, 0, 10016, 1000020000, 2]
+
+## ! add len 40 script cairo
+
+# calcul total supply +/- allocation change 
+# Step0 = 0, 0, 5 
+
+# calcul total borrow * 10^deicmals
+# Step1 = 1, 1000000000000020000, 2
+
+# calcul total borrow / supply               Ut * 10**18 Step 2
+# Step2 = 10001, 10000, 3
+
+# final Step                        
+# finalStep = 10002, 5, 22, 18           
+
+CALCULATION_CONDITION = [0, 0, 5, 1, 1000000000000020000, 2, 10001, 10000, 3, 10002, 5, 22, 18]
+## add len 3 for cairo script 
+

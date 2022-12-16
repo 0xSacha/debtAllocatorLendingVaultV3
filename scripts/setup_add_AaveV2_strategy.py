@@ -75,7 +75,7 @@ def main():
     calculations = strategies_info["calculations"]
     conditionsLen = strategies_info["conditionsLen"]
     conditions = strategies_info["conditions"]
-    
+
     tx = contract.addStrategy((addresses, callLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions), aave_strategy, (int(len(AAVE_STRATEGY_CONTRACTS)), AAVE_STRATEGY_CONTRACTS, AAVE_STRATEGYY_CHECKDATA, AAVE_STRATEGYY_OFFSET, int(len(AAVE_STRATEGYY_CALCULATION)), AAVE_STRATEGYY_CALCULATION, int(len(AAVE_CALCULATION_CONDITION)), AAVE_CALCULATION_CONDITION),sender=account, max_priority_fee="1 gwei")
     logs = list(tx.decode_logs(contract.StrategyAdded))
     addresses = logs[0].Strategies

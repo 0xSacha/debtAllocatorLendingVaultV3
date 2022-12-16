@@ -95,7 +95,7 @@ def main():
     addresses = logs[0].Strategies
     callLen = logs[0].StrategiesCallLen
     contracts = logs[0].Contracts
-    for i in AAVE_STRATEGYY_CHECKDATA:
+    for i in COMPOUND_STRATEGYY_CHECKDATA:
         checkdata.append(i[2:])
     
     offset = logs[0].Offset
@@ -103,6 +103,7 @@ def main():
     calculations = logs[0].Calculations
     ConditionsLen = logs[0].ConditionsLen
     conditions = logs[0].Conditions
+
     result = {}
     result["addresses"] = addresses
     result["callLen"] = callLen

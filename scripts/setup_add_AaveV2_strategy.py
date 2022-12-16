@@ -65,6 +65,7 @@ def main():
     f.close()
     account = accounts.load(config_dict["account"])
     contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
+    print("Contract:", contract.address)
     aave_strategy = config_dict["strategy_aave_address"]
     addresses = strategies_info["addresses"]
     callLen = strategies_info["callLen"]

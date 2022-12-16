@@ -94,7 +94,7 @@ def main():
     addresses = logs[0].Strategies
     callLen = logs[0].StrategiesCallLen
     contracts = logs[0].Contracts
-    for i in AAVE_STRATEGYY_CHECKDATA:
+    for i in COMPOUND_STRATEGYY_CHECKDATA:
         checkdata.append(i[2:])
     
     offset = logs[0].Offset

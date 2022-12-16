@@ -20,13 +20,13 @@ def main():
 
     save_snapshot(account, contract, config["new_allocation_array"])
 
-
     #### START CLIENT ####
     client = init_client(config["bin_path"], [config["rpc"]])
 
     #### RUN THE CAIRO PROGRAM ####
     compiled_program = client.compile_cairo(config["cairo_program_path"])
     cairo_pie = client.run_program(compiled_program, config["cairo_program_input_path"])
+
     # save cairo pie
     cairo_pie.to_file(config["cairo_program_output_path"])
     program_output = get_program_output(cairo_pie)
@@ -35,8 +35,10 @@ def main():
     print("PROGRAM OUTPUT")
     print(program_output)
     print(program_output[-1]/1e16, "% vs.", program_output[-2]/1e16, "%")
+
     job_key = client.submit_cairo_pie(cairo_pie=cairo_pie)
     fact = client.get_fact(cairo_pie)
+
     print("Job Key:", job_key)
     print("Fact:", fact)
 
@@ -50,6 +52,8 @@ def main():
         mins += 1
         time.sleep(60)
         print("Job is still pending... sleeping for 60 secs")
+
+    # now that job has been processed, we can verify on-chain
 
     #### SOLUTION VERIFICATION ####
     tx = contract.verifySolution(program_output, max_priority_fee="0.0001 gwei", sender=account)
@@ -85,7 +89,7 @@ def save_snapshot(account, contract, new_allocation):
     cumulative_offset = 0
     strategies_calculation_result = []
     for i in range(int(len(addresses))):
-        strategies_calculation_result.append(calculationsLen[i] / 3)
+        strategies_calculation_result.append(int(calculationsLen[i] / 3))
         for j in range(calculationsLen[i]):
             strategies_calculation_result.append(strategies_calculation[cumulative_offset + j])
         cumulative_offset += calculationsLen[i]
@@ -95,7 +99,7 @@ def save_snapshot(account, contract, new_allocation):
     cumulative_offset = 0
     strategies_condition_result = []
     for i in range(int(len(addresses))):
-        strategies_condition_result.append((conditionsLen[i]-4) / 3)
+        strategies_condition_result.append(int((conditionsLen[i]-4) / 3))
         for j in range(conditionsLen[i]):
             strategies_condition_result.append(strategies_condition[cumulative_offset + j])
         cumulative_offset += conditionsLen[i]
@@ -112,7 +116,6 @@ def save_snapshot(account, contract, new_allocation):
     result['strategies_data'] = strategies_data_result
     result['strategies_calculation'] = strategies_calculation_result
     result['strategies_calculation_conditions'] = strategies_condition_result
-
 
     f = open("./cairoScripts/input/apy_calculator_lender_input.json", "w")
     json.dump(result, f)

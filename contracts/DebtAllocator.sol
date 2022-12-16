@@ -24,12 +24,6 @@ interface IStreamer {
     ) external view returns (bytes32);
 }
 
-interface IStrategy {
-    function apiVersion() external pure returns (uint256);
-
-    function totalAssets() external view returns (uint256 _totalAssets);
-}
-
 contract DebtAllocator is Ownable {
     using SafeERC20 for IERC20;
 
@@ -137,7 +131,7 @@ contract DebtAllocator is Ownable {
     event NewStalePeriod(uint256 newStalePeriod);
     event NewStaleSnapshotPeriod(uint256 newStaleSnapshotPeriod);
 
-    // event targetAllocationForced(uint256[] newTargetAllocation);
+    event targetAllocationForced(uint256[] newTargetAllocation);
 
     function updateRewardsConfig(
         address _rewardsPayer,
@@ -182,19 +176,150 @@ contract DebtAllocator is Ownable {
         emit NewStaleSnapshotPeriod(_staleSnapshotPeriod);
     }
 
-    // function forceTargetAllocation(uint256[] memory _newTargetAllocation) public onlyOwner whenPaused {
-    //     require(strategiesHash != 0, "NO_STRATEGIES");
-    //     require(_newTargetAllocation.length == targetAllocation.length, "LENGTH");
-    //     for(uint256 j; j < _newTargetAllocation.length; j++) {
-    //         targetAllocation[j] = _newTargetAllocation[j];
-    //     }
-    //     emit targetAllocationForced(_newTargetAllocation);
-    // }
+    function forceTargetAllocation(uint256[] calldata _newTargetAllocation) public onlyOwner {
+        require(strategiesHash != 0, "NO_STRATEGIES");
+        require(_newTargetAllocation.length == targetAllocation.length, "LENGTH");
+        for(uint256 j; j < _newTargetAllocation.length; j++) {
+            targetAllocation[j] = _newTargetAllocation[j];
+        }
+        emit targetAllocationForced(_newTargetAllocation);
+    }
 
+    function saveSnapshot(PackedStrategies calldata _packedStrategies) external {
+        // Checks at least one strategy is registered
+        require(strategiesHash != 0, "NO_STRATEGIES");
+
+        bytes4[] memory checkdata = castCheckdataToBytes4(
+            _packedStrategies.checkdata
+        );
+
+        // Checks strategies data is valid
+        checkStrategyHash(_packedStrategies, checkdata);
+
+        // updateTargetAllocation(_packedStrategies.addresses);
+
+        uint256[] memory dataStrategies = getStrategiesData(
+            _packedStrategies.contracts,
+            _packedStrategies.checkdata,
+            _packedStrategies.offset
+        );
+
+        inputHash = uint256(
+            keccak256(
+                abi.encodePacked(
+                    dataStrategies,
+                    _packedStrategies.calculations,
+                    _packedStrategies.conditions
+                )
+            )
+        );
+
+        snapshotTimestamp[inputHash] = block.timestamp;
+        // TODO: do we need current debt in each strategy? (to be able to take into account withdrawals)
+        emit NewSnapshot(
+            dataStrategies,
+            _packedStrategies.calculations,
+            _packedStrategies.conditions,
+            targetAllocation
+        );
+    }
+
+    function verifySolution(
+        uint256[] calldata programOutput
+    ) external returns (bytes32) {
+        // NOTE: Check current snapshot not stale
+        uint256 _inputHash = inputHash;
+        uint256 _snapshotTimestamp = snapshotTimestamp[_inputHash];
+
+        require(
+            _snapshotTimestamp + staleSnapshotPeriod > block.timestamp,
+            "STALE_SNAPSHOT"
+        );
+
+        // NOTE: We get the data from parsing the program output
+        (
+            uint256 inputHash_,
+            uint256[] memory currentTargetAllocation,
+            uint256[] memory newTargetAllocation,
+            uint256 currentSolution,
+            uint256 newSolution 
+        ) = parseProgramOutput(programOutput);
+
+        // check inputs
+        require(inputHash_ == _inputHash, "HASH");
+
+        // check target allocation len
+        require(
+            targetAllocation.length == currentTargetAllocation.length &&
+                targetAllocation.length == newTargetAllocation.length,
+            "TARGET_ALLOCATION_LENGTH"
+        );
+
+        // check if the new solution better than previous one
+        require(
+            newSolution - minimumApyIncreaseForNewSolution >= currentSolution,
+            "TOO_BAD"
+        );
+
+        // Check with cairoVerifier
+        bytes32 outputHash = keccak256(abi.encodePacked(programOutput));
+        bytes32 fact = keccak256(
+            abi.encodePacked(cairoProgramHash, outputHash)
+        );
+
+        require(cairoVerifier.isValid(fact), "MISSING_PROOF");
+
+        targetAllocation = newTargetAllocation;
+        lastUpdate = block.timestamp;
+
+        sendRewardsToCurrentProposer();
+        proposer = msg.sender;
+        proposerPerformance = newSolution - currentSolution;
+
+        emit NewSolution(
+            newSolution,
+            newTargetAllocation,
+            msg.sender,
+            proposerPerformance,
+            block.timestamp
+        );
+        return (fact);
+    }
+
+    // =============== REWARDS =================
+    function sendRewardsToCurrentProposer() internal {
+        IStreamer _rewardsStreamer = IStreamer(rewardsStreamer);
+        if (address(_rewardsStreamer) == address(0)) {
+            return;
+        }
+        bytes32 streamId = _rewardsStreamer.getStreamId(
+            rewardsPayer,
+            address(this),
+            rewardsPerSec
+        );
+        if (_rewardsStreamer.streamToStart(streamId) == 0) {
+            // stream does not exist
+            return;
+        }
+        IERC20 _rewardsToken = IERC20(_rewardsStreamer.token());
+        // NOTE: if the stream does not have enough to pay full amount, it will pay less than expected
+        // WARNING: if this happens and the proposer is changed, the old proposer will lose the rewards
+        // TODO: create a way to ensure previous proposer gets the rewards even when payers balance is not enough (by saving how much he's owed)
+        _rewardsStreamer.withdraw(rewardsPayer, address(this), rewardsPerSec);
+        uint256 rewardsBalance = _rewardsToken.balanceOf(address(this));
+        _rewardsToken.safeTransfer(proposer, rewardsBalance);
+    }
+
+    function claimRewards() external {
+        require(msg.sender == proposer, "NOT_ALLOWED");
+        sendRewardsToCurrentProposer();
+    }
+
+    // ============== STRATEGY MANAGEMENT ================
     function addStrategy(
-        PackedStrategies memory _packedStrategies,
+        PackedStrategies calldata _packedStrategies,
         address _newStrategy,
-        StrategyParam memory _newStrategyParam
+        StrategyParam calldata _newStrategyParam
     ) external onlyOwner {
         // Checks previous strategies data valid
         bytes4[] memory checkdata = castCheckdataToBytes4(
@@ -216,7 +341,7 @@ contract DebtAllocator is Ownable {
         // Checks call data valid
         checkValidityOfData(_newStrategyParam);
 
-        // Build new arrays for the Strategy Hash and the Event        address[] memory strategies = new address[](_packedStrategies.addresses.length + 1);
+        // Build new arrays for the Strategy Hash and the Event        
         address[] memory strategies = new address[](
             _packedStrategies.addresses.length + 1
         );
@@ -312,6 +437,7 @@ contract DebtAllocator is Ownable {
         );
     }
 
+    // TODO: use utils functions
     function updateStrategy(
         PackedStrategies memory _packedStrategies,
         uint256 indexStrategyToUpdate,
@@ -321,13 +447,10 @@ contract DebtAllocator is Ownable {
         require(strategiesHash != 0, "NO_STRATEGIES");
 
         // Checks strategies data is valid
-        bytes4[] memory checkdata = new bytes4[](
-            _packedStrategies.checkdata.length
-        );
-        for (uint256 i = 0; i < _packedStrategies.checkdata.length; i++) {
-            checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
-        }
+        bytes4[] memory checkdata = castCheckdataToBytes4(_packedStrategies.checkdata);
+
         checkStrategyHash(_packedStrategies, checkdata);
+
         // Checks index in range
         require(
             indexStrategyToUpdate < _packedStrategies.addresses.length,
@@ -335,27 +458,9 @@ contract DebtAllocator is Ownable {
         );
 
         // Checks call data valid
-        require(
-            _newStrategyParam.callLen == _newStrategyParam.contracts.length &&
-                _newStrategyParam.callLen ==
-                _newStrategyParam.checkdata.length &&
-                _newStrategyParam.callLen == _newStrategyParam.offset.length &&
-                _newStrategyParam.calculationsLen ==
-                _newStrategyParam.calculations.length &&
-                _newStrategyParam.conditionsLen ==
-                _newStrategyParam.conditions.length,
-            "ARRAY_LEN"
-        );
-        for (uint256 i = 0; i < _newStrategyParam.callLen; i++) {
-            (bool success, ) = _newStrategyParam.contracts[i].call(
-                _newStrategyParam.checkdata[i]
-            );
-            require(success == true, "CALLDATA");
-            // Should we check for offset?
-        }
+        checkValidityOfData(_newStrategyParam);
 
         // Build new arrays for the Strategy Hash and the Event
-
         uint256[] memory strategiesCallLen = new uint256[](
             _packedStrategies.callLen.length
         );
@@ -844,9 +949,9 @@ contract DebtAllocator is Ownable {
 
     //Can't set only view, .call potentially modify state (should not arrive)
     function getStrategiesData(
-        address[] memory contracts,
-        bytes[] memory checkdata,
-        uint256[] memory offset
+        address[] calldata contracts,
+        bytes[] calldata checkdata,
+        uint256[] calldata offset
     ) public returns (uint256[] memory dataStrategies) {
         uint256[] memory dataStrategies_ = new uint256[](contracts.length);
         for (uint256 j; j < contracts.length; j++) {
@@ -856,176 +961,50 @@ contract DebtAllocator is Ownable {
         return (dataStrategies_);
     }
 
-    function updateTargetAllocation(address[] memory strategies) internal {
-        uint256[] memory realAllocations = new uint256[](strategies.length);
-        uint256 cumulativeAmountRealAllocations = 0;
-        uint256 cumulativeAmountTargetAllocations = 0;
-        for (uint256 j; j < strategies.length; j++) {
-            realAllocations[j] = IStrategy(strategies[j]).totalAssets();
-            cumulativeAmountRealAllocations += realAllocations[j];
-            cumulativeAmountTargetAllocations += targetAllocation[j];
-        }
-
-        if (cumulativeAmountTargetAllocations == 0) {
-            targetAllocation = realAllocations;
-        } else {
-            if (
-                cumulativeAmountTargetAllocations <=
-                cumulativeAmountRealAllocations
-            ) {
-                uint256 diff = cumulativeAmountRealAllocations -
-                    cumulativeAmountTargetAllocations;
-                // We need to add this amount respecting the different strategies allocation ratio
-                for (uint256 i = 0; i < strategies.length; i++) {
-                    uint256 strategyAllocationRatio = (PRECISION *
-                        targetAllocation[i]) /
-                        cumulativeAmountTargetAllocations;
-                    targetAllocation[i] +=
-                        (strategyAllocationRatio * diff) /
-                        PRECISION;
-                }
-            } else {
-                uint256 diff = cumulativeAmountTargetAllocations -
-                    cumulativeAmountRealAllocations;
-                // We need to substract this amount respecting the different strategies allocation ratio
-                for (uint256 i = 0; i < strategies.length; i++) {
-                    uint256 strategyAllocationRatio = (PRECISION *
-                        targetAllocation[i]) /
-                        cumulativeAmountTargetAllocations;
-                    targetAllocation[i] -=
-                        (strategyAllocationRatio * diff) /
-                        PRECISION;
-                }
-            }
-        }
-    }
-
-    function saveSnapshot(PackedStrategies memory _packedStrategies) external {
-        // Checks at least one strategy is registered
-        require(strategiesHash != 0, "NO_STRATEGIES");
-
-        bytes4[] memory checkdata = new bytes4[](
-            _packedStrategies.checkdata.length
-        );
-        for (uint256 i = 0; i < _packedStrategies.checkdata.length; i++) {
-            checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
-        }
-
-        // Checks strategies data is valid
-        checkStrategyHash(_packedStrategies, checkdata);
-
-        updateTargetAllocation(_packedStrategies.addresses);
-        uint256[] memory dataStrategies = getStrategiesData(
-            _packedStrategies.contracts,
-            _packedStrategies.checkdata,
-            _packedStrategies.offset
-        );
-        inputHash = uint256(
-            keccak256(
-                abi.encodePacked(
-                    dataStrategies,
-                    _packedStrategies.calculations,
-                    _packedStrategies.conditions
-                )
-            )
-        );
-        snapshotTimestamp[inputHash] = block.timestamp;
-        emit NewSnapshot(
-            dataStrategies,
-            _packedStrategies.calculations,
-            _packedStrategies.conditions,
-            targetAllocation
-        );
-    }
-
-    function verifySolution(
-        uint256[] memory programOutput
-    ) external returns (bytes32) {
-        // NOTE: Check current snapshot not stale
-        uint256 _snapshotTimestamp = snapshotTimestamp[inputHash];
-        require(
-            _snapshotTimestamp + staleSnapshotPeriod > block.timestamp,
-            "STALE_SNAPSHOT"
-        );
-
-        // NOTE: We get the data from parsing the program output
-        (
-            uint256 inputHash_,
-            uint256[] memory current_target_allocation,
-            uint256[] memory new_target_allocation,
-            uint256 current_solution,
-            uint256 new_solution
-        ) = parseProgramOutput(programOutput);
-
-        // check inputs
-        require(inputHash_ == inputHash, "HASH");
-
-        // check target allocation len
-        require(
-            targetAllocation.length == current_target_allocation.length &&
-                targetAllocation.length == new_target_allocation.length,
-            "TARGET_ALLOCATION_LENGTH"
-        );
-
-        // check if the new solution better than previous one
-        require(
-            new_solution - minimumApyIncreaseForNewSolution >= current_solution,
-            "TOO_BAD"
-        );
-
-        // Check with cairoVerifier
-        bytes32 outputHash = keccak256(abi.encodePacked(programOutput));
-        bytes32 fact = keccak256(
-            abi.encodePacked(cairoProgramHash, outputHash)
-        );
-        require(cairoVerifier.isValid(fact), "MISSING_PROOF");
-
-        // check no one has improven it in stale period (in case market conditions deteriorated)
-        targetAllocation = new_target_allocation;
-        lastUpdate = block.timestamp;
-
-        sendRewardsToCurrentProposer();
-        proposer = msg.sender;
-        proposerPerformance = new_solution - current_solution;
-
-        emit NewSolution(
-            new_solution,
-            new_target_allocation,
-            msg.sender,
-            proposerPerformance,
-            block.timestamp
-        );
-        return (fact);
-    }
-
-    function sendRewardsToCurrentProposer() internal {
-        IStreamer _rewardsStreamer = IStreamer(rewardsStreamer);
-        if (address(_rewardsStreamer) == address(0)) {
-            return;
-        }
-        bytes32 streamId = _rewardsStreamer.getStreamId(
-            rewardsPayer,
-            address(this),
-            rewardsPerSec
-        );
-        if (_rewardsStreamer.streamToStart(streamId) == 0) {
-            // stream does not exist
-            return;
-        }
-        IERC20 _rewardsToken = IERC20(_rewardsStreamer.token());
-        // NOTE: if the stream does not have enough to pay full amount, it will pay less than expected
-        // WARNING: if this happens and the proposer is changed, the old proposer will lose the rewards
-        // TODO: create a way to ensure previous proposer gets the rewards even when payers balance is not enough (by saving how much he's owed)
-        _rewardsStreamer.withdraw(rewardsPayer, address(this), rewardsPerSec);
-        uint256 rewardsBalance = _rewardsToken.balanceOf(address(this));
-        _rewardsToken.safeTransfer(proposer, rewardsBalance);
-    }
-
-    function claimRewards() external {
-        require(msg.sender == proposer, "NOT_ALLOWED");
-        sendRewardsToCurrentProposer();
-    }
-
+//     function updateTargetAllocation(address[] memory strategies) internal {
+//         uint256[] memory realAllocations = new uint256[](strategies.length);
+//         uint256 cumulativeAmountRealAllocations = 0;
+//         uint256 cumulativeAmountTargetAllocations = 0;
+//         for (uint256 j; j < strategies.length; j++) {
+//             realAllocations[j] = IStrategy(strategies[j]).totalAssets();
+//             cumulativeAmountRealAllocations += realAllocations[j];
+//             cumulativeAmountTargetAllocations += targetAllocation[j];
+//         }
+// 
+//         if (cumulativeAmountTargetAllocations == 0) {
+//             targetAllocation = realAllocations;
+//         } else {
+//             if (
+//                 cumulativeAmountTargetAllocations <=
+//                 cumulativeAmountRealAllocations
+//             ) {
+//                 uint256 diff = cumulativeAmountRealAllocations -
+//                     cumulativeAmountTargetAllocations;
+//                 // We need to add this amount respecting the different strategies allocation ratio
+//                 for (uint256 i = 0; i < strategies.length; i++) {
+//                     uint256 strategyAllocationRatio = (PRECISION *
+//                         targetAllocation[i]) /
+//                         cumulativeAmountTargetAllocations;
+//                     targetAllocation[i] +=
+//                         (strategyAllocationRatio * diff) /
+//                         PRECISION;
+//                 }
+//             } else {
+//                 uint256 diff = cumulativeAmountTargetAllocations -
+//                     cumulativeAmountRealAllocations;
+//                 // We need to substract this amount respecting the different strategies allocation ratio
+//                 for (uint256 i = 0; i < strategies.length; i++) {
+//                     uint256 strategyAllocationRatio = (PRECISION *
+//                         targetAllocation[i]) /
+//                         cumulativeAmountTargetAllocations;
+//                     targetAllocation[i] -=
+//                         (strategyAllocationRatio * diff) /
+//                         PRECISION;
+//                 }
+//             }
+//         }
+//     }
+// 
     // UTILS
     function checkStrategyHash(
         PackedStrategies memory _packedStrategies,
@@ -1053,37 +1032,38 @@ contract DebtAllocator is Ownable {
     }
 
     function parseProgramOutput(
-        uint256[] memory programOutput
+        uint256[] calldata programOutput
     )
         public
         pure
         returns (
             uint256 _inputHash,
-            uint256[] memory _current_target_allocation,
-            uint256[] memory _new_target_allocation,
-            uint256 _current_solution,
-            uint256 _new_solution
+            uint256[] memory _currentTargetAllocation,
+            uint256[] memory _newTargetAllocation,
+            uint256 _currentSolution,
+            uint256 _newSolution 
         )
     {
-        uint256 inputHashUint256 = programOutput[0] << 128;
-        inputHashUint256 += programOutput[1];
+        _inputHash = programOutput[0] << 128;
+        _inputHash += programOutput[1];
 
-        uint256[] memory current_target_allocation = new uint256[](
+        _currentTargetAllocation = new uint256[](
             programOutput[2]
         );
-        uint256[] memory new_target_allocation = new uint256[](
+
+        _newTargetAllocation = new uint256[](
             programOutput[2]
         );
 
         for (uint256 i = 0; i < programOutput[2]; i++) {
             // NOTE: skip the 2 first value + array len
-            current_target_allocation[i] = programOutput[i + 3];
-            new_target_allocation[i] = programOutput[i + 4 + programOutput[2]];
+            _currentTargetAllocation[i] = programOutput[i + 3];
+            _newTargetAllocation[i] = programOutput[i + 4 + programOutput[2]];
         }
         return (
-            inputHashUint256,
-            current_target_allocation,
-            new_target_allocation,
+            _inputHash,
+            _currentTargetAllocation,
+            _newTargetAllocation,
             programOutput[programOutput.length - 2],
             programOutput[programOutput.length - 1]
         );

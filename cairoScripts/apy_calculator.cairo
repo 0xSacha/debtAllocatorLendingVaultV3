@@ -134,6 +134,9 @@ func calcul_score_strategy{ range_check_ptr }(
     }
 
     let (result_) = perform_calculation(op1_, op2_, _calcul_strat[3 * _step_len + 2], _current_allocation, _new_allocation);
+    %{
+        print(ids.result_)
+    %}
     assert _step[_step_len] = result_;
     return calcul_score_strategy(_data_strat_len, _data_strat, _calcul_strat_len, _calcul_strat, _step_len + 1, _step, _current_allocation, _new_allocation);
 }

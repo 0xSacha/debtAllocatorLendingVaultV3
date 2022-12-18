@@ -76,7 +76,7 @@ def main():
     f = open("./scripts/strategies_info.json")
     strategies_info = json.load(f)
     f.close()
-    account = accounts.load(config_dict["account"])
+    account = accounts.load(os.environ["ACCOUNT_ALIAS"])
     contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
     compound_strategy = config_dict["strategy_compound_address"]
     addresses = strategies_info["addresses"]
@@ -94,7 +94,7 @@ def main():
     addresses = logs[0].Strategies
     callLen = logs[0].StrategiesCallLen
     contracts = logs[0].Contracts
-    for i in AAVE_STRATEGYY_CHECKDATA:
+    for i in COMPOUND_STRATEGYY_CHECKDATA:
         checkdata.append(i[2:])
     
     offset = logs[0].Offset

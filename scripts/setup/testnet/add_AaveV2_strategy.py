@@ -63,7 +63,7 @@ def main():
     f = open("./scripts/strategies_info.json")
     strategies_info = json.load(f)
     f.close()
-    account = accounts.load(config_dict["account"])
+    account = accounts.load(os.environ["ACCOUNT_ALIAS"])
     contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
     aave_strategy = config_dict["strategy_aave_address"]
     addresses = strategies_info["addresses"]

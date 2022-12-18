@@ -118,7 +118,7 @@ def main():
     f = open("./scripts/strategies_info.json")
     strategies_info = json.load(f)
     f.close()
-    account = accounts.load(config_dict["account"])
+    account = accounts.load(os.environ["ACCOUNT_ALIAS"])
     contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
     compound_v3_strategy = config_dict["strategy_compound_v3_address"]
     addresses = strategies_info["addresses"]

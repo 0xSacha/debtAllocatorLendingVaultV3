@@ -11,7 +11,6 @@ INTEREST_RATE_cTOKEN = "0xef5ae06093bdFc54Fbc804C7627B15dAE98Ca5e7"
 Comptroller = "0x05Df6C772A563FfB37fD3E04C1A279Fb30228621"
 COMP_USD = "0x0d79df66BE487753B02D015Fb622DED7f0E9798d"
 WANTED_TOKEN_USD = "0xAb5c49580294Aff77670F839ea425f5b78ab3Ae7"
-
 COMPOUND_CONTRACT_ADDRESS_0 = cTOKEN
 COMPOUND_CHECKDATA_0 = "0x3b1d21a2"
 COMPOUND_STRATEGYY_OFFSET_0 = 0
@@ -95,7 +94,7 @@ def main():
     addresses = logs[0].Strategies
     callLen = logs[0].StrategiesCallLen
     contracts = logs[0].Contracts
-    for i in COMPOUND_STRATEGYY_CHECKDATA:
+    for i in AAVE_STRATEGYY_CHECKDATA:
         checkdata.append(i[2:])
     
     offset = logs[0].Offset
@@ -103,7 +102,6 @@ def main():
     calculations = logs[0].Calculations
     ConditionsLen = logs[0].ConditionsLen
     conditions = logs[0].Conditions
-
     result = {}
     result["addresses"] = addresses
     result["callLen"] = callLen

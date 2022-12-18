@@ -1,5 +1,6 @@
 __pycache__
 .env
+.build/
 .history
 .hypothesis/
 build/
@@ -9,3 +10,4 @@ lib/
 pyvenv.cfg
 share/
 certs/
+node_modules/

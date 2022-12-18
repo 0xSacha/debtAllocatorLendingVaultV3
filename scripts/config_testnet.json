@@ -1,6 +1,6 @@
 {
   "account": "v3_deployer",
-  "debt_allocator_address": "0xA8E820325c513157ab2414CA4a664beAA066D20a",
+  "debt_allocator_address": "0x275F2f2b75C8dcFFd2D1CD80443b25a5972408fD",
   "strategy_aave_address": "0xEbc69526A626F66397949c972de5D5227Dc8d8Af",
   "strategy_compound_address": "0x53A3FB71a9Eb07Eee11d63273780Ed5e43f77359",
   "verifier_address": "0xAB43bA48c9edF4C2C4bB01237348D1D7B28ef168",
@@ -8,9 +8,9 @@
   "cairo_program_hash": "0x6c8e2d49edc0b0ac9873c622f30108a51ea0f37d4bfb698fbba825a91fd0831",
   "rpc": "https://mainnet.infura.io/v3/eebdf8732cd044f0a52f976af7781260",
   "cairo_program_path": "./cairoScripts/apy_calculator.cairo",
-  "cairo_program_input_path": "./cairoScripts/input/apy_calculator_lender_input.json",
+  "cairo_program_input_path": "./cairoScripts/input/apy_calculator_input.json",
   "cairo_program_output_path": "./cairoScripts/output/apy_calculator.pie",
-  "new_allocation_array": [5000000000000000000, 55000000000000000000],
+  "new_allocation_array": [5000000000, 5500000000],
   "prover_url": "https://testnet.provingservice.io/",
   "steps_limit": 1000000
 }

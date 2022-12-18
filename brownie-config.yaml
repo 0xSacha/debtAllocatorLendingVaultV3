@@ -1,3 +1,0 @@
-networks:
-    default: goerli
-dotenv: .env

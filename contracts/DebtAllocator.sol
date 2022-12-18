@@ -176,16 +176,23 @@ contract DebtAllocator is Ownable {
         emit NewStaleSnapshotPeriod(_staleSnapshotPeriod);
     }
 
-    function forceTargetAllocation(uint256[] calldata _newTargetAllocation) public onlyOwner {
+    function forceTargetAllocation(
+        uint256[] calldata _newTargetAllocation
+    ) public onlyOwner {
         require(strategiesHash != 0, "NO_STRATEGIES");
-        require(_newTargetAllocation.length == targetAllocation.length, "LENGTH");
-        for(uint256 j; j < _newTargetAllocation.length; j++) {
+        require(
+            _newTargetAllocation.length == targetAllocation.length,
+            "LENGTH"
+        );
+        for (uint256 j; j < _newTargetAllocation.length; j++) {
             targetAllocation[j] = _newTargetAllocation[j];
         }
         emit targetAllocationForced(_newTargetAllocation);
     }
 
-    function saveSnapshot(PackedStrategies calldata _packedStrategies) external {
+    function saveSnapshot(
+        PackedStrategies calldata _packedStrategies
+    ) external {
         // Checks at least one strategy is registered
         require(strategiesHash != 0, "NO_STRATEGIES");
 
@@ -242,7 +249,7 @@ contract DebtAllocator is Ownable {
             uint256[] memory currentTargetAllocation,
             uint256[] memory newTargetAllocation,
             uint256 currentSolution,
-            uint256 newSolution 
+            uint256 newSolution
         ) = parseProgramOutput(programOutput);
 
         // check inputs
@@ -341,7 +348,7 @@ contract DebtAllocator is Ownable {
         // Checks call data valid
         checkValidityOfData(_newStrategyParam);
 
-        // Build new arrays for the Strategy Hash and the Event        
+        // Build new arrays for the Strategy Hash and the Event
         address[] memory strategies = new address[](
             _packedStrategies.addresses.length + 1
         );
@@ -447,7 +454,9 @@ contract DebtAllocator is Ownable {
         require(strategiesHash != 0, "NO_STRATEGIES");
 
         // Checks strategies data is valid
-        bytes4[] memory checkdata = castCheckdataToBytes4(_packedStrategies.checkdata);
+        bytes4[] memory checkdata = castCheckdataToBytes4(
+            _packedStrategies.checkdata
+        );
 
         checkStrategyHash(_packedStrategies, checkdata);
 
@@ -961,50 +970,50 @@ contract DebtAllocator is Ownable {
         return (dataStrategies_);
     }
 
-//     function updateTargetAllocation(address[] memory strategies) internal {
-//         uint256[] memory realAllocations = new uint256[](strategies.length);
-//         uint256 cumulativeAmountRealAllocations = 0;
-//         uint256 cumulativeAmountTargetAllocations = 0;
-//         for (uint256 j; j < strategies.length; j++) {
-//             realAllocations[j] = IStrategy(strategies[j]).totalAssets();
-//             cumulativeAmountRealAllocations += realAllocations[j];
-//             cumulativeAmountTargetAllocations += targetAllocation[j];
-//         }
-// 
-//         if (cumulativeAmountTargetAllocations == 0) {
-//             targetAllocation = realAllocations;
-//         } else {
-//             if (
-//                 cumulativeAmountTargetAllocations <=
-//                 cumulativeAmountRealAllocations
-//             ) {
-//                 uint256 diff = cumulativeAmountRealAllocations -
-//                     cumulativeAmountTargetAllocations;
-//                 // We need to add this amount respecting the different strategies allocation ratio
-//                 for (uint256 i = 0; i < strategies.length; i++) {
-//                     uint256 strategyAllocationRatio = (PRECISION *
-//                         targetAllocation[i]) /
-//                         cumulativeAmountTargetAllocations;
-//                     targetAllocation[i] +=
-//                         (strategyAllocationRatio * diff) /
-//                         PRECISION;
-//                 }
-//             } else {
-//                 uint256 diff = cumulativeAmountTargetAllocations -
-//                     cumulativeAmountRealAllocations;
-//                 // We need to substract this amount respecting the different strategies allocation ratio
-//                 for (uint256 i = 0; i < strategies.length; i++) {
-//                     uint256 strategyAllocationRatio = (PRECISION *
-//                         targetAllocation[i]) /
-//                         cumulativeAmountTargetAllocations;
-//                     targetAllocation[i] -=
-//                         (strategyAllocationRatio * diff) /
-//                         PRECISION;
-//                 }
-//             }
-//         }
-//     }
-// 
+    //     function updateTargetAllocation(address[] memory strategies) internal {
+    //         uint256[] memory realAllocations = new uint256[](strategies.length);
+    //         uint256 cumulativeAmountRealAllocations = 0;
+    //         uint256 cumulativeAmountTargetAllocations = 0;
+    //         for (uint256 j; j < strategies.length; j++) {
+    //             realAllocations[j] = IStrategy(strategies[j]).totalAssets();
+    //             cumulativeAmountRealAllocations += realAllocations[j];
+    //             cumulativeAmountTargetAllocations += targetAllocation[j];
+    //         }
+    //
+    //         if (cumulativeAmountTargetAllocations == 0) {
+    //             targetAllocation = realAllocations;
+    //         } else {
+    //             if (
+    //                 cumulativeAmountTargetAllocations <=
+    //                 cumulativeAmountRealAllocations
+    //             ) {
+    //                 uint256 diff = cumulativeAmountRealAllocations -
+    //                     cumulativeAmountTargetAllocations;
+    //                 // We need to add this amount respecting the different strategies allocation ratio
+    //                 for (uint256 i = 0; i < strategies.length; i++) {
+    //                     uint256 strategyAllocationRatio = (PRECISION *
+    //                         targetAllocation[i]) /
+    //                         cumulativeAmountTargetAllocations;
+    //                     targetAllocation[i] +=
+    //                         (strategyAllocationRatio * diff) /
+    //                         PRECISION;
+    //                 }
+    //             } else {
+    //                 uint256 diff = cumulativeAmountTargetAllocations -
+    //                     cumulativeAmountRealAllocations;
+    //                 // We need to substract this amount respecting the different strategies allocation ratio
+    //                 for (uint256 i = 0; i < strategies.length; i++) {
+    //                     uint256 strategyAllocationRatio = (PRECISION *
+    //                         targetAllocation[i]) /
+    //                         cumulativeAmountTargetAllocations;
+    //                     targetAllocation[i] -=
+    //                         (strategyAllocationRatio * diff) /
+    //                         PRECISION;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //
     // UTILS
     function checkStrategyHash(
         PackedStrategies memory _packedStrategies,
@@ -1041,19 +1050,15 @@ contract DebtAllocator is Ownable {
             uint256[] memory _currentTargetAllocation,
             uint256[] memory _newTargetAllocation,
             uint256 _currentSolution,
-            uint256 _newSolution 
+            uint256 _newSolution
         )
     {
         _inputHash = programOutput[0] << 128;
         _inputHash += programOutput[1];
 
-        _currentTargetAllocation = new uint256[](
-            programOutput[2]
-        );
+        _currentTargetAllocation = new uint256[](programOutput[2]);
 
-        _newTargetAllocation = new uint256[](
-            programOutput[2]
-        );
+        _newTargetAllocation = new uint256[](programOutput[2]);
 
         for (uint256 i = 0; i < programOutput[2]; i++) {
             // NOTE: skip the 2 first value + array len

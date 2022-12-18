@@ -5,7 +5,7 @@
   "strategy_compound_address": "",
   "verifier_address": "0x47312450B3Ac8b5b8e247a6bB6d523e7605bDb60",
   "bin_path": "./bin",
-  "cairo_program_hash": "0x6c8e2d49edc0b0ac9873c622f30108a51ea0f37d4bfb698fbba825a91fd0831",
+  "cairo_program_hash": "0x5ca573cf10164674ca0ef484dc302cf265cbba25db4559dbfb68831b4512c3c",
   "rpc": "https://mainnet.infura.io/v3/eebdf8732cd044f0a52f976af7781260",
   "cairo_program_path": "./cairoScripts/apy_calculator.cairo",
   "cairo_program_input_path": "./cairoScripts/input/apy_calculator_input.json",

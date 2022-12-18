@@ -1,9 +1,7 @@
 from ape import accounts, project
-from typing import List, Optional
 import json
 import os
-import time
- 
+from dotenv import load_dotenv
 
 WANTED_TOKEN = "0x07865c6E87B9F70255377e024ace6630C1Eaa37F"
 cTOKEN = "0x73506770799Eb04befb5AaE4734e58C2C624F493"
@@ -71,6 +69,7 @@ COMPOUND_CALCULATION_CONDITION = [0, 0, 5, 10000, 1, 0, 10001, 2, 1, 1, 10000000
 
 
 def main():
+    load_dotenv()
     f = open("./scripts/config_testnet.json")
     config_dict = json.load(f)
     f.close()

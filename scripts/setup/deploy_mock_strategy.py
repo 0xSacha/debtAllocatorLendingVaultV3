@@ -3,7 +3,7 @@ from ape.cli import network_option, NetworkBoundCommand
 from ape import accounts, project
 import json
 
-def main():
+def run():
     f = open("./scripts/config_testnet.json")
     config_dict = json.load(f)
     f.close()

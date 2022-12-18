@@ -1,9 +1,7 @@
 from ape import accounts, project
-from typing import List, Optional
 import json
 import os
-import time
- 
+from dotevn import load_dotenv
 
 #
 ## AAVE 
@@ -57,6 +55,7 @@ AAVE_STRATEGYY_CALCULATION = [1, 0, 5, 10000, 2, 0, 10001, 3, 0, 2, 3, 0, 10003,
 AAVE_CALCULATION_CONDITION = [1, 0, 5, 10000, 2, 0, 10001, 3, 0, 2, 3, 0, 10003, 1000000000000000000000020000, 2, 10004, 10002, 3, 10005, 4, 32, 28]
 
 def main():
+    load_dotenv()
     f = open("./scripts/config_testnet.json")
     config_dict = json.load(f)
     f.close()

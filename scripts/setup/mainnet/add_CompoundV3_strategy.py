@@ -1,9 +1,7 @@
 from ape import accounts, project
-from typing import List, Optional
 import json
 import os
-import time
- 
+from dotenv import load_dotenv
 
 BASE_TOKEN = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
 cTOKEN = "0xc3d688B66703497DAA19211EEdff47f25384cdc3"
@@ -112,6 +110,7 @@ CALCULATION_CONDITION = [0, 0, 5, 1, 1000000000000020000, 2, 10001, 10000, 3, 10
 
 
 def main():
+    load_dotenv()
     f = open("./scripts/config_testnet.json")
     config_dict = json.load(f)
     f.close()

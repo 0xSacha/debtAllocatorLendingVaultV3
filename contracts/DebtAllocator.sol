@@ -76,7 +76,10 @@ contract DebtAllocator is Ownable {
     // 100% APY = 10^27, minimum increased = 10^23 = 0,01%
     uint256 public minimumApyIncreaseForNewSolution = 100000000000000000000000;
 
-    constructor(address _cairoVerifier, bytes32 _cairoProgramHash) payable {}
+    constructor(address _cairoVerifier, bytes32 _cairoProgramHash) payable {
+        updateCairoVerifier(_cairoVerifier);
+        updateCairoProgramHash(_cairoProgramHash);
+    }
 
     event StrategyAdded(
         address[] Strategies,

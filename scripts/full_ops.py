@@ -28,6 +28,7 @@ def main():
     #### RUN THE CAIRO PROGRAM ####
     compiled_program = client.compile_cairo(config["cairo_program_path"])
     cairo_pie = client.run_program(compiled_program, config["cairo_program_input_path"])
+    cairo_pie.to_file(config["cairo_program_output_path"])
     program_output = get_program_output(cairo_pie)
 
     #### SUBMIT FOR VERIFICATION ####

@@ -59,14 +59,12 @@ contract DebtAllocator is Ownable {
 
     // Everyone is free to propose a new solution, the address is stored so the user can get rewarded
     address public proposer;
-    uint256 public proposerPerformance;
     uint256 public lastUpdate;
     uint256 public strategiesHash;
     uint256 public inputHash;
     mapping(uint256 => uint256) public snapshotTimestamp;
 
     uint256 public staleSnapshotPeriod = 24 * 3600;
-    uint256 public stalePeriod = 24 * 3600;
 
     // Rewards config
     address public rewardsPayer;
@@ -125,7 +123,6 @@ contract DebtAllocator is Ownable {
         uint256 newApy,
         uint256[] newTargetAllocation,
         address proposer,
-        uint256 proposerPerformance,
         uint256 timestamp
     );
 
@@ -133,7 +130,6 @@ contract DebtAllocator is Ownable {
     event NewCairoVerifier(address newCairoVerifier);
     event NewStalePeriod(uint256 newStalePeriod);
     event NewStaleSnapshotPeriod(uint256 newStaleSnapshotPeriod);
-
     event targetAllocationForced(uint256[] newTargetAllocation);
 
     function updateRewardsConfig(
@@ -165,11 +161,6 @@ contract DebtAllocator is Ownable {
     function updateCairoVerifier(address _cairoVerifier) public onlyOwner {
         cairoVerifier = ICairoVerifier(_cairoVerifier);
         emit NewCairoVerifier(_cairoVerifier);
-    }
-
-    function updateStalePeriod(uint256 _stalePeriod) external onlyOwner {
-        stalePeriod = _stalePeriod;
-        emit NewStalePeriod(_stalePeriod);
     }
 
     function updateStaleSnapshotPeriod(
@@ -205,8 +196,6 @@ contract DebtAllocator is Ownable {
 
         // Checks strategies data is valid
         checkStrategyHash(_packedStrategies, checkdata);
-
-        // updateTargetAllocation(_packedStrategies.addresses);
 
         uint256[] memory dataStrategies = getStrategiesData(
             _packedStrategies.contracts,
@@ -284,13 +273,11 @@ contract DebtAllocator is Ownable {
 
         sendRewardsToCurrentProposer();
         proposer = msg.sender;
-        proposerPerformance = newSolution - currentSolution;
 
         emit NewSolution(
             newSolution,
             newTargetAllocation,
             msg.sender,
-            proposerPerformance,
             block.timestamp
         );
         return (fact);
@@ -1080,12 +1067,11 @@ contract DebtAllocator is Ownable {
     function bytesToBytes32(
         bytes memory b,
         uint offset
-    ) private pure returns (bytes32) {
-        bytes32 out;
-        for (uint i = 0; i < 32; i++) {
-            out |= bytes32(b[offset + i] & 0xFF) >> (i * 8);
+    ) private pure returns (bytes32 result) {
+        offset += 32;
+        assembly {
+            result := mload(add(b, offset))
         }
-        return out;
     }
 
     function castCheckdataToBytes4(

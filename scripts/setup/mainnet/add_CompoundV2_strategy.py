@@ -1,9 +1,7 @@
 from ape import accounts, project
-from typing import List, Optional
 import json
 import os
-import time
- 
+from dotenv import load_dotenv
 
 WANTED_TOKEN = "0x07865c6E87B9F70255377e024ace6630C1Eaa37F"
 cTOKEN = "0x73506770799Eb04befb5AaE4734e58C2C624F493"
@@ -71,13 +69,14 @@ COMPOUND_CALCULATION_CONDITION = [0, 0, 5, 10000, 1, 0, 10001, 2, 1, 1, 10000000
 
 
 def main():
+    load_dotenv()
     f = open("./scripts/config_testnet.json")
     config_dict = json.load(f)
     f.close()
     f = open("./scripts/strategies_info.json")
     strategies_info = json.load(f)
     f.close()
-    account = accounts.load(config_dict["account"])
+    account = accounts.load(os.environ["ACCOUNT_ALIAS"])
     contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
     compound_strategy = config_dict["strategy_compound_address"]
     addresses = strategies_info["addresses"]
@@ -95,7 +94,7 @@ def main():
     addresses = logs[0].Strategies
     callLen = logs[0].StrategiesCallLen
     contracts = logs[0].Contracts
-    for i in AAVE_STRATEGYY_CHECKDATA:
+    for i in COMPOUND_STRATEGYY_CHECKDATA:
         checkdata.append(i[2:])
     
     offset = logs[0].Offset
@@ -103,6 +102,7 @@ def main():
     calculations = logs[0].Calculations
     ConditionsLen = logs[0].ConditionsLen
     conditions = logs[0].Conditions
+
     result = {}
     result["addresses"] = addresses
     result["callLen"] = callLen

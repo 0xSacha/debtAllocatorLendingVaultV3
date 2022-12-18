@@ -1,1 +1,0 @@
-cairo-hash-program --program=apy_calculator_compiled.json

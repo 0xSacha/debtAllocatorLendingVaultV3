@@ -1,16 +1,14 @@
 {
-  "account": "sacha",
-  "debt_allocator_address": "0xECc247eBfe818eD9f04Cc5fB5Aea1cd16fc012DB",
+  "debt_allocator_address": "0x061175d51DE34e89d7ef6ad7Cca6fAb01613b267",
   "strategy_aave_address": "0xEbc69526A626F66397949c972de5D5227Dc8d8Af",
   "strategy_compound_address": "0x53A3FB71a9Eb07Eee11d63273780Ed5e43f77359",
   "verifier_address": "0xAB43bA48c9edF4C2C4bB01237348D1D7B28ef168",
-  "bin_path": "/Users/sacha/cairo_venv/bin",
-  "cairo_program_hash": "0x6c8e2d49edc0b0ac9873c622f30108a51ea0f37d4bfb698fbba825a91fd0831",
-  "rpc": "https://mainnet.infura.io/v3/eebdf8732cd044f0a52f976af7781260",
+  "cairo_program_hash": "0x5ca573cf10164674ca0ef484dc302cf265cbba25db4559dbfb68831b4512c3c",
   "cairo_program_path": "./cairoScripts/apy_calculator.cairo",
   "cairo_program_input_path": "./cairoScripts/input/apy_calculator_input.json",
-  "cairo_program_output_path": "./cairoScripts/output/apy_calculator.pie", 
-  "new_allocation_array": [30000000000000000000, 30000000000000000000],
+  "cairo_program_output_path": "./cairoScripts/output/apy_calculator.pie",
+  "new_allocation_array": [3000000000000000000, 3000000000000000000],
   "prover_url": "https://testnet.provingservice.io/",
-  "steps_limit": 1000000
+  "steps_limit": 1000000,
+  "strategies_info_path": "./scripts/strategies_info.json"
 }

@@ -329,13 +329,14 @@ func main{output_ptr: felt*, range_check_ptr, bitwise_ptr : BitwiseBuiltin*}() {
     %}
 
     let tab_len_ = tab_len_;
-    let (vault_total_value_) = sum_array(tab_len_, current_allocation);
     let (local cumulative_data_strat_array : felt*) = alloc();
     let (local cumulative_calculation_strat_array : felt*) = alloc();
     let (local cumulative_condition_strat_array : felt*) = alloc();
     let (current_score_, new_score_, input_hash_) = run_input(current_allocation, new_allocation, strat_data, strat_calculation, strat_calculation_conditions,0, 0, 0, cumulative_data_strat_array, 0, cumulative_calculation_strat_array, 0, cumulative_condition_strat_array, tab_len_, 0);
-    let (vault_current_apy_,r) = unsigned_div_rem(current_score_, vault_total_value_);
-    let (vault_new_apy_,r) = unsigned_div_rem(new_score_, vault_total_value_);
+    
+
+    let (vault_current_apy_) = calculate_apr(tab_len_, current_allocation, current_score_);
+    let (vault_new_apy_) = calculate_apr(tab_len_, new_allocation, new_score_);
 
     //Return the program input and output
     let (callback) = get_label_location(serialize_word_from_pointer);
@@ -349,6 +350,17 @@ func main{output_ptr: felt*, range_check_ptr, bitwise_ptr : BitwiseBuiltin*}() {
     return ();
 }
 
+
+
+func calculate_apr{ range_check_ptr }(array_len : felt, array: felt*, current_score_) -> (res: felt){
+    let (total_value_) = sum_array(array_len, array);
+    if(total_value_ == 0){
+        return(0,);
+    } else {
+        let (apr_,r) = unsigned_div_rem(current_score_, total_value_);
+        return(apr_,);
+    }
+}
 
 func sum_array{ range_check_ptr }(array_len : felt, array: felt*) -> (res: felt){
     if(array_len == 0){

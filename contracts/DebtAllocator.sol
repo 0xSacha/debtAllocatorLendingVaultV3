@@ -1,8 +1,9 @@
 //SPDX-License-Identifier: UNLICENSED
 
-import "@openzeppelin/access/Ownable.sol";
-import "@openzeppelin/token/ERC20/IERC20.sol";
-import "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "./DebtAllocatorUtils.sol";
 
 pragma solidity >=0.7.0 <0.9.0;
 
@@ -24,7 +25,7 @@ interface IStreamer {
     ) external view returns (bytes32);
 }
 
-contract DebtAllocator is Ownable {
+contract DebtAllocator is Ownable, DebtAllocatorUtils {
     using SafeERC20 for IERC20;
 
     uint256 PRECISION = 10 ** 18;
@@ -32,28 +33,6 @@ contract DebtAllocator is Ownable {
     ICairoVerifier public cairoVerifier = ICairoVerifier(address(0));
     bytes32 public cairoProgramHash = 0x0;
 
-    struct PackedStrategies {
-        address[] addresses;
-        uint256[] callLen;
-        address[] contracts;
-        bytes[] checkdata;
-        uint256[] offset;
-        uint256[] calculationsLen;
-        uint256[] calculations;
-        uint256[] conditionsLen;
-        uint256[] conditions;
-    }
-
-    struct StrategyParam {
-        uint256 callLen;
-        address[] contracts;
-        bytes[] checkdata;
-        uint256[] offset;
-        uint256 calculationsLen;
-        uint256[] calculations;
-        uint256 conditionsLen;
-        uint256[] conditions;
-    }
 
     uint256[] public targetAllocation;
 
@@ -83,7 +62,8 @@ contract DebtAllocator is Ownable {
         address[] Strategies,
         uint256[] StrategiesCallLen,
         address[] Contracts,
-        bytes4[] Checkdata,
+        bytes4[] Selectors,
+        bytes32[][] CallData,
         uint256[] Offset,
         uint256[] CalculationsLen,
         uint256[] Calculations,
@@ -94,7 +74,8 @@ contract DebtAllocator is Ownable {
         address[] Strategies,
         uint256[] StrategiesCallLen,
         address[] Contracts,
-        bytes4[] Checkdata,
+        bytes4[] Selectors,
+        bytes32[][] CallData,
         uint256[] Offset,
         uint256[] CalculationsLen,
         uint256[] Calculations,
@@ -105,7 +86,8 @@ contract DebtAllocator is Ownable {
         address[] Strategies,
         uint256[] StrategiesCallLen,
         address[] Contracts,
-        bytes4[] Checkdata,
+        bytes4[] Selectors,
+        bytes32[][] CallData,
         uint256[] Offset,
         uint256[] CalculationsLen,
         uint256[] Calculations,
@@ -190,18 +172,15 @@ contract DebtAllocator is Ownable {
         // Checks at least one strategy is registered
         require(strategiesHash != 0, "NO_STRATEGIES");
 
-        bytes4[] memory checkdata = castCheckdataToBytes4(
-            _packedStrategies.checkdata
-        );
-
         // Checks strategies data is valid
-        checkStrategyHash(_packedStrategies, checkdata);
+        checkStrategyHash(_packedStrategies, strategiesHash);
+
+        bytes[] memory checkdatas = selectorAndCallDataToBytes(_packedStrategies.selectors, _packedStrategies.callData);
 
         uint256[] memory dataStrategies = getStrategiesData(
             _packedStrategies.contracts,
-            _packedStrategies.checkdata,
-            _packedStrategies.offset
-        );
+            checkdatas,
+            _packedStrategies.offset);
 
         inputHash = uint256(
             keccak256(
@@ -313,18 +292,16 @@ contract DebtAllocator is Ownable {
     }
 
     // ============== STRATEGY MANAGEMENT ================
+
     function addStrategy(
         PackedStrategies calldata _packedStrategies,
         address _newStrategy,
         StrategyParam calldata _newStrategyParam
     ) external onlyOwner {
         // Checks previous strategies data valid
-        bytes4[] memory checkdata = castCheckdataToBytes4(
-            _packedStrategies.checkdata
-        );
 
         if (strategiesHash != 0) {
-            checkStrategyHash(_packedStrategies, checkdata);
+            checkStrategyHash(_packedStrategies, strategiesHash);
         } else {
             require(_packedStrategies.addresses.length == 0, "FIRST_DATA");
         }
@@ -339,43 +316,30 @@ contract DebtAllocator is Ownable {
         checkValidityOfData(_newStrategyParam);
 
         // Build new arrays for the Strategy Hash and the Event
-        address[] memory strategies = new address[](
-            _packedStrategies.addresses.length + 1
+        address[] memory strategies = appendAddressToArray(
+            _packedStrategies.addresses,
+            _newStrategy
         );
-        for (uint256 i = 0; i < _packedStrategies.addresses.length; i++) {
-            strategies[i] = _packedStrategies.addresses[i];
-        }
-        strategies[_packedStrategies.addresses.length] = _newStrategy;
 
         uint256[] memory strategiesCallLen = appendUint256ToArray(
             _packedStrategies.callLen,
             _newStrategyParam.callLen
         );
 
-        address[] memory contracts = new address[](
-            _packedStrategies.contracts.length + _newStrategyParam.callLen
-        );
-        for (uint256 i = 0; i < _packedStrategies.contracts.length; i++) {
-            contracts[i] = _packedStrategies.contracts[i];
-        }
-        for (uint256 i = 0; i < _newStrategyParam.callLen; i++) {
-            contracts[
-                i + _packedStrategies.contracts.length
-            ] = _newStrategyParam.contracts[i];
-        }
+        address[] memory contracts = concatenateAddressArrayToAddressArray(
+            _packedStrategies.contracts, 
+            _newStrategyParam.contracts);
 
-        checkdata = new bytes4[](
-            _packedStrategies.checkdata.length + _newStrategyParam.callLen
+        bytes4[] memory selectors = concatenateBytes4ArrayToBytes4(
+            _packedStrategies.selectors, 
+            _newStrategyParam.selectors
         );
-        for (uint256 i = 0; i < _packedStrategies.checkdata.length; i++) {
-            checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
-        }
 
-        for (uint256 i = 0; i < _newStrategyParam.callLen; i++) {
-            checkdata[i + _packedStrategies.checkdata.length] = bytes4(
-                _newStrategyParam.checkdata[i]
-            );
-        }
+        bytes32[][] memory callData = concatenateDoubleArrayBytes32ArrayToDoubleArrayBytes32(
+            _packedStrategies.callData, 
+            _newStrategyParam.callData
+        );
+       
 
         uint256[] memory offset = concatenateUint256ArrayToUint256Array(
             _packedStrategies.offset,
@@ -402,13 +366,16 @@ contract DebtAllocator is Ownable {
             _newStrategyParam.conditions
         );
 
+        bytes32[] memory callDataReduced = getReducedBytes32Array(callData);
+
         strategiesHash = uint256(
             keccak256(
                 abi.encodePacked(
                     strategies,
                     strategiesCallLen,
                     contracts,
-                    checkdata,
+                    selectors,
+                    callDataReduced,
                     offset,
                     calculationsLen,
                     calculations,
@@ -425,7 +392,8 @@ contract DebtAllocator is Ownable {
             strategies,
             strategiesCallLen,
             contracts,
-            checkdata,
+            selectors,
+            callData,
             offset,
             calculationsLen,
             calculations,
@@ -443,12 +411,7 @@ contract DebtAllocator is Ownable {
         // Checks at least one strategy is registered
         require(strategiesHash != 0, "NO_STRATEGIES");
 
-        // Checks strategies data is valid
-        bytes4[] memory checkdata = castCheckdataToBytes4(
-            _packedStrategies.checkdata
-        );
-
-        checkStrategyHash(_packedStrategies, checkdata);
+        checkStrategyHash(_packedStrategies, strategiesHash);
 
         // Checks index in range
         require(
@@ -460,236 +423,17 @@ contract DebtAllocator is Ownable {
         checkValidityOfData(_newStrategyParam);
 
         // Build new arrays for the Strategy Hash and the Event
-        uint256[] memory strategiesCallLen = new uint256[](
-            _packedStrategies.callLen.length
-        );
-        uint256[] memory calculationsLen = new uint256[](
-            _packedStrategies.calculationsLen.length
-        );
-        uint256[] memory conditionsLen = new uint256[](
-            _packedStrategies.conditionsLen.length
-        );
-        address[] memory contracts = new address[](
-            _packedStrategies.contracts.length -
-                _packedStrategies.callLen[indexStrategyToUpdate] +
-                _newStrategyParam.callLen
-        );
-        checkdata = new bytes4[](
-            _packedStrategies.checkdata.length -
-                _packedStrategies.callLen[indexStrategyToUpdate] +
-                _newStrategyParam.callLen
-        );
-        uint256[] memory offset = new uint256[](
-            _packedStrategies.offset.length -
-                _packedStrategies.callLen[indexStrategyToUpdate] +
-                _newStrategyParam.callLen
-        );
-        uint256[] memory calculations = new uint256[](
-            _packedStrategies.calculations.length -
-                _packedStrategies.calculationsLen[indexStrategyToUpdate] +
-                _newStrategyParam.calculationsLen
-        );
-        uint256[] memory conditions = new uint256[](
-            _packedStrategies.conditions.length -
-                _packedStrategies.conditionsLen[indexStrategyToUpdate] +
-                _newStrategyParam.conditionsLen
-        );
-        uint256 offsetCalldata = indexStrategyToUpdate;
-        if (indexStrategyToUpdate == _packedStrategies.addresses.length - 1) {
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                strategiesCallLen[i] = _packedStrategies.callLen[i];
-            }
-            strategiesCallLen[offsetCalldata] = _newStrategyParam.callLen;
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                calculationsLen[i] = _packedStrategies.calculationsLen[i];
-            }
-            calculationsLen[offsetCalldata] = _newStrategyParam.calculationsLen;
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                conditionsLen[i] = _packedStrategies.conditionsLen[i];
-            }
-            conditionsLen[offsetCalldata] = _newStrategyParam.conditionsLen;
-
-            offsetCalldata = 0;
-            for (uint256 i = 0; i < indexStrategyToUpdate; i++) {
-                offsetCalldata += _packedStrategies.callLen[i];
-            }
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                contracts[i] = _packedStrategies.contracts[i];
-            }
-            for (uint256 i = 0; i < _newStrategyParam.callLen; i++) {
-                contracts[i + offsetCalldata] = _newStrategyParam.contracts[i];
-            }
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
-            }
-            for (uint256 i = 0; i < _newStrategyParam.callLen; i++) {
-                checkdata[i + offsetCalldata] = bytes4(
-                    _newStrategyParam.checkdata[i]
-                );
-            }
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                offset[i] = _packedStrategies.offset[i];
-            }
-            for (uint256 i = 0; i < _newStrategyParam.callLen; i++) {
-                offset[i + offsetCalldata] = _newStrategyParam.offset[i];
-            }
-
-            offsetCalldata = 0;
-            for (uint256 i = 0; i < indexStrategyToUpdate; i++) {
-                offsetCalldata += _packedStrategies.calculationsLen[i];
-            }
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                calculations[i] = _packedStrategies.calculations[i];
-            }
-            for (uint256 i = 0; i < _newStrategyParam.calculationsLen; i++) {
-                calculations[i + offsetCalldata] = _newStrategyParam
-                    .calculations[i];
-            }
-
-            offsetCalldata = 0;
-            for (uint256 i = 0; i < indexStrategyToUpdate; i++) {
-                offsetCalldata += _packedStrategies.conditionsLen[i];
-            }
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                conditions[i] = _packedStrategies.conditions[i];
-            }
-            for (uint256 i = 0; i < _newStrategyParam.conditionsLen; i++) {
-                conditions[i + offsetCalldata] = _newStrategyParam.conditions[
-                    i
-                ];
-            }
-        } else {
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                strategiesCallLen[i] = _packedStrategies.callLen[i];
-            }
-            strategiesCallLen[offsetCalldata] = _newStrategyParam.callLen;
-            for (
-                uint256 i = offsetCalldata + 1;
-                i < _packedStrategies.callLen.length;
-                i++
-            ) {
-                strategiesCallLen[i] = _packedStrategies.callLen[i];
-            }
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                calculationsLen[i] = _packedStrategies.calculationsLen[i];
-            }
-            calculationsLen[offsetCalldata] = _newStrategyParam.calculationsLen;
-            for (
-                uint256 i = offsetCalldata + 1;
-                i < _packedStrategies.calculationsLen.length;
-                i++
-            ) {
-                calculationsLen[i] = _packedStrategies.calculationsLen[i];
-            }
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                conditionsLen[i] = _packedStrategies.conditionsLen[i];
-            }
-            conditionsLen[offsetCalldata] = _newStrategyParam.conditionsLen;
-            for (
-                uint256 i = offsetCalldata + 1;
-                i < _packedStrategies.conditionsLen.length;
-                i++
-            ) {
-                conditionsLen[i] = _packedStrategies.conditionsLen[i];
-            }
-
-            uint256 totalCallLen = 0;
-            offsetCalldata = 0;
-            for (uint256 i = 0; i < _packedStrategies.addresses.length; i++) {
-                if (i == indexStrategyToUpdate) {
-                    offsetCalldata = totalCallLen;
-                }
-                totalCallLen += _packedStrategies.callLen[i];
-            }
-            uint256 offsetCalldataAfter = offsetCalldata +
-                _packedStrategies.callLen[indexStrategyToUpdate];
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                contracts[i] = _packedStrategies.contracts[i];
-            }
-            for (uint256 i = 0; i < _newStrategyParam.callLen; i++) {
-                contracts[i + offsetCalldata] = _newStrategyParam.contracts[i];
-            }
-            for (uint256 i = 0; i < totalCallLen - offsetCalldataAfter; i++) {
-                contracts[
-                    i + offsetCalldata + _newStrategyParam.callLen
-                ] = _packedStrategies.contracts[offsetCalldataAfter + i];
-            }
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
-            }
-            for (uint256 i = 0; i < _newStrategyParam.callLen; i++) {
-                checkdata[i + offsetCalldata] = bytes4(
-                    _newStrategyParam.checkdata[i]
-                );
-            }
-            for (uint256 i = 0; i < totalCallLen - offsetCalldataAfter; i++) {
-                checkdata[
-                    i + offsetCalldata + _newStrategyParam.callLen
-                ] = bytes4(
-                    _packedStrategies.checkdata[offsetCalldataAfter + i]
-                );
-            }
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                offset[i] = _packedStrategies.offset[i];
-            }
-            for (uint256 i = 0; i < _newStrategyParam.callLen; i++) {
-                offset[i + offsetCalldata] = _newStrategyParam.offset[i];
-            }
-            for (uint256 i = 0; i < totalCallLen - offsetCalldataAfter; i++) {
-                offset[
-                    i + offsetCalldata + _newStrategyParam.callLen
-                ] = _packedStrategies.offset[offsetCalldataAfter + i];
-            }
-
-            totalCallLen = 0;
-            offsetCalldata = 0;
-            for (uint256 i = 0; i < _packedStrategies.addresses.length; i++) {
-                if (i == indexStrategyToUpdate) {
-                    offsetCalldata = totalCallLen;
-                }
-                totalCallLen += _packedStrategies.calculationsLen[i];
-            }
-            offsetCalldataAfter =
-                offsetCalldata +
-                _packedStrategies.calculationsLen[indexStrategyToUpdate];
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                calculations[i] = _packedStrategies.calculations[i];
-            }
-            for (uint256 i = 0; i < _newStrategyParam.calculationsLen; i++) {
-                calculations[i + offsetCalldata] = _newStrategyParam
-                    .calculations[i];
-            }
-            for (uint256 i = 0; i < totalCallLen - offsetCalldataAfter; i++) {
-                calculations[
-                    i + offsetCalldata + _newStrategyParam.calculationsLen
-                ] = _packedStrategies.calculations[offsetCalldataAfter + i];
-            }
-
-            totalCallLen = 0;
-            offsetCalldata = 0;
-            for (uint256 i = 0; i < _packedStrategies.addresses.length; i++) {
-                if (i == indexStrategyToUpdate) {
-                    offsetCalldata = totalCallLen;
-                }
-                totalCallLen += _packedStrategies.conditionsLen[i];
-            }
-            offsetCalldataAfter =
-                offsetCalldata +
-                _packedStrategies.conditionsLen[indexStrategyToUpdate];
-            for (uint256 i = 0; i < offsetCalldata; i++) {
-                conditions[i] = _packedStrategies.conditions[i];
-            }
-            for (uint256 i = 0; i < _newStrategyParam.conditionsLen; i++) {
-                conditions[i + offsetCalldata] = _newStrategyParam.conditions[
-                    i
-                ];
-            }
-            for (uint256 i = 0; i < totalCallLen - offsetCalldataAfter; i++) {
-                conditions[
-                    i + offsetCalldata + _newStrategyParam.conditionsLen
-                ] = _packedStrategies.conditions[offsetCalldataAfter + i];
-            }
-        }
+        uint256[] memory strategiesCallLen = updateUint256Array(_packedStrategies.callLen, _newStrategyParam.callLen, indexStrategyToUpdate);
+        uint256[] memory calculationsLen = updateUint256Array(_packedStrategies.calculationsLen, _newStrategyParam.calculationsLen, indexStrategyToUpdate);
+        uint256[] memory conditionsLen =updateUint256Array(_packedStrategies.conditionsLen, _newStrategyParam.conditionsLen, indexStrategyToUpdate);
+        address[] memory contracts = updateAddressArrayWithLen(_packedStrategies.callLen, _packedStrategies.contracts, _newStrategyParam.callLen, _newStrategyParam.contracts, indexStrategyToUpdate);
+        bytes4[] memory selectors = updateBytes4ArrayWithLen(_packedStrategies.callLen, _packedStrategies.selectors, _newStrategyParam.callLen, _newStrategyParam.selectors, indexStrategyToUpdate);
+        bytes32[][] memory callData = updateBytes32ArrayWithLen(_packedStrategies.callLen, _packedStrategies.callData, _newStrategyParam.callLen, _newStrategyParam.callData, indexStrategyToUpdate);
+        uint256[] memory offset = updateUint256ArrayWithLen(_packedStrategies.callLen, _packedStrategies.offset, _newStrategyParam.callLen, _newStrategyParam.offset, indexStrategyToUpdate);
+        uint256[] memory calculations = updateUint256ArrayWithLen(_packedStrategies.calculationsLen, _packedStrategies.calculations, _newStrategyParam.calculationsLen, _newStrategyParam.calculations, indexStrategyToUpdate);
+        uint256[] memory conditions = updateUint256ArrayWithLen(_packedStrategies.conditionsLen, _packedStrategies.conditions, _newStrategyParam.callLen, _newStrategyParam.conditions, indexStrategyToUpdate);
+        
+        bytes32[] memory callDataReduced = getReducedBytes32Array(callData);
 
         strategiesHash = uint256(
             keccak256(
@@ -697,7 +441,7 @@ contract DebtAllocator is Ownable {
                     _packedStrategies.addresses,
                     strategiesCallLen,
                     contracts,
-                    checkdata,
+                    callDataReduced,
                     offset,
                     calculationsLen,
                     calculations,
@@ -711,7 +455,8 @@ contract DebtAllocator is Ownable {
             _packedStrategies.addresses,
             strategiesCallLen,
             contracts,
-            checkdata,
+            selectors,
+            callData,
             offset,
             calculationsLen,
             calculations,
@@ -720,6 +465,7 @@ contract DebtAllocator is Ownable {
         );
     }
 
+
     function removeStrategy(
         PackedStrategies memory _packedStrategies,
         uint256 indexStrategyToRemove
@@ -727,204 +473,32 @@ contract DebtAllocator is Ownable {
         // Checks at least one strategy is registered
         require(strategiesHash != 0, "NO_STRATEGIES");
 
-        bytes4[] memory checkdata = castCheckdataToBytes4(
-            _packedStrategies.checkdata
-        );
-
         // Checks strategies data is valid
-        checkStrategyHash(_packedStrategies, checkdata);
+        checkStrategyHash(_packedStrategies, strategiesHash);
 
         // Checks index in range
         require(indexStrategyToRemove < _packedStrategies.addresses.length);
 
         // Build new arrays for the Strategy Hash and the Event
-        uint256[] memory strategiesCallLen = new uint256[](
-            _packedStrategies.callLen.length - 1
-        );
-        uint256[] memory calculationsLen = new uint256[](
-            _packedStrategies.calculationsLen.length - 1
-        );
-        uint256[] memory conditionsLen = new uint256[](
-            _packedStrategies.conditionsLen.length - 1
-        );
-        address[] memory contracts = new address[](
-            _packedStrategies.contracts.length -
-                _packedStrategies.callLen[indexStrategyToRemove]
-        );
-        checkdata = new bytes4[](
-            _packedStrategies.checkdata.length -
-                _packedStrategies.callLen[indexStrategyToRemove]
-        );
-        uint256[] memory offset = new uint256[](
-            _packedStrategies.offset.length -
-                _packedStrategies.callLen[indexStrategyToRemove]
-        );
-        uint256[] memory calculations = new uint256[](
-            _packedStrategies.calculations.length -
-                _packedStrategies.calculationsLen[indexStrategyToRemove]
-        );
-        uint256[] memory conditions = new uint256[](
-            _packedStrategies.conditions.length -
-                _packedStrategies.conditionsLen[indexStrategyToRemove]
-        );
-        uint256 offsetCalldata = indexStrategyToRemove;
-        for (uint256 i = 0; i < offsetCalldata; i++) {
-            strategiesCallLen[i] = _packedStrategies.callLen[i];
-        }
-        for (
-            uint256 i = 0;
-            i < _packedStrategies.addresses.length - (offsetCalldata + 1);
-            i++
-        ) {
-            strategiesCallLen[offsetCalldata + i] = _packedStrategies.callLen[
-                offsetCalldata + 1 + i
-            ];
-        }
-        for (uint256 i = 0; i < offsetCalldata; i++) {
-            calculationsLen[i] = _packedStrategies.calculationsLen[i];
-        }
-        for (
-            uint256 i = 0;
-            i < _packedStrategies.addresses.length - (offsetCalldata + 1);
-            i++
-        ) {
-            calculationsLen[offsetCalldata + i] = _packedStrategies
-                .calculationsLen[offsetCalldata + 1 + i];
-        }
-        for (uint256 i = 0; i < offsetCalldata; i++) {
-            conditionsLen[i] = _packedStrategies.conditionsLen[i];
-        }
-        for (
-            uint256 i = 0;
-            i < _packedStrategies.addresses.length - (offsetCalldata + 1);
-            i++
-        ) {
-            conditionsLen[offsetCalldata + i] = _packedStrategies.conditionsLen[
-                offsetCalldata + 1 + i
-            ];
-        }
-
-        uint256 totalCallLen = 0;
-        offsetCalldata = 0;
-        for (uint256 i = 0; i < _packedStrategies.addresses.length; i++) {
-            if (i == indexStrategyToRemove) {
-                offsetCalldata = totalCallLen;
-            }
-            totalCallLen += _packedStrategies.callLen[i];
-        }
-
-        for (uint256 i = 0; i < offsetCalldata; i++) {
-            contracts[i] = _packedStrategies.contracts[i];
-        }
-        for (
-            uint256 i = 0;
-            i <
-            totalCallLen -
-                (offsetCalldata +
-                    _packedStrategies.callLen[indexStrategyToRemove]);
-            i++
-        ) {
-            contracts[i + offsetCalldata] = _packedStrategies.contracts[
-                offsetCalldata +
-                    _packedStrategies.callLen[indexStrategyToRemove] +
-                    i
-            ];
-        }
-        for (uint256 i = 0; i < offsetCalldata; i++) {
-            checkdata[i] = bytes4(_packedStrategies.checkdata[i]);
-        }
-        for (
-            uint256 i = 0;
-            i <
-            totalCallLen -
-                (offsetCalldata +
-                    _packedStrategies.callLen[indexStrategyToRemove]);
-            i++
-        ) {
-            checkdata[i + offsetCalldata] = bytes4(
-                _packedStrategies.checkdata[
-                    offsetCalldata +
-                        _packedStrategies.callLen[indexStrategyToRemove] +
-                        i
-                ]
-            );
-        }
-        for (uint256 i = 0; i < offsetCalldata; i++) {
-            offset[i] = _packedStrategies.offset[i];
-        }
-        for (
-            uint256 i = 0;
-            i <
-            totalCallLen -
-                (offsetCalldata +
-                    _packedStrategies.callLen[indexStrategyToRemove]);
-            i++
-        ) {
-            offset[i + offsetCalldata] = _packedStrategies.offset[
-                offsetCalldata +
-                    _packedStrategies.callLen[indexStrategyToRemove] +
-                    i
-            ];
-        }
-
-        totalCallLen = 0;
-        offsetCalldata = 0;
-        for (uint256 i = 0; i < _packedStrategies.addresses.length; i++) {
-            if (i == indexStrategyToRemove) {
-                offsetCalldata = totalCallLen;
-            }
-            totalCallLen += _packedStrategies.calculationsLen[i];
-        }
-        for (uint256 i = 0; i < offsetCalldata; i++) {
-            calculations[i] = _packedStrategies.calculations[i];
-        }
-        for (
-            uint256 i = 0;
-            i <
-            totalCallLen -
-                (offsetCalldata +
-                    _packedStrategies.calculationsLen[indexStrategyToRemove]);
-            i++
-        ) {
-            calculations[i + offsetCalldata] = _packedStrategies.calculations[
-                offsetCalldata +
-                    _packedStrategies.calculationsLen[indexStrategyToRemove] +
-                    i
-            ];
-        }
-        totalCallLen = 0;
-        offsetCalldata = 0;
-        for (uint256 i = 0; i < _packedStrategies.addresses.length; i++) {
-            if (i == indexStrategyToRemove) {
-                offsetCalldata = totalCallLen;
-            }
-            totalCallLen += _packedStrategies.conditionsLen[i];
-        }
-        for (uint256 i = 0; i < offsetCalldata; i++) {
-            conditions[i] = _packedStrategies.conditions[i];
-        }
-        for (
-            uint256 i = 0;
-            i <
-            totalCallLen -
-                (offsetCalldata +
-                    _packedStrategies.conditionsLen[indexStrategyToRemove]);
-            i++
-        ) {
-            conditions[i + offsetCalldata] = _packedStrategies.conditions[
-                offsetCalldata +
-                    _packedStrategies.conditionsLen[indexStrategyToRemove] +
-                    i
-            ];
-        }
-
+        uint256[] memory strategiesCallLen = removeUint256Array(_packedStrategies.callLen, indexStrategyToRemove);
+        uint256[] memory calculationsLen = removeUint256Array(_packedStrategies.calculationsLen, indexStrategyToRemove);
+        uint256[] memory conditionsLen =removeUint256Array(_packedStrategies.conditionsLen, indexStrategyToRemove);
+        address[] memory contracts = removeAddressArrayWithLen(_packedStrategies.callLen, _packedStrategies.contracts, indexStrategyToRemove);
+        bytes4[] memory selectors = removeBytes4ArrayWithLen(_packedStrategies.callLen, _packedStrategies.selectors, indexStrategyToRemove);
+        bytes32[][] memory callData = removeBytes32ArrayWithLen(_packedStrategies.callLen, _packedStrategies.callData, indexStrategyToRemove);
+        uint256[] memory offset = removeUint256ArrayWithLen(_packedStrategies.callLen, _packedStrategies.offset, indexStrategyToRemove);
+        uint256[] memory calculations = removeUint256ArrayWithLen(_packedStrategies.calculationsLen, _packedStrategies.calculations, indexStrategyToRemove);
+        uint256[] memory conditions = removeUint256ArrayWithLen(_packedStrategies.conditionsLen, _packedStrategies.conditions, indexStrategyToRemove);
+        
+        bytes32[] memory callDataReduced = getReducedBytes32Array(callData);
         strategiesHash = uint256(
             keccak256(
                 abi.encodePacked(
                     _packedStrategies.addresses,
                     strategiesCallLen,
                     contracts,
-                    checkdata,
+                    selectors,
+                    callDataReduced,
                     offset,
                     calculationsLen,
                     calculations,
@@ -937,7 +511,8 @@ contract DebtAllocator is Ownable {
             _packedStrategies.addresses,
             strategiesCallLen,
             contracts,
-            checkdata,
+            selectors,
+            callData,
             offset,
             calculationsLen,
             calculations,
@@ -949,7 +524,7 @@ contract DebtAllocator is Ownable {
     //Can't set only view, .call potentially modify state (should not arrive)
     function getStrategiesData(
         address[] calldata contracts,
-        bytes[] calldata checkdata,
+        bytes[] memory checkdata,
         uint256[] calldata offset
     ) public returns (uint256[] memory dataStrategies) {
         uint256[] memory dataStrategies_ = new uint256[](contracts.length);
@@ -1004,133 +579,5 @@ contract DebtAllocator is Ownable {
     //         }
     //     }
     //
-    // UTILS
-    function checkStrategyHash(
-        PackedStrategies memory _packedStrategies,
-        bytes4[] memory checkdata
-    ) internal view {
-        require(
-            strategiesHash ==
-                uint256(
-                    keccak256(
-                        abi.encodePacked(
-                            _packedStrategies.addresses,
-                            _packedStrategies.callLen,
-                            _packedStrategies.contracts,
-                            checkdata,
-                            _packedStrategies.offset,
-                            _packedStrategies.calculationsLen,
-                            _packedStrategies.calculations,
-                            _packedStrategies.conditionsLen,
-                            _packedStrategies.conditions
-                        )
-                    )
-                ),
-            "DATA"
-        );
-    }
 
-    function parseProgramOutput(
-        uint256[] calldata programOutput
-    )
-        public
-        pure
-        returns (
-            uint256 _inputHash,
-            uint256[] memory _currentTargetAllocation,
-            uint256[] memory _newTargetAllocation,
-            uint256 _currentSolution,
-            uint256 _newSolution
-        )
-    {
-        _inputHash = programOutput[0] << 128;
-        _inputHash += programOutput[1];
-
-        _currentTargetAllocation = new uint256[](programOutput[2]);
-
-        _newTargetAllocation = new uint256[](programOutput[2]);
-
-        for (uint256 i = 0; i < programOutput[2]; i++) {
-            // NOTE: skip the 2 first value + array len
-            _currentTargetAllocation[i] = programOutput[i + 3];
-            _newTargetAllocation[i] = programOutput[i + 4 + programOutput[2]];
-        }
-        return (
-            _inputHash,
-            _currentTargetAllocation,
-            _newTargetAllocation,
-            programOutput[programOutput.length - 2],
-            programOutput[programOutput.length - 1]
-        );
-    }
-
-    function bytesToBytes32(
-        bytes memory b,
-        uint offset
-    ) private pure returns (bytes32 result) {
-        offset += 32;
-        assembly {
-            result := mload(add(b, offset))
-        }
-    }
-
-    function castCheckdataToBytes4(
-        bytes[] memory oldCheckdata
-    ) internal view returns (bytes4[] memory checkdata) {
-        checkdata = new bytes4[](oldCheckdata.length);
-        for (uint256 i = 0; i < oldCheckdata.length; i++) {
-            checkdata[i] = bytes4(oldCheckdata[i]);
-        }
-    }
-
-    function checkValidityOfData(
-        StrategyParam memory _newStrategyParam
-    ) internal {
-        // check lengths
-        require(
-            _newStrategyParam.callLen == _newStrategyParam.contracts.length &&
-                _newStrategyParam.callLen ==
-                _newStrategyParam.checkdata.length &&
-                _newStrategyParam.callLen == _newStrategyParam.offset.length &&
-                _newStrategyParam.calculationsLen ==
-                _newStrategyParam.calculations.length &&
-                _newStrategyParam.conditionsLen ==
-                _newStrategyParam.conditions.length,
-            "ARRAY_LEN"
-        );
-
-        // check success of calls
-        for (uint256 i = 0; i < _newStrategyParam.callLen; i++) {
-            (bool success, ) = _newStrategyParam.contracts[i].call(
-                _newStrategyParam.checkdata[i]
-            );
-            require(success == true, "CALLDATA");
-            // Should we check for offset?
-        }
-    }
-
-    function appendUint256ToArray(
-        uint256[] memory array,
-        uint256 newItem
-    ) internal pure returns (uint256[] memory newArray) {
-        newArray = new uint256[](array.length + 1);
-        for (uint256 i = 0; i < array.length; i++) {
-            newArray[i] = array[i];
-        }
-        newArray[array.length] = newItem;
-    }
-
-    function concatenateUint256ArrayToUint256Array(
-        uint256[] memory arrayA,
-        uint256[] memory arrayB
-    ) internal pure returns (uint256[] memory newArray) {
-        newArray = new uint256[](arrayA.length + arrayB.length);
-        for (uint256 i = 0; i < arrayA.length; i++) {
-            newArray[i] = arrayA[i];
-        }
-        uint256 lenA = arrayA.length;
-        for (uint256 i = 0; i < arrayB.length; i++) {
-            newArray[i + lenA] = arrayB[i];
-        }
-    }
 }

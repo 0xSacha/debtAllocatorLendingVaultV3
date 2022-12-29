@@ -1,10 +1,8 @@
 from ape import accounts, project
-from starkware.cairo.sharp.client_lib import CairoPie, ClientLib
-from starkware.cairo.sharp.fact_checker import FactChecker
+from client_lib import ClientLib
+from sharp_client import SharpClient
 from starkware.cairo.bootloaders.generate_fact import get_program_output
-from starkware.cairo.sharp.sharp_client import SharpClient
-from starkware.cairo.lang.compiler.assembler import Program
-from typing import List, Optional
+from typing import Optional
 import json
 import os
 import time
@@ -13,7 +11,7 @@ from dotenv import load_dotenv
 def main():
     # Load configuration files
     load_dotenv()
-    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_testnet.json")
+    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_mainnet.json")
     with open(CONFIG_PATH, "r") as config_file:
         config = json.load(config_file)
 
@@ -133,7 +131,7 @@ def init_client(bin_dir: str, node_rpc_url: Optional[str] = None) -> SharpClient
     Initialized a SharpClient instance, with or without node access.
     """
     # Load configuration file.
-    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_testnet.json")
+    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_mainnet.json")
     with open(CONFIG_PATH, "r") as config_file:
         config = json.load(config_file)
 

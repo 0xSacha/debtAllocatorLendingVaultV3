@@ -111,7 +111,7 @@ CALCULATION_CONDITION = [0, 0, 5, 1, 1000000000000020000, 2, 10001, 10000, 3, 10
 
 def main():
     load_dotenv()
-    f = open("./scripts/config_testnet.json")
+    f = open("./scripts/config_mainnet.json")
     config_dict = json.load(f)
     f.close()
     f = open("./scripts/strategies_info.json")

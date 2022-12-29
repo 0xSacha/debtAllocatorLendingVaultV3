@@ -71,7 +71,7 @@ COMPOUND_CALCULATION_CONDITION = [0, 0, 5, 10000, 1, 0, 10001, 2, 1, 1, 10000000
 
 
 def main():
-    f = open("./scripts/config_testnet.json")
+    f = open("./scripts/config_mainnet.json")
     config_dict = json.load(f)
     f.close()
     f = open("./scripts/strategies_info.json")
@@ -79,7 +79,7 @@ def main():
     f.close()
     account = accounts.load(config_dict["account"])
     contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
-    compound_strategy = config_dict["strategy_compound_address"]
+    compound_strategy = config_dict["strategy_compound_v2_address"]
     addresses = strategies_info["addresses"]
     callLen = strategies_info["callLen"]
     contracts = strategies_info["contracts"]
@@ -95,7 +95,7 @@ def main():
     addresses = logs[0].Strategies
     callLen = logs[0].StrategiesCallLen
     contracts = logs[0].Contracts
-    for i in AAVE_STRATEGYY_CHECKDATA:
+    for i in COMPOUND_STRATEGYY_CHECKDATA:
         checkdata.append(i[2:])
     
     offset = logs[0].Offset

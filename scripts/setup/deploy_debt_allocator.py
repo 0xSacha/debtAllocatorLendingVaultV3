@@ -3,7 +3,7 @@ import json
 import os
 
 def main():
-    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_testnet.json")
+    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_mainnet.json")
     with open(CONFIG_PATH, "r") as config_file:
         config = json.load(config_file)
     

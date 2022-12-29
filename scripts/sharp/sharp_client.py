@@ -15,7 +15,7 @@ from starkware.cairo.lang.compiler.assembler import Program
 from starkware.cairo.lang.vm.crypto import get_crypto_lib_context_manager
 from starkware.cairo.sharp.client_lib import CairoPie
 from starkware.cairo.sharp.fact_checker import FactChecker
-from sharp.client_lib import ClientLib
+from client_lib import ClientLib
 
 
 class SharpClient:

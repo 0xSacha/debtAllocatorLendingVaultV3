@@ -5,7 +5,7 @@ import re
 import typing
 import uuid
 
-from sharp.lambda_utils import send_cairo_job, send_get_status
+from lambda_utils import send_cairo_job, send_get_status
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)

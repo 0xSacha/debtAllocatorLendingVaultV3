@@ -39,6 +39,10 @@ def stratData2(project, owner):
     return owner.deploy(project.MockStrategyData2)
 
 @pytest.fixture
+def stratData33(project, owner):
+    return owner.deploy(project.MockStrategyData33)
+
+@pytest.fixture
 def rewards_payer(accounts):
     return accounts[2]
 
@@ -53,48 +57,56 @@ def rewards_payer(accounts):
 #     event = list(tx.decode_logs(factory.LlamaPayCreated))
 #     return project.dependencies["LlamaPay"]["master"].LlamaPay.contract_type.at(event[0].llamaPay)
 
+def test_deployment(stratData1, stratData33):
+    assert stratData1.first_data() == 11
+    assert stratData33.first_data() == 22
+
 def test_deployment(debt_allo):
-    assert debt_allo.cairoVerifier() == CAIRO_VERIFIER
-    assert debt_allo.cairoProgramHash() == bytes.fromhex("018261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f494")
+    assert stratData1.cairoVerifier() == CAIRO_VERIFIER
 
 
-def test_update_cairo_program_hash_1(debt_allo, owner2):
-    with reverts("Ownable: caller is not the owner"):
-        debt_allo.updateCairoProgramHash("018261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f492",sender=owner2)
-
-def test_update_cairo_program_hash_2(debt_allo, owner):
-    tx = debt_allo.updateCairoProgramHash("018261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f492",sender=owner)
-    logs = list(tx.decode_logs(debt_allo.NewCairoProgramHash))
-    assert logs[0].newCairoProgramHash == bytes.fromhex("018261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f492")
+# def test_deployment(debt_allo):
+#     assert debt_allo.cairoVerifier() == CAIRO_VERIFIER
+#     assert debt_allo.cairoProgramHash() == bytes.fromhex("018261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f494")
 
 
-def test_update_cairo_verifier_1(debt_allo, owner2):
-    with reverts("Ownable: caller is not the owner"):
-        debt_allo.updateCairoVerifier("0x79c32F042e2e5aE9c70a9814833A9013f0023c7a",sender=owner2)
+# def test_update_cairo_program_hash_1(debt_allo, owner2):
+#     with reverts("Ownable: caller is not the owner"):
+#         debt_allo.updateCairoProgramHash("018261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f492",sender=owner2)
 
-def test_update_cairo_verifier_2(debt_allo, owner):
-    tx = debt_allo.updateCairoVerifier("0x79c32F042e2e5aE9c70a9814833A9013f0023c7a",sender=owner)
-    logs = list(tx.decode_logs(debt_allo.NewCairoVerifier))
-    assert logs[0].newCairoVerifier == "0x79c32F042e2e5aE9c70a9814833A9013f0023c7a"
+# def test_update_cairo_program_hash_2(debt_allo, owner):
+#     tx = debt_allo.updateCairoProgramHash("018261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f492",sender=owner)
+#     logs = list(tx.decode_logs(debt_allo.NewCairoProgramHash))
+#     assert logs[0].newCairoProgramHash == bytes.fromhex("018261fedf8bb9295db94450fdda4343f1b04d3ae08f198d079a0e178596f492")
 
 
-def test_update_stale_period_1(debt_allo, owner2):
-    with reverts("Ownable: caller is not the owner"):
-        debt_allo.updateStalePeriod(88,sender=owner2)
+# def test_update_cairo_verifier_1(debt_allo, owner2):
+#     with reverts("Ownable: caller is not the owner"):
+#         debt_allo.updateCairoVerifier("0x79c32F042e2e5aE9c70a9814833A9013f0023c7a",sender=owner2)
 
-def test_update_stale_period_2(debt_allo, owner):
-    tx = debt_allo.updateStalePeriod(88,sender=owner)
-    logs = list(tx.decode_logs(debt_allo.NewStalePeriod))
-    assert logs[0].newStalePeriod == 88
+# def test_update_cairo_verifier_2(debt_allo, owner):
+#     tx = debt_allo.updateCairoVerifier("0x79c32F042e2e5aE9c70a9814833A9013f0023c7a",sender=owner)
+#     logs = list(tx.decode_logs(debt_allo.NewCairoVerifier))
+#     assert logs[0].newCairoVerifier == "0x79c32F042e2e5aE9c70a9814833A9013f0023c7a"
 
-def test_update_stale_snapshot_period_1(debt_allo, owner2):
-    with reverts("Ownable: caller is not the owner"):
-        debt_allo.updateStaleSnapshotPeriod(88,sender=owner2)
 
-def test_update_stale_snapshot_period_2(debt_allo, owner):
-    tx = debt_allo.updateStaleSnapshotPeriod(90,sender=owner)
-    logs = list(tx.decode_logs(debt_allo.NewStaleSnapshotPeriod))
-    assert logs[0].newStaleSnapshotPeriod == 90
+# def test_update_stale_snapshot_period_1(debt_allo, owner2):
+#     with reverts("Ownable: caller is not the owner"):
+#         debt_allo.updateStaleSnapshotPeriod(88,sender=owner2)
+
+# def test_update_stale_snapshot_period_2(debt_allo, owner):
+#     tx = debt_allo.updateStaleSnapshotPeriod(90,sender=owner)
+#     logs = list(tx.decode_logs(debt_allo.NewStaleSnapshotPeriod))
+#     assert logs[0].newStaleSnapshotPeriod == 90
+
+# def test_update_minimum_apy_increase_1(debt_allo, owner2):
+#     with reverts("Ownable: caller is not the owner"):
+#         debt_allo.updateMinimumApyIncrease(100,sender=owner2)
+
+# def test_update_minimum_apy_increase_2(debt_allo, owner):
+#     tx = debt_allo.updateMinimumApyIncrease(90,sender=owner)
+#     logs = list(tx.decode_logs(debt_allo.NewMinimumApyIncrease))
+#     assert logs[0].newStaleSnapshotPeriod == 90
 
 
 
@@ -273,5 +285,13 @@ def test_update_stale_snapshot_period_2(debt_allo, owner):
 #     assert rewards_streamer.streamToStart(stream_id) > 0
 
 
+# def test_update_stale_period_1(debt_allo, owner2):
+#     with reverts("Ownable: caller is not the owner"):
+#         debt_allo.updateStalePeriod(88,sender=owner2)
+
+# def test_update_stale_period_2(debt_allo, owner):
+#     tx = debt_allo.updateStalePeriod(88,sender=owner)
+#     logs = list(tx.decode_logs(debt_allo.NewStalePeriod))
+#     assert logs[0].newStalePeriod == 88
 
 

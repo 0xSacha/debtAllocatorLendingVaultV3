@@ -1,7 +1,5 @@
 //SPDX-License-Identifier: UNLICENSED
 
-pragma solidity >=0.7.0 <0.9.0;
-
     uint256 constant PRECISION = 1e27;
     uint256 constant STALE_SNAPSHOT_PERIOD = 24 * 3600;
     uint256 constant MINIMUM_APY_INCREASE = 1e23;

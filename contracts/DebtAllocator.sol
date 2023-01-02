@@ -1,11 +1,9 @@
 //SPDX-License-Identifier: UNLICENSED
 
-pragma solidity >=0.7.0 <0.9.0;
-
 import "@openzeppelin/access/Ownable.sol";
 import "@openzeppelin/token/ERC20/IERC20.sol";
 import "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
-import "./utils/DebtAllocatorLib.sol";
+import "./DebtAllocatorLib.sol";
 
 
 interface ICairoVerifier {
@@ -84,7 +82,7 @@ contract DebtAllocator is Ownable {
     event NewStalePeriod(uint256 newStalePeriod);
     event NewStaleSnapshotPeriod(uint256 newStaleSnapshotPeriod);
     event NewMinimumApyIncrease(uint256 newStaleSnapshotPeriod);
-    event targetAllocationForced(uint256[] newTargetAllocation);
+    // event TargetAllocationForced(uint256[] newTargetAllocation);
 
 
     constructor(address _cairoVerifier, bytes32 _cairoProgramHash) payable {
@@ -92,7 +90,7 @@ contract DebtAllocator is Ownable {
         updateCairoProgramHash(_cairoProgramHash);
     }
 
-     // ============== PARAMETERS MANAGEMENT  ================
+    //  // ============== PARAMETERS MANAGEMENT  ================
 
     function updateRewardsConfig(
         address _rewardsPayer,

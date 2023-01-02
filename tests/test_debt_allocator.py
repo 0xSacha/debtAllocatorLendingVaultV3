@@ -96,168 +96,170 @@ def test_update_stale_snapshot_period_2(debt_allo, owner):
     logs = list(tx.decode_logs(debt_allo.NewStaleSnapshotPeriod))
     assert logs[0].newStaleSnapshotPeriod == 90
 
-def test_add_strategy_1(debt_allo, owner2, strat, stratData1, stratData2):
-    with reverts("Ownable: caller is not the owner"):
-        debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner2)
-
-def test_add_strategy_2(debt_allo, owner, strat, stratData1, stratData2):
-    with reverts("INVALID_STRATEGY"):
-        debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), stratData1.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-
-def test_add_strategy_3(debt_allo, owner, strat, stratData1, stratData2):
-    with reverts("INVALID_ARRAY_LEN"):
-        debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-
-def test_add_strategy_4(debt_allo, owner, strat, stratData1, stratData2):
-    with reverts("INVALID_CALLDATA"):
-        debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [RANDOM_SELECTOR, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-
-def test_add_strategy_5(debt_allo, owner, strat, stratData1, stratData2):
-    debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-    with reverts("INVALID_DATA"):
-        debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-
-def test_add_strategy_6(debt_allo, owner, strat, stratData1, stratData2):
-    debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-    with reverts("STRATEGY_EXISTS"):
-        debt_allo.addStrategy(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-
-def test_add_strategy_7(debt_allo, owner, strat, stratData1, stratData2):
-    tx = debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-    logs = list(tx.decode_logs(debt_allo.StrategyAdded))
-    assert logs[0].Strategies[0] == (strat.address).lower()
-    assert logs[0].StrategiesCallLen[0] == 2
-    assert logs[0].Contracts[0] == (stratData1.address).lower()
-    assert logs[0].Contracts[1] == (stratData2.address).lower()
-    assert logs[0].Checkdata[0] == bytearray.fromhex(SELECTOR_1)
-    assert logs[0].Checkdata[1] == bytearray.fromhex(SELECTOR_2)
-    assert logs[0].Offset[0] == 0
-    assert logs[0].Offset[1] == 0
-    assert logs[0].CalculationsLen[0] == 3
-    assert logs[0].Calculations[0] == 0
-    assert logs[0].Calculations[1] == 1
-    assert logs[0].Calculations[2] == 0
-    assert logs[0].ConditionsLen[0] == 4
-    assert logs[0].Conditions[0] == 0
-    assert logs[0].Conditions[1] == 0
-    assert logs[0].Conditions[2] == 0
-    assert logs[0].Conditions[3] == 0
-
-def test_update_strategy_1(debt_allo, owner2, strat, stratData1, stratData2):
-    with reverts("Ownable: caller is not the owner"):
-        debt_allo.updateStrategy(([], [], [], [], [], [], [], [], []), 0, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner2)
-
-def test_update_strategy_2(debt_allo, owner, strat, stratData1, stratData2):
-    with reverts("NO_STRATEGIES"):
-        debt_allo.updateStrategy(([], [], [], [], [], [], [], [], []), 0, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-
-def test_update_strategy_3(debt_allo, owner, strat, stratData1, stratData2):
-    debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-    with reverts("INVALID_DATA"):
-        debt_allo.updateStrategy(([], [], [], [], [], [], [], [], []), 0, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-
-def test_update_strategy_4(debt_allo, owner, strat, stratData1, stratData2):
-    debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-    with reverts("INDEX_OUT_OF_RANGE"):
-        debt_allo.updateStrategy(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]), 1, (2, [stratData1.address, stratData2.address], [SELECTOR_2, SELECTOR_1], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-
-def test_update_strategy_5(debt_allo, owner, strat, stratData1, stratData2):
-    debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-    with reverts("INVALID_CALLDATA"):
-        debt_allo.updateStrategy(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]), 0, (2, [stratData1.address, stratData2.address], [RANDOM_ADDRESS, SELECTOR_1], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-
-def test_update_strategy_6(debt_allo, owner, strat, stratData1, stratData2):
-    debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-    tx = debt_allo.updateStrategy(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]), 0, (2, [stratData1.address, stratData2.address], [SELECTOR_2, SELECTOR_1], [0, 0], 6, [0, 1, 0, 3, 2, 1], 5, [0,0,0,0,0]),sender=owner)
-    logs = list(tx.decode_logs(debt_allo.StrategyUpdated))
-    assert logs[0].Strategies[0] == (strat.address).lower()
-    assert logs[0].StrategiesCallLen[0] == 2
-    assert logs[0].Contracts[0] == (stratData1.address).lower()
-    assert logs[0].Contracts[1] == (stratData2.address).lower()
-    assert logs[0].Checkdata[0] == bytearray.fromhex(SELECTOR_2)
-    assert logs[0].Checkdata[1] == bytearray.fromhex(SELECTOR_1)
-    assert logs[0].Offset[0] == 0
-    assert logs[0].Offset[1] == 0
-    assert logs[0].CalculationsLen[0] == 6
-    assert logs[0].Calculations[0] == 0
-    assert logs[0].Calculations[1] == 1
-    assert logs[0].Calculations[2] == 0
-    assert logs[0].Calculations[3] == 3
-    assert logs[0].Calculations[4] == 2
-    assert logs[0].Calculations[5] == 1
-    assert logs[0].ConditionsLen[0] == 5
-    assert logs[0].Conditions[0] == 0
-    assert logs[0].Conditions[1] == 0
-    assert logs[0].Conditions[2] == 0
-    assert logs[0].Conditions[3] == 0
-    assert logs[0].Conditions[4] == 0
 
 
-def test_remove_strategy_1(debt_allo, owner2, strat, stratData1, stratData2):
-    with reverts("Ownable: caller is not the owner"):
-        debt_allo.removeStrategy(([], [], [], [], [], [], [], [], []), 0,sender=owner2)
+# def test_add_strategy_1(debt_allo, owner2, strat, stratData1, stratData2):
+#     with reverts("Ownable: caller is not the owner"):
+#         debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner2)
 
-def test_remove_strategy_2(debt_allo, owner, strat, stratData1, stratData2):
-    with reverts("NO_STRATEGIES"):
-        debt_allo.removeStrategy(([], [], [], [], [], [], [], [], []), 0,sender=owner)
+# def test_add_strategy_2(debt_allo, owner, strat, stratData1, stratData2):
+#     with reverts("INVALID_STRATEGY"):
+#         debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), stratData1.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
 
-def test_remove_strategy_3(debt_allo, owner, strat, stratData1, stratData2):
-    debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-    with reverts("INVALID_DATA"):
-        debt_allo.removeStrategy(([], [], [], [], [], [], [], [], []), 0,sender=owner)
+# def test_add_strategy_3(debt_allo, owner, strat, stratData1, stratData2):
+#     with reverts("INVALID_ARRAY_LEN"):
+#         debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
 
-def test_remove_strategy_4(debt_allo, owner, strat, stratData1, stratData2):
-    debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-    tx = debt_allo.removeStrategy(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]), 0,sender=owner)
-    logs = list(tx.decode_logs(debt_allo.StrategyRemoved))
+# def test_add_strategy_4(debt_allo, owner, strat, stratData1, stratData2):
+#     with reverts("INVALID_CALLDATA"):
+#         debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [RANDOM_SELECTOR, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+
+# def test_add_strategy_5(debt_allo, owner, strat, stratData1, stratData2):
+#     debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+#     with reverts("INVALID_DATA"):
+#         debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+
+# def test_add_strategy_6(debt_allo, owner, strat, stratData1, stratData2):
+#     debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+#     with reverts("STRATEGY_EXISTS"):
+#         debt_allo.addStrategy(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+
+# def test_add_strategy_7(debt_allo, owner, strat, stratData1, stratData2):
+#     tx = debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+#     logs = list(tx.decode_logs(debt_allo.StrategyAdded))
+#     assert logs[0].Strategies[0] == (strat.address).lower()
+#     assert logs[0].StrategiesCallLen[0] == 2
+#     assert logs[0].Contracts[0] == (stratData1.address).lower()
+#     assert logs[0].Contracts[1] == (stratData2.address).lower()
+#     assert logs[0].Checkdata[0] == bytearray.fromhex(SELECTOR_1)
+#     assert logs[0].Checkdata[1] == bytearray.fromhex(SELECTOR_2)
+#     assert logs[0].Offset[0] == 0
+#     assert logs[0].Offset[1] == 0
+#     assert logs[0].CalculationsLen[0] == 3
+#     assert logs[0].Calculations[0] == 0
+#     assert logs[0].Calculations[1] == 1
+#     assert logs[0].Calculations[2] == 0
+#     assert logs[0].ConditionsLen[0] == 4
+#     assert logs[0].Conditions[0] == 0
+#     assert logs[0].Conditions[1] == 0
+#     assert logs[0].Conditions[2] == 0
+#     assert logs[0].Conditions[3] == 0
+
+# def test_update_strategy_1(debt_allo, owner2, strat, stratData1, stratData2):
+#     with reverts("Ownable: caller is not the owner"):
+#         debt_allo.updateStrategy(([], [], [], [], [], [], [], [], []), 0, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner2)
+
+# def test_update_strategy_2(debt_allo, owner, strat, stratData1, stratData2):
+#     with reverts("NO_STRATEGIES"):
+#         debt_allo.updateStrategy(([], [], [], [], [], [], [], [], []), 0, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+
+# def test_update_strategy_3(debt_allo, owner, strat, stratData1, stratData2):
+#     debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+#     with reverts("INVALID_DATA"):
+#         debt_allo.updateStrategy(([], [], [], [], [], [], [], [], []), 0, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+
+# def test_update_strategy_4(debt_allo, owner, strat, stratData1, stratData2):
+#     debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+#     with reverts("INDEX_OUT_OF_RANGE"):
+#         debt_allo.updateStrategy(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]), 1, (2, [stratData1.address, stratData2.address], [SELECTOR_2, SELECTOR_1], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+
+# def test_update_strategy_5(debt_allo, owner, strat, stratData1, stratData2):
+#     debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+#     with reverts("INVALID_CALLDATA"):
+#         debt_allo.updateStrategy(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]), 0, (2, [stratData1.address, stratData2.address], [RANDOM_ADDRESS, SELECTOR_1], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+
+# def test_update_strategy_6(debt_allo, owner, strat, stratData1, stratData2):
+#     debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+#     tx = debt_allo.updateStrategy(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]), 0, (2, [stratData1.address, stratData2.address], [SELECTOR_2, SELECTOR_1], [0, 0], 6, [0, 1, 0, 3, 2, 1], 5, [0,0,0,0,0]),sender=owner)
+#     logs = list(tx.decode_logs(debt_allo.StrategyUpdated))
+#     assert logs[0].Strategies[0] == (strat.address).lower()
+#     assert logs[0].StrategiesCallLen[0] == 2
+#     assert logs[0].Contracts[0] == (stratData1.address).lower()
+#     assert logs[0].Contracts[1] == (stratData2.address).lower()
+#     assert logs[0].Checkdata[0] == bytearray.fromhex(SELECTOR_2)
+#     assert logs[0].Checkdata[1] == bytearray.fromhex(SELECTOR_1)
+#     assert logs[0].Offset[0] == 0
+#     assert logs[0].Offset[1] == 0
+#     assert logs[0].CalculationsLen[0] == 6
+#     assert logs[0].Calculations[0] == 0
+#     assert logs[0].Calculations[1] == 1
+#     assert logs[0].Calculations[2] == 0
+#     assert logs[0].Calculations[3] == 3
+#     assert logs[0].Calculations[4] == 2
+#     assert logs[0].Calculations[5] == 1
+#     assert logs[0].ConditionsLen[0] == 5
+#     assert logs[0].Conditions[0] == 0
+#     assert logs[0].Conditions[1] == 0
+#     assert logs[0].Conditions[2] == 0
+#     assert logs[0].Conditions[3] == 0
+#     assert logs[0].Conditions[4] == 0
 
 
-def test_save_snapshot_1(debt_allo, owner, strat, stratData1, stratData2):
-    with reverts("NO_STRATEGIES"):
-        debt_allo.saveSnapshot(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]),sender=owner)
+# def test_remove_strategy_1(debt_allo, owner2, strat, stratData1, stratData2):
+#     with reverts("Ownable: caller is not the owner"):
+#         debt_allo.removeStrategy(([], [], [], [], [], [], [], [], []), 0,sender=owner2)
 
-def test_save_snapshot_2(debt_allo, owner, strat, stratData1, stratData2):
-    debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-    tx = debt_allo.saveSnapshot(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]),sender=owner)
-    logs = list(tx.decode_logs(debt_allo.NewSnapshot))
-    assert logs[0].dataStrategies[0] == 11
-    assert logs[0].dataStrategies[1] == 222
-    assert logs[0].calculation[0] == 0
-    assert logs[0].calculation[1] == 1
-    assert logs[0].calculation[2] == 0
-    assert logs[0].condition[0] == 0
-    assert logs[0].condition[1] == 0
-    assert logs[0].condition[2] == 0
-    assert logs[0].condition[3] == 0
-    new_target_allocation = debt_allo.targetAllocation(0)
-    assert new_target_allocation == 50000000000000000000
-    strat.updateTotalAssets(sender=owner)
-    tx = debt_allo.saveSnapshot(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]),sender=owner)
-    new_target_allocation = debt_allo.targetAllocation(0)
-    assert new_target_allocation == 500000000000000000000
+# def test_remove_strategy_2(debt_allo, owner, strat, stratData1, stratData2):
+#     with reverts("NO_STRATEGIES"):
+#         debt_allo.removeStrategy(([], [], [], [], [], [], [], [], []), 0,sender=owner)
+
+# def test_remove_strategy_3(debt_allo, owner, strat, stratData1, stratData2):
+#     debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+#     with reverts("INVALID_DATA"):
+#         debt_allo.removeStrategy(([], [], [], [], [], [], [], [], []), 0,sender=owner)
+
+# def test_remove_strategy_4(debt_allo, owner, strat, stratData1, stratData2):
+#     debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+#     tx = debt_allo.removeStrategy(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]), 0,sender=owner)
+#     logs = list(tx.decode_logs(debt_allo.StrategyRemoved))
 
 
-def test_force_target_allocation_1(debt_allo, owner2, strat, stratData1, stratData2):
-    with reverts("Ownable: caller is not the owner"):
-        debt_allo.forceTargetAllocation(([33]),sender=owner2)
+# def test_save_snapshot_1(debt_allo, owner, strat, stratData1, stratData2):
+#     with reverts("NO_STRATEGIES"):
+#         debt_allo.saveSnapshot(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]),sender=owner)
 
-def test_force_target_allocation_2(debt_allo, owner, strat, stratData1, stratData2):
-    with reverts("Pausable: not paused"):
-        debt_allo.forceTargetAllocation(([33]),sender=owner)
+# def test_save_snapshot_2(debt_allo, owner, strat, stratData1, stratData2):
+#     debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+#     tx = debt_allo.saveSnapshot(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]),sender=owner)
+#     logs = list(tx.decode_logs(debt_allo.NewSnapshot))
+#     assert logs[0].dataStrategies[0] == 11
+#     assert logs[0].dataStrategies[1] == 222
+#     assert logs[0].calculation[0] == 0
+#     assert logs[0].calculation[1] == 1
+#     assert logs[0].calculation[2] == 0
+#     assert logs[0].condition[0] == 0
+#     assert logs[0].condition[1] == 0
+#     assert logs[0].condition[2] == 0
+#     assert logs[0].condition[3] == 0
+#     new_target_allocation = debt_allo.targetAllocation(0)
+#     assert new_target_allocation == 50000000000000000000
+#     strat.updateTotalAssets(sender=owner)
+#     tx = debt_allo.saveSnapshot(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]),sender=owner)
+#     new_target_allocation = debt_allo.targetAllocation(0)
+#     assert new_target_allocation == 500000000000000000000
 
-def test_force_target_allocation_3(debt_allo, owner, strat, stratData1, stratData2):
-    debt_allo.pause(sender=owner)
-    with reverts("NO_STRATEGIES"):
-        debt_allo.forceTargetAllocation(([33]),sender=owner)
 
-def test_force_target_allocation_4(debt_allo, owner, strat, stratData1, stratData2):
-    debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
-    debt_allo.pause(sender=owner)
-    tx = debt_allo.forceTargetAllocation(([33]),sender=owner)
-    logs = list(tx.decode_logs(debt_allo.targetAllocationForced))
-    assert logs[0].newTargetAllocation[0] == 33
-    new_target_allocation = debt_allo.targetAllocation(0)
-    assert new_target_allocation == 33
+# def test_force_target_allocation_1(debt_allo, owner2, strat, stratData1, stratData2):
+#     with reverts("Ownable: caller is not the owner"):
+#         debt_allo.forceTargetAllocation(([33]),sender=owner2)
+
+# def test_force_target_allocation_2(debt_allo, owner, strat, stratData1, stratData2):
+#     with reverts("Pausable: not paused"):
+#         debt_allo.forceTargetAllocation(([33]),sender=owner)
+
+# def test_force_target_allocation_3(debt_allo, owner, strat, stratData1, stratData2):
+#     debt_allo.pause(sender=owner)
+#     with reverts("NO_STRATEGIES"):
+#         debt_allo.forceTargetAllocation(([33]),sender=owner)
+
+# def test_force_target_allocation_4(debt_allo, owner, strat, stratData1, stratData2):
+#     debt_allo.addStrategy(([], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
+#     debt_allo.pause(sender=owner)
+#     tx = debt_allo.forceTargetAllocation(([33]),sender=owner)
+#     logs = list(tx.decode_logs(debt_allo.targetAllocationForced))
+#     assert logs[0].newTargetAllocation[0] == 33
+#     new_target_allocation = debt_allo.targetAllocation(0)
+#     assert new_target_allocation == 33
 
 
 

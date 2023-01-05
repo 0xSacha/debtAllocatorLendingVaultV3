@@ -55,8 +55,12 @@ def main():
         time.sleep(60)
         print("Job is still pending... sleeping for 60 secs")
 
-    # now that job has been processed, we can verify on-chain
+    # now that job has been processed, we can verify on-chain, just need to wait a bit
+
+    time.sleep(10)
+
     #### SOLUTION VERIFICATION ####
+
     tx = contract.verifySolution(program_output, max_priority_fee="1 gwei", sender=account)
     logs = list(tx.decode_logs(contract.NewSolution))
     print(logs)

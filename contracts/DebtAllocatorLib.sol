@@ -52,7 +52,7 @@ library StrategiesUtils {
     function checkStrategiesHash(
         PackedStrategies memory _packedStrategies,
         uint256 strategiesHash
-    ) public pure {
+    ) internal pure {
         uint256 currentHash = getStrategiesHash(_packedStrategies);
         require(
             strategiesHash == currentHash,
@@ -62,7 +62,7 @@ library StrategiesUtils {
 
     function getStrategiesHash(
         PackedStrategies memory _packedStrategies
-    ) public pure returns (uint256 newHash) {
+    ) internal pure returns (uint256 newHash) {
         bytes32[] memory callDataReduced = getReducedBytes32Array(_packedStrategies.callData);
         newHash = uint256(
             keccak256(
@@ -87,7 +87,7 @@ library StrategiesUtils {
 
     function getReducedBytes32Array(
         bytes32[][] memory callData
-    ) public pure returns (bytes32[] memory result) {
+    ) internal pure returns (bytes32[] memory result) {
         uint256 callDataTotalLen = 0;
         for (uint i = 0; i < callData.length; i++) 
         {
@@ -110,7 +110,7 @@ library StrategiesUtils {
     function checkMessageSenderIsProposer(
         address sender,
         address proposer
-    ) public pure {
+    ) internal pure {
         require(sender == proposer, "NOT_ALLOWED");
     }
     
@@ -120,39 +120,45 @@ library StrategiesUtils {
         PackedStrategies calldata _packedStrategies,
         address _newStrategy,
         StrategyParam memory _newStrategyParam
-    ) public {
-        
+    ) internal {
+      
         // Checks previous strategies data valid
 
         if (strategiesHash != 0) {
             checkStrategiesHash(_packedStrategies, strategiesHash);
         } else {
-            require(_packedStrategies.addresses.length == 0, "FIRST_DATA");
+            require(_packedStrategies.addresses.length == 0 && 
+                    _packedStrategies.callLen.length == 0 &&
+                    _packedStrategies.contracts.length == 0 &&
+                    _packedStrategies.selectors.length == 0 &&
+                    _packedStrategies.callData.length == 0 &&
+                    _packedStrategies.offset.length == 0 &&
+                    _packedStrategies.calculationsLen.length == 0 &&
+                    _packedStrategies.calculations.length == 0 &&
+                    _packedStrategies.conditionsLen.length == 0 &&
+                    _packedStrategies.conditions.length == 0, "FIRST_DATA");
         }
-  
+
         for (uint256 i = 0; i < _packedStrategies.addresses.length; i++) {
             if (_packedStrategies.addresses[i] == _newStrategy) {
                 revert("STRATEGY_EXISTS");
             }
         }
-
         checkValidityOfData(_newStrategyParam);
     }
     
 
     function checkValidityOfData(
         StrategyParam memory _newStrategyParam
-    ) public {
+    ) internal {
         // check lengths
         require(
             _newStrategyParam.callLen == _newStrategyParam.contracts.length &&
                 _newStrategyParam.callLen == _newStrategyParam.selectors.length &&
                 _newStrategyParam.callLen == _newStrategyParam.callData.length &&
                 _newStrategyParam.callLen == _newStrategyParam.offset.length &&
-                _newStrategyParam.calculationsLen ==
-                _newStrategyParam.calculations.length &&
-                _newStrategyParam.conditionsLen ==
-                _newStrategyParam.conditions.length,
+                _newStrategyParam.calculationsLen == _newStrategyParam.calculations.length &&
+                _newStrategyParam.conditionsLen == _newStrategyParam.conditions.length,
             "ARRAY_LEN"
         );
 
@@ -172,7 +178,7 @@ library StrategiesUtils {
     function checkSnapshotNotStaled(
         uint256 _snapshotTimestamp,
         uint256 _staleSnapshotPeriod,
-        uint256 _block_timestamp) public pure {
+        uint256 _block_timestamp) internal pure {
         require(
             _snapshotTimestamp + _staleSnapshotPeriod > _block_timestamp,
             "STALE_SNAPSHOT"
@@ -180,13 +186,13 @@ library StrategiesUtils {
     }
 
     function checkAtLeastOneStrategy(
-        uint256 strategiesHash) public pure {
+        uint256 strategiesHash) internal pure {
         require(strategiesHash != 0, "NO_STRATEGIES");
     }
 
     function checkIndexInRange(
         uint256 index,
-        uint256 stratLen) public pure {
+        uint256 stratLen) internal pure {
         require(
             index < stratLen,
             "INDEX_OUT_OF_RANGE"
@@ -200,7 +206,7 @@ library StrategiesUtils {
         address[] calldata contracts,
         bytes[] memory checkdata,
         uint256[] calldata offset
-    ) public returns (uint256[] memory dataStrategies) {
+    ) internal returns (uint256[] memory dataStrategies) {
         uint256[] memory dataStrategies_ = new uint256[](contracts.length);
         for (uint256 j; j < contracts.length; j++) {
             (, bytes memory data) = contracts[j].call(checkdata[j]);
@@ -213,7 +219,7 @@ library StrategiesUtils {
     function parseProgramOutput(
         uint256[] calldata programOutput
     )
-        public
+        internal
         pure
         returns (
             ProgramOutput memory _programOutput
@@ -235,12 +241,12 @@ library StrategiesUtils {
     }
 
     function checkProgramOutput(
-        ProgramOutput calldata programOutput,
+        ProgramOutput memory programOutput,
         uint256 inputHash,
-        uint256[] calldata targetAllocation,
+        uint256[] memory targetAllocation,
         uint256 minimumApyIncreaseForNewSolution
     )
-        public
+        internal
         pure
     {
          // check inputs
@@ -264,7 +270,7 @@ library StrategiesUtils {
     function getFact(
         uint256[] calldata programOutput,
         bytes32 programHash
-    ) public pure returns (bytes32 fact) {
+    ) internal pure returns (bytes32 fact) {
         bytes32 outputHash = keccak256(abi.encodePacked(programOutput));
         fact = keccak256(abi.encodePacked(programHash, outputHash));
     }
@@ -274,7 +280,7 @@ library StrategiesUtils {
     function selectorAndCallDataToBytes(
         bytes4[] memory selector,
         bytes32[][] memory callData
-    ) public pure returns (bytes[] memory result) {
+    ) internal pure returns (bytes[] memory result) {
         bytes[] memory results = new bytes[](selector.length);
         for (uint i=0; i< selector.length; i++) 
         {
@@ -287,7 +293,7 @@ library StrategiesUtils {
     function bytesToBytes32(
         bytes memory b,
         uint offset
-    ) public pure returns (bytes32 result) {
+    ) internal pure returns (bytes32 result) {
         offset += 32;
         assembly {
             result := mload(add(b, offset))
@@ -296,7 +302,7 @@ library StrategiesUtils {
 
     function castCheckdataToBytes4 (
         bytes[] memory oldCheckdata
-    ) public pure returns (bytes4[] memory checkdata) {
+    ) internal pure returns (bytes4[] memory checkdata) {
         checkdata = new bytes4[](oldCheckdata.length);
         for (uint256 i = 0; i < oldCheckdata.length; i++) {
             checkdata[i] = bytes4(oldCheckdata[i]);
@@ -315,7 +321,7 @@ library ArrayUtils {
         PackedStrategies memory _packedStrategies,
         address _newStrategy,
         StrategyParam memory _newStrategyParam
-    ) public pure returns (PackedStrategies memory newPacked) {
+    ) internal pure returns (PackedStrategies memory newPacked) {
         
         // Build new arrays for the Strategy Hash and the Event
         address[] memory strategies = appendAddressToArray(
@@ -376,7 +382,7 @@ library ArrayUtils {
         PackedStrategies memory _packedStrategies,
         uint256 indexStrategyToUpdate,
         StrategyParam memory _newStrategyParam
-    ) public pure returns (PackedStrategies memory newPacked) {
+    ) internal pure returns (PackedStrategies memory newPacked) {
         uint256[] memory strategiesCallLen = updateUint256Array(_packedStrategies.callLen, _newStrategyParam.callLen, indexStrategyToUpdate);
         uint256[] memory calculationsLen = updateUint256Array(_packedStrategies.calculationsLen, _newStrategyParam.calculationsLen, indexStrategyToUpdate);
         uint256[] memory conditionsLen =updateUint256Array(_packedStrategies.conditionsLen, _newStrategyParam.conditionsLen, indexStrategyToUpdate);
@@ -385,13 +391,13 @@ library ArrayUtils {
         bytes32[][] memory callData = updateBytes32ArrayWithLen(_packedStrategies.callLen, _packedStrategies.callData, _newStrategyParam.callLen, _newStrategyParam.callData, indexStrategyToUpdate);
         uint256[] memory offset = updateUint256ArrayWithLen(UpdateU256Len(_packedStrategies.callLen, _packedStrategies.offset, _newStrategyParam.callLen, _newStrategyParam.offset, indexStrategyToUpdate));
         uint256[] memory calculations = updateUint256ArrayWithLen(UpdateU256Len(_packedStrategies.calculationsLen, _packedStrategies.calculations, _newStrategyParam.calculationsLen, _newStrategyParam.calculations, indexStrategyToUpdate));
-        uint256[] memory conditions = updateUint256ArrayWithLen(UpdateU256Len(_packedStrategies.conditionsLen, _packedStrategies.conditions, _newStrategyParam.callLen, _newStrategyParam.conditions, indexStrategyToUpdate));
+        uint256[] memory conditions = updateUint256ArrayWithLen(UpdateU256Len(_packedStrategies.conditionsLen, _packedStrategies.conditions, _newStrategyParam.conditionsLen, _newStrategyParam.conditions, indexStrategyToUpdate));
         newPacked = PackedStrategies(_packedStrategies.addresses, strategiesCallLen, contracts, selectors, callData, offset, calculationsLen, calculations, conditionsLen, conditions);
     }
 
 
     function getPackedStrategiesAfterRemove(
-        PackedStrategies memory _packedStrategies, uint256 indexStrategyToRemove) public pure returns (PackedStrategies memory newPacked) {
+        PackedStrategies memory _packedStrategies, uint256 indexStrategyToRemove) internal pure returns (PackedStrategies memory newPacked) {
         address[] memory addresses = removeAddressArray(_packedStrategies.addresses, indexStrategyToRemove);
         uint256[] memory strategiesCallLen = removeUint256Array(_packedStrategies.callLen, indexStrategyToRemove);
         uint256[] memory calculationsLen = removeUint256Array(_packedStrategies.calculationsLen, indexStrategyToRemove);
@@ -409,7 +415,7 @@ library ArrayUtils {
     function appendAddressToArray(
         address[] memory array,
         address newItem
-    ) public pure returns (address[] memory newArray) {
+    ) internal pure returns (address[] memory newArray) {
         newArray = new address[](array.length + 1);
         for (uint256 i = 0; i < array.length; i++) {
             newArray[i] = array[i];
@@ -420,7 +426,7 @@ library ArrayUtils {
     function appendUint256ToArray(
         uint256[] memory array,
         uint256 newItem
-    ) public pure returns (uint256[] memory newArray) {
+    ) internal pure returns (uint256[] memory newArray) {
         newArray = new uint256[](array.length + 1);
         for (uint256 i = 0; i < array.length; i++) {
             newArray[i] = array[i];
@@ -431,7 +437,7 @@ library ArrayUtils {
     function concatenateUint256ArrayToUint256Array(
         uint256[] memory arrayA,
         uint256[] memory arrayB
-    ) public pure returns (uint256[] memory newArray) {
+    ) internal pure returns (uint256[] memory newArray) {
         newArray = new uint256[](arrayA.length + arrayB.length);
         for (uint256 i = 0; i < arrayA.length; i++) {
             newArray[i] = arrayA[i];
@@ -445,7 +451,7 @@ library ArrayUtils {
     function concatenateAddressArrayToAddressArray(
         address[] memory arrayA,
         address[] memory arrayB
-    ) public pure returns (address[] memory newArray) {
+    ) internal pure returns (address[] memory newArray) {
         newArray = new address[](arrayA.length + arrayB.length);
         for (uint256 i = 0; i < arrayA.length; i++) {
             newArray[i] = arrayA[i];
@@ -459,7 +465,7 @@ library ArrayUtils {
     function concatenateBytes4ArrayToBytes4(
         bytes4[] memory arrayA,
         bytes4[] memory arrayB
-    ) public pure returns (bytes4[] memory newArray) {
+    ) internal pure returns (bytes4[] memory newArray) {
         newArray = new bytes4[](arrayA.length + arrayB.length);
         for (uint256 i = 0; i < arrayA.length; i++) {
             newArray[i] = arrayA[i];
@@ -473,7 +479,7 @@ library ArrayUtils {
     function concatenateDoubleArrayBytes32ArrayToDoubleArrayBytes32(
         bytes32[][] memory arrayA,
         bytes32[][] memory arrayB
-    ) public pure returns (bytes32[][] memory newArray) {
+    ) internal pure returns (bytes32[][] memory newArray) {
         newArray = new bytes32[][](arrayA.length + arrayB.length);
         for (uint256 i = 0; i < arrayA.length; i++) {
             newArray[i] = arrayA[i];
@@ -488,7 +494,7 @@ library ArrayUtils {
         uint256[] memory array,
         uint256 newItem,
         uint256 index
-    ) public pure returns (uint256[] memory newArray) {
+    ) internal pure returns (uint256[] memory newArray) {
         newArray = array;
         newArray[index] = newItem;
     }
@@ -499,7 +505,7 @@ library ArrayUtils {
         uint256 newCallLen,
         address[] memory newArray,
         uint256 index
-    ) public pure returns (address[] memory newAddressArray) {
+    ) internal pure returns (address[] memory newAddressArray) {
         newAddressArray = new address[](array.length - callLen[index] + newCallLen);
         uint256 offsetCalldata = 0;
         for (uint256 i = 0; i < index; i++) {
@@ -511,6 +517,7 @@ library ArrayUtils {
         for (uint256 i = 0; i < newCallLen; i++) {
             newAddressArray[offsetCalldata + i] = newArray[i];
         }
+
         for (uint256 i = 0; i < array.length - (offsetCalldata + callLen[index]); i++) {
             newAddressArray[offsetCalldata + newCallLen + i] = array[array.length - (offsetCalldata + callLen[index]) + i];
         }
@@ -522,7 +529,7 @@ library ArrayUtils {
         uint256 newCallLen,
         bytes4[] memory newArray,
         uint256 index
-    ) public pure returns (bytes4[] memory newBytes4Array) {
+    ) internal pure returns (bytes4[] memory newBytes4Array) {
         newBytes4Array = new bytes4[](array.length - callLen[index] + newCallLen);
         uint256 offsetCalldata = 0;
         for (uint256 i = 0; i < index; i++) {
@@ -545,7 +552,7 @@ library ArrayUtils {
         uint256 newCallLen,
         bytes32[][] memory newArray,
         uint256 index
-    ) public pure returns (bytes32[][] memory newBytes32DoubleArray) {
+    ) internal pure returns (bytes32[][] memory newBytes32DoubleArray) {
         newBytes32DoubleArray = new bytes32[][](array.length - callLen[index] + newCallLen);
         uint256 offsetCalldata = 0;
         for (uint256 i = 0; i < index; i++) {
@@ -564,7 +571,7 @@ library ArrayUtils {
 
     function updateUint256ArrayWithLen(
         UpdateU256Len memory U256Len
-    ) public pure returns (uint256[] memory newUint256Array) {
+    ) internal pure returns (uint256[] memory newUint256Array) {
         newUint256Array = new uint256[](U256Len.array.length - U256Len.callLen[U256Len.index] + U256Len.newCallLen);
         uint256 offsetCalldata = 0;
         for (uint256 i = 0; i < U256Len.index; i++) {
@@ -584,7 +591,7 @@ library ArrayUtils {
     function removeAddressArray(
         address[] memory array,
         uint256 index
-    ) public pure returns (address[] memory newArray) {
+    ) internal pure returns (address[] memory newArray) {
         newArray = new address[](array.length - 1);
         for (uint256 i = 0; i < index; i++) {
             newArray[i] = array[i];
@@ -597,7 +604,7 @@ library ArrayUtils {
     function removeUint256Array(
         uint256[] memory array,
         uint256 index
-    ) public pure returns (uint256[] memory newArray) {
+    ) internal pure returns (uint256[] memory newArray) {
         newArray = new uint256[](array.length - 1);
         for (uint256 i = 0; i < index; i++) {
             newArray[i] = array[i];
@@ -611,7 +618,7 @@ library ArrayUtils {
         uint256[] memory callLen,
         address[] memory array,
         uint256 index
-    ) public pure returns (address[] memory newArray) {
+    ) internal pure returns (address[] memory newArray) {
         newArray = new address[](array.length - callLen[index]);
         uint256 offsetCalldata = 0;
         for (uint256 i = 0; i < index; i++) {
@@ -629,7 +636,7 @@ library ArrayUtils {
         uint256[] memory callLen,
         bytes4[] memory array,
         uint256 index
-    ) public pure returns (bytes4[] memory newArray) {
+    ) internal pure returns (bytes4[] memory newArray) {
         newArray = new bytes4[](array.length - callLen[index]);
         uint256 offsetCalldata = 0;
         for (uint256 i = 0; i < index; i++) {
@@ -647,7 +654,7 @@ library ArrayUtils {
         uint256[] memory callLen,
         bytes32[][] memory array,
         uint256 index
-    ) public pure returns (bytes32[][] memory newArray) {
+    ) internal pure returns (bytes32[][] memory newArray) {
         newArray = new bytes32[][](array.length - callLen[index]);
         uint256 offsetCalldata = 0;
         for (uint256 i = 0; i < index; i++) {
@@ -665,7 +672,7 @@ library ArrayUtils {
         uint256[] memory callLen,
         uint256[] memory array,
         uint256 index
-    ) public pure returns (uint256[] memory newArray) {
+    ) internal pure returns (uint256[] memory newArray) {
         newArray = new uint256[](array.length - callLen[index]);
         uint256 offsetCalldata = 0;
         for (uint256 i = 0; i < index; i++) {

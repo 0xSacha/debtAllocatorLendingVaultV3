@@ -6,29 +6,45 @@ from web3._utils.events import get_event_data
 from web3._utils.filters import construct_event_filter_params
 from web3._utils.contracts import encode_abi
 import json
+import os
+from dotenv import load_dotenv
+
 
 
 def run():    
-    f = open("./config_testnet.json")
-    config_dict = json.load(f)
-    f.close()
-    f = open("../.build/abi/debtAllocator_abi.json")
-    abi = json.load(f)
-    f.close()
+    ADDRESSES = []
+    CALL_LEN = []
+    CONTRACTS = []
+    SELECTORS = []
+    CALLDATA = []
+    OFFSET = []
+    CALCULATIONS_LEN = []
+    CALCULATIONS = []
+    CONDTIONS_LEN = []
+    CONDTIONS = []
+    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_testnet.json")
+    ABI_PATH = os.path.join(os.path.dirname(__file__), "DebtAllocatorAbi.json")
+    
+    with open(CONFIG_PATH, "r") as config_file:
+        config = json.load(config_file)
 
-    infura = 'https://goerli.infura.io/v3/eebdf8732cd044f0a52f976af7781260'
-    web3 = Web3(Web3.HTTPProvider(infura))
+    with open(ABI_PATH, "r") as abi_file:
+        abi = json.load(abi_file)
 
-    address = config_dict["debt_allocator_address"]
+    load_dotenv()
+    TESTNET_RPC = os.getenv('TESTNET_RPC')
+    web3 = Web3(Web3.HTTPProvider(TESTNET_RPC))
+    address = config["debt_allocator_address"]
     contract = web3.eth.contract(address, abi=abi)
     abi_codec = web3.codec
 
-    last_block = 0
+    current_block = 0
     result = {}
     result["addresses"] = []
     result["callLen"] = []
     result["contracts"] = []
-    result["checkdata"] = []
+    result["selectors"] = []
+    result["callData"] = []
     result["offset"] = []
     result["calculationsLen"] = []
     result["calculations"] = []
@@ -39,7 +55,7 @@ def run():
     data_filter_set, event_filter_params = construct_event_filter_params(
         abi,
         abi_codec,
-        contract_address=config_dict["debt_allocator_address"],
+        contract_address=config["debt_allocator_address"],
         argument_filters=None,
         fromBlock=7958605,
         toBlock="latest",
@@ -51,44 +67,121 @@ def run():
     if len(logs) > 0:
         last_block = logs[len(logs) - 1].blockNumber
         last_strategy_added = get_event_data(abi_codec, abi, logs[len(logs) - 1])
-        print(last_strategy_added)
+        strat_array = last_strategy_added.args.Strategies
+        if(last_block > current_block):
+            current_block = last_block
+            ADDRESSES = strat_array[0]
+            CALL_LEN = strat_array[1]
+            CONTRACTS = strat_array[2]
+            SELECTORS = strat_array[3]
+            for i in range(len(SELECTORS)):
+                SELECTORS[i] = SELECTORS[i].hex()
+
+            CALLDATA = strat_array[4]
+            for i in range(len(CALLDATA)):
+                for j in range(len(CALLDATA[i])):
+                    CALLDATA[i][j] = CALLDATA[i][j].hex()
+            OFFSET = strat_array[5]
+            CALCULATIONS_LEN = strat_array[6]
+            CALCULATIONS = strat_array[7]
+            CONDTIONS_LEN = strat_array[8]
+            CONDTIONS = strat_array[9]
+
+    abi = contract.events.StrategyUpdated._get_event_abi()
+    data_filter_set, event_filter_params = construct_event_filter_params(
+        abi,
+        abi_codec,
+        contract_address=config["debt_allocator_address"],
+        argument_filters=None,
+        fromBlock=7958605,
+        toBlock="latest",
+        address=None,
+        topics=None,
+    )
+
+
+    logs = web3.eth.get_logs(event_filter_params)
+
+    if len(logs) > 0:
+        last_block = logs[len(logs) - 1].blockNumber
+        last_strategy_added = get_event_data(abi_codec, abi, logs[len(logs) - 1])
+        strat_array = last_strategy_added.args.Strategies
+        if(last_block > current_block):
+            current_block = last_block
+            ADDRESSES = strat_array[0]
+            CALL_LEN = strat_array[1]
+            CONTRACTS = strat_array[2]
+            SELECTORS = strat_array[3]
+            for i in range(len(SELECTORS)):
+                SELECTORS[i] = SELECTORS[i].hex()
+
+            CALLDATA = strat_array[4]
+            for i in range(len(CALLDATA)):
+                for j in range(len(CALLDATA[i])):
+                    print(CALLDATA[i][j].hex())
+                    CALLDATA[i][j] = CALLDATA[i][j].hex()
+            OFFSET = strat_array[5]
+            CALCULATIONS_LEN = strat_array[6]
+            CALCULATIONS = strat_array[7]
+            CONDTIONS_LEN = strat_array[8]
+            CONDTIONS = strat_array[9]
+
+    abi = contract.events.StrategyRemoved._get_event_abi()
+    data_filter_set, event_filter_params = construct_event_filter_params(
+        abi,
+        abi_codec,
+        contract_address=config["debt_allocator_address"],
+        argument_filters=None,
+        fromBlock=7958605,
+        toBlock="latest",
+        address=None,
+        topics=None,
+    )
+    logs = web3.eth.get_logs(event_filter_params)
+
+    if len(logs) > 0:
+        last_block = logs[len(logs) - 1].blockNumber
+        last_strategy_added = get_event_data(abi_codec, abi, logs[len(logs) - 1])
+        strat_array = last_strategy_added.args.Strategies
+        if(last_block > current_block):
+            current_block = last_block
+            ADDRESSES = strat_array[0]
+            CALL_LEN = strat_array[1]
+            CONTRACTS = strat_array[2]
+            SELECTORS = strat_array[3]
+            for i in range(len(SELECTORS)):
+                SELECTORS[i] = SELECTORS[i].hex()
+
+            CALLDATA = strat_array[4]
+            for i in range(len(CALLDATA)):
+                for j in range(len(CALLDATA[i])):
+                    print(CALLDATA[i][j].hex())
+                    CALLDATA[i][j] = CALLDATA[i][j].hex()
+            OFFSET = strat_array[5]
+            CALCULATIONS_LEN = strat_array[6]
+            CALCULATIONS = strat_array[7]
+            CONDTIONS_LEN = strat_array[8]
+            CONDTIONS = strat_array[9]
+            
+
+
     
-    
+    result = {}
+    result["addresses"] = ADDRESSES
+    result["callLen"] = CALL_LEN
+    result["contracts"] = CONTRACTS
+    result["selectors"] = SELECTORS
+    result["callData"] = CALLDATA
+    result["offset"] = OFFSET
+    result["calculationsLen"] = CALCULATIONS_LEN
+    result["calculations"] = CALCULATIONS
+    result["conditionsLen"] = CONDTIONS_LEN
+    result["conditions"] = CONDTIONS
+    f = open("./scripts/strategies_info.json", "w")
+    json.dump(result, f)
+    f.close()
+    print("✅ Data Strategies load")
 
-    # abi = contract.events.StrategyUpdated._get_event_abi()
-    # data_filter_set, event_filter_params = construct_event_filter_params(
-    #     abi,
-    #     abi_codec,
-    #     contract_address=config_dict["debt_allocator_address"],
-    #     argument_filters=None,
-    #     fromBlock=7958605,
-    #     toBlock="latest",
-    #     address=None,
-    #     topics=None,
-    # )
-    # logs = web3.eth.get_logs(event_filter_params)
-
-    # if(len(logs) != 0)
-    # # block_last_strategy_updated = logs[len(logs) - 1].blockNumber
-    # last_strategy_updated = get_event_data(abi_codec, abi, logs[len(logs) - 1])
-    # print(last_strategy_updated)
-
-    # abi = contract.events.StrategyRemoved._get_event_abi()
-    # data_filter_set, event_filter_params = construct_event_filter_params(
-    #     abi,
-    #     abi_codec,
-    #     contract_address=config_dict["debt_allocator_address"],
-    #     argument_filters=None,
-    #     fromBlock=7958605,
-    #     toBlock="latest",
-    #     address=None,
-    #     topics=None,
-    # )
-    # logs = web3.eth.get_logs(event_filter_params)
-    # block_last_strategy_removed = logs[len(logs) - 1].blockNumber
-    # last_strategy_removed = get_event_data(abi_codec, abi, logs[len(logs) - 1])
-
-    # print(block_last_strategy_removed)
     
 
 

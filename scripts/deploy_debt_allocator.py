@@ -13,3 +13,4 @@ def main():
     account = accounts.load(config["account"])
     contract = project.DebtAllocator.deploy(CAIRO_VERIFIER, CAIRO_PROGRAM_HASH, sender=account, max_priority_fee="1 gwei")
     project.track_deployment(contract)
+    

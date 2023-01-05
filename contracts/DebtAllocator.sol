@@ -288,9 +288,6 @@ contract DebtAllocator is Ownable {
         StrategiesUtils.checkStrategiesHash(_packedStrategies, strategiesHash);
         StrategiesUtils.checkIndexInRange(indexStrategyToRemove, _packedStrategies.addresses.length);
 
-        // Checks index in range
-        require(indexStrategyToRemove < _packedStrategies.addresses.length);
-
         PackedStrategies memory newPackedStrategies = ArrayUtils.getPackedStrategiesAfterRemove(_packedStrategies, indexStrategyToRemove);
         targetAllocation = ArrayUtils.removeUint256Array(targetAllocation, indexStrategyToRemove);
         strategiesHash = StrategiesUtils.getStrategiesHash(newPackedStrategies);

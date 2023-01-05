@@ -73,7 +73,7 @@ Follow these steps:
 ACCOUNT_ALIAS=  <account_name>
 BIN_PATH=  EXEMPLE: "/Users/sacha/cairo_venv/bin"
 STEPS_LIMIT=1000000 
-TESTNET_RPC= YOUR GOERLI RPC
+NODE_RPC_URL= YOUR GOERLI RPC
 
 - ape run deploy_debt_allocator. Once executed add the deployed address in config_testnet at "debt_allocator_address"
 

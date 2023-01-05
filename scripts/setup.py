@@ -32,8 +32,8 @@ def run():
         abi = json.load(abi_file)
 
     load_dotenv()
-    TESTNET_RPC = os.getenv('TESTNET_RPC')
-    web3 = Web3(Web3.HTTPProvider(TESTNET_RPC))
+    RPC = os.getenv('NODE_RPC_URL')
+    web3 = Web3(Web3.HTTPProvider(RPC))
     address = config["debt_allocator_address"]
     contract = web3.eth.contract(address, abi=abi)
     abi_codec = web3.codec

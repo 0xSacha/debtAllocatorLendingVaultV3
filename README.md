@@ -81,15 +81,15 @@ TESTNET_RPC= YOUR GOERLI RPC
 
 - ape run setup  (setup has to be executed before each step, it will index strategies data from the last events, as this data is not stored directly in the contract for gas optimization)
 
-- ape run add_AaveV2_strategy
+- ape run add_AaveV2_strategy --network ethereum:goerli:infura   (or your own provider)
 
 - ape run setup
 
-- ape run add_CompoundV2_strategy
+- ape run add_CompoundV2_strategy --network ethereum:goerli:infura  
 
 -  add the wanted assets amount in config_testnet at  "new_allocation_array" (don't forget decimals) [50000000, 70000000], 50 USDC + 70 USDC
 
-- ape run setup
+- ape run setup --network ethereum:goerli:infura  
 
 - ape run full_ops
 This last step will take a snapshot, run the cairo program with data taken from snapshot event, submit to the sharp the proof of execution and wait until the job is processed (be patient, it can takes until 15 minutes). Once processed, the solution will be verified and you'll be rewarded as the new proposer! 

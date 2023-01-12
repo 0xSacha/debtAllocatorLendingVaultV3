@@ -1,10 +1,11 @@
 //SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.17;
 
 import "@openzeppelin/access/Ownable.sol";
 import "@openzeppelin/token/ERC20/IERC20.sol";
 import "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
 import "./DebtAllocatorLib.sol";
-
+import "./interfaces/IVault.sol";
 
 interface ICairoVerifier {
     function isValid(bytes32) external view returns (bool);
@@ -15,7 +16,11 @@ interface IStreamer {
 
     function streamToStart(bytes32) external view returns (uint256);
 
-    function withdraw(address from, address to, uint216 amountPerSec) external;
+    function withdraw(
+        address from,
+        address to,
+        uint216 amountPerSec
+    ) external;
 
     function getStreamId(
         address from,
@@ -26,10 +31,10 @@ interface IStreamer {
 
 contract DebtAllocator is Ownable {
     using SafeERC20 for IERC20;
+    IVault public immutable vault;
 
     ICairoVerifier public cairoVerifier = ICairoVerifier(address(0));
     bytes32 public cairoProgramHash = 0x0;
-
 
     uint256[] public targetAllocation;
 
@@ -50,18 +55,11 @@ contract DebtAllocator is Ownable {
     // 100% APY = 10^27, minimum increased = 10^23 = 0,01%
     uint256 public minimumApyIncreaseForNewSolution = MINIMUM_APY_INCREASE;
 
+    event StrategyAdded(PackedStrategies Strategies);
 
-    event StrategyAdded(
-        PackedStrategies Strategies
-    );
+    event StrategyUpdated(PackedStrategies Strategies);
 
-    event StrategyUpdated(
-        PackedStrategies Strategies
-    );
-
-    event StrategyRemoved(
-        PackedStrategies Strategies
-    );
+    event StrategyRemoved(PackedStrategies Strategies);
 
     event NewSnapshot(
         uint256[] dataStrategies,
@@ -82,12 +80,17 @@ contract DebtAllocator is Ownable {
     event NewStalePeriod(uint256 newStalePeriod);
     event NewStaleSnapshotPeriod(uint256 newStaleSnapshotPeriod);
     event NewMinimumApyIncrease(uint256 newStaleSnapshotPeriod);
+
     // event TargetAllocationForced(uint256[] newTargetAllocation);
 
-
-    constructor(address _cairoVerifier, bytes32 _cairoProgramHash) payable {
+    constructor(
+        address _cairoVerifier,
+        bytes32 _cairoProgramHash,
+        address _vault
+    ) payable {
         updateCairoVerifier(_cairoVerifier);
         updateCairoProgramHash(_cairoProgramHash);
+        vault = IVault(_vault);
     }
 
     //  // ============== PARAMETERS MANAGEMENT  ================
@@ -111,9 +114,10 @@ contract DebtAllocator is Ownable {
         rewardsPerSec = _rewardsPerSec;
     }
 
-    function updateCairoProgramHash(
-        bytes32 _cairoProgramHash
-    ) public onlyOwner {
+    function updateCairoProgramHash(bytes32 _cairoProgramHash)
+        public
+        onlyOwner
+    {
         cairoProgramHash = _cairoProgramHash;
         emit NewCairoProgramHash(_cairoProgramHash);
     }
@@ -123,37 +127,41 @@ contract DebtAllocator is Ownable {
         emit NewCairoVerifier(_cairoVerifier);
     }
 
-    function updateStaleSnapshotPeriod(
-        uint256 _staleSnapshotPeriod
-    ) external onlyOwner {
+    function updateStaleSnapshotPeriod(uint256 _staleSnapshotPeriod)
+        external
+        onlyOwner
+    {
         staleSnapshotPeriod = _staleSnapshotPeriod;
         emit NewStaleSnapshotPeriod(_staleSnapshotPeriod);
     }
 
-    function updateMinimumApyIncrease(
-        uint256 _minimumApyIncrease
-    ) external onlyOwner {
+    function updateMinimumApyIncrease(uint256 _minimumApyIncrease)
+        external
+        onlyOwner
+    {
         minimumApyIncreaseForNewSolution = _minimumApyIncrease;
         emit NewMinimumApyIncrease(_minimumApyIncrease);
     }
 
-
     // ============== FRESH DATA  ================
 
-    function saveSnapshot(
-        PackedStrategies calldata _packedStrategies
-    ) external {
-
+    function saveSnapshot(PackedStrategies calldata _packedStrategies)
+        external
+    {
         StrategiesUtils.checkAtLeastOneStrategy(strategiesHash);
 
         // Checks strategies data is valid
         StrategiesUtils.checkStrategiesHash(_packedStrategies, strategiesHash);
 
-        bytes[] memory checkdatas = StrategiesUtils.selectorAndCallDataToBytes(_packedStrategies.selectors, _packedStrategies.callData);
+        bytes[] memory checkdatas = StrategiesUtils.selectorAndCallDataToBytes(
+            _packedStrategies.selectors,
+            _packedStrategies.callData
+        );
         uint256[] memory dataStrategies = StrategiesUtils.getStrategiesData(
             _packedStrategies.contracts,
             checkdatas,
-            _packedStrategies.offset);
+            _packedStrategies.offset
+        );
 
         inputHash = uint256(
             keccak256(
@@ -166,7 +174,16 @@ contract DebtAllocator is Ownable {
         );
 
         snapshotTimestamp[inputHash] = block.timestamp;
-        // TODO: do we need current debt in each strategy? (to be able to take into account withdrawals)
+
+        for (
+            uint256 index = 0;
+            index < _packedStrategies.addresses.length;
+            index++
+        ) {
+            address _strategy = _packedStrategies.addresses[index];
+            targetAllocation[index] = vault.strategies(_strategy).current_debt;
+        }
+
         emit NewSnapshot(
             dataStrategies,
             _packedStrategies.calculations,
@@ -175,19 +192,38 @@ contract DebtAllocator is Ownable {
         );
     }
 
-
-     // ============== SOLUTION  ================
+    // ============== SOLUTION  ================
 
     function verifySolution(
-        uint256[] calldata programOutput
+        uint256[] calldata programOutput,
+        PackedStrategies memory _packedStrategies
     ) external returns (bytes32) {
+        StrategiesUtils.checkStrategiesHash(_packedStrategies, strategiesHash);
 
         // NOTE: Check current snapshot not stale
-        StrategiesUtils.checkSnapshotNotStaled(snapshotTimestamp[inputHash], staleSnapshotPeriod, block.timestamp);
-        
+        StrategiesUtils.checkSnapshotNotStaled(
+            snapshotTimestamp[inputHash],
+            staleSnapshotPeriod,
+            block.timestamp
+        );
+
         // NOTE: We get the data from parsing the program output
-        ProgramOutput memory programOutputParsed =  StrategiesUtils.parseProgramOutput(programOutput);
-        StrategiesUtils.checkProgramOutput(programOutputParsed, inputHash, targetAllocation, minimumApyIncreaseForNewSolution);
+        ProgramOutput memory programOutputParsed = StrategiesUtils
+            .parseProgramOutput(programOutput);
+
+        // NOTE: We make sure data taken by the cairo program are valid and the new solution is better
+        StrategiesUtils.checkProgramOutput(
+            programOutputParsed,
+            inputHash,
+            targetAllocation,
+            minimumApyIncreaseForNewSolution
+        );
+
+        // NOTE: We make sure current and new allocation array is valid
+        StrategiesUtils.checkTargetAllocation(
+            programOutputParsed,
+            targetAllocation
+        );
 
         // Check with cairoVerifier
         bytes32 fact = StrategiesUtils.getFact(programOutput, cairoProgramHash);
@@ -198,6 +234,8 @@ contract DebtAllocator is Ownable {
         sendRewardsToCurrentProposer();
         proposer = msg.sender;
 
+        updateAllocations(_packedStrategies, programOutputParsed);
+
         emit NewSolution(
             programOutputParsed.newSolution,
             programOutputParsed.newTargetAllocation,
@@ -207,6 +245,77 @@ contract DebtAllocator is Ownable {
         return (fact);
     }
 
+    function updateAllocations(
+        PackedStrategies memory _packedStrategies,
+        ProgramOutput memory _programOutput
+    ) internal {
+        // We first harvest strategies with decreasing apr and update their allocation (so we release funds for strategies with increasint apr)
+        for (
+            uint256 index = 0;
+            index < _programOutput.currentTargetAllocation.length;
+            index++
+        ) {
+            if (
+                _programOutput.newTargetAllocation[index] <
+                _programOutput.currentTargetAllocation[index]
+            ) {
+                address _strategy = _packedStrategies.addresses[index];
+                // harvest all profits
+                vault.tend_strategy(_strategy);
+
+                // report to the vault so it doesnt leave anything behind
+                vault.process_report(_strategy);
+
+                // update the debt down to 0
+                vault.update_debt(
+                    _strategy,
+                    _programOutput.newTargetAllocation[index]
+                );
+            }
+        }
+
+        // We get the index of the highest apr strategy
+        uint256 highest_apr_index = 0;
+        for (
+            uint256 index = 1;
+            index < _programOutput.currentTargetAllocation.length;
+            index++
+        ) {
+            if (
+                _programOutput.newTargetAllocation[index] >
+                (_programOutput.newTargetAllocation[index - 1])
+            ) {
+                highest_apr_index = index;
+            }
+        }
+
+        uint256 _totalIdle = vault.total_idle();
+        // We then update debt for increasing apr, the remaining funds in the vault is transfered to the most promising strategy
+        for (
+            uint256 index = 0;
+            index < _programOutput.currentTargetAllocation.length;
+            index++
+        ) {
+            if (
+                _programOutput.newTargetAllocation[index] >=
+                _programOutput.currentTargetAllocation[index]
+            ) {
+                address _strategy = _packedStrategies.addresses[index];
+                if (index == highest_apr_index) {
+                    vault.update_debt(
+                        _strategy,
+                        _programOutput.newTargetAllocation[index] + _totalIdle
+                    );
+                } else {
+                    vault.update_debt(
+                        _strategy,
+                        _programOutput.newTargetAllocation[index]
+                    );
+                }
+            }
+        }
+        return;
+    }
 
     // =============== REWARDS =================
     function sendRewardsToCurrentProposer() internal {
@@ -237,8 +346,6 @@ contract DebtAllocator is Ownable {
         sendRewardsToCurrentProposer();
     }
 
-
-
     // ============== STRATEGY MANAGEMENT ================
 
     function addStrategy(
@@ -246,12 +353,21 @@ contract DebtAllocator is Ownable {
         address _newStrategy,
         StrategyParam calldata _newStrategyParam
     ) external onlyOwner {
-
         // Checks data valid
-        StrategiesUtils.checkValidityOfPreviousAndNewData(strategiesHash,_packedStrategies, _newStrategy,_newStrategyParam);
+        StrategiesUtils.checkValidityOfPreviousAndNewData(
+            strategiesHash,
+            _packedStrategies,
+            _newStrategy,
+            _newStrategyParam
+        );
 
         // get New array and calculate Hash
-        PackedStrategies memory newPackedStrategies = ArrayUtils.getPackedStrategiesAfterAdd(_packedStrategies, _newStrategy, _newStrategyParam);
+        PackedStrategies memory newPackedStrategies = ArrayUtils
+            .getPackedStrategiesAfterAdd(
+                _packedStrategies,
+                _newStrategy,
+                _newStrategyParam
+            );
         strategiesHash = StrategiesUtils.getStrategiesHash(newPackedStrategies);
 
         // New strategy allocation always set to 0, people can then send new solution
@@ -266,41 +382,50 @@ contract DebtAllocator is Ownable {
         uint256 indexStrategyToUpdate,
         StrategyParam memory _newStrategyParam
     ) external onlyOwner {
-
         StrategiesUtils.checkAtLeastOneStrategy(strategiesHash);
         StrategiesUtils.checkStrategiesHash(_packedStrategies, strategiesHash);
-        StrategiesUtils.checkIndexInRange(indexStrategyToUpdate, _packedStrategies.addresses.length);
+        StrategiesUtils.checkIndexInRange(
+            indexStrategyToUpdate,
+            _packedStrategies.addresses.length
+        );
 
         // Checks call data valid
         StrategiesUtils.checkValidityOfData(_newStrategyParam);
-        PackedStrategies memory newPackedStrategies = ArrayUtils.getPackedStrategiesAfterUpdate(_packedStrategies, indexStrategyToUpdate, _newStrategyParam);
+        PackedStrategies memory newPackedStrategies = ArrayUtils
+            .getPackedStrategiesAfterUpdate(
+                _packedStrategies,
+                indexStrategyToUpdate,
+                _newStrategyParam
+            );
         strategiesHash = StrategiesUtils.getStrategiesHash(newPackedStrategies);
         emit StrategyUpdated(newPackedStrategies);
     }
-
 
     function removeStrategy(
         PackedStrategies memory _packedStrategies,
         uint256 indexStrategyToRemove
     ) external onlyOwner {
-
         StrategiesUtils.checkAtLeastOneStrategy(strategiesHash);
         StrategiesUtils.checkStrategiesHash(_packedStrategies, strategiesHash);
-        StrategiesUtils.checkIndexInRange(indexStrategyToRemove, _packedStrategies.addresses.length);
+        StrategiesUtils.checkIndexInRange(
+            indexStrategyToRemove,
+            _packedStrategies.addresses.length
+        );
 
-        PackedStrategies memory newPackedStrategies = ArrayUtils.getPackedStrategiesAfterRemove(_packedStrategies, indexStrategyToRemove);
-        targetAllocation = ArrayUtils.removeUint256Array(targetAllocation, indexStrategyToRemove);
+        PackedStrategies memory newPackedStrategies = ArrayUtils
+            .getPackedStrategiesAfterRemove(
+                _packedStrategies,
+                indexStrategyToRemove
+            );
+        targetAllocation = ArrayUtils.removeUint256Array(
+            targetAllocation,
+            indexStrategyToRemove
+        );
         strategiesHash = StrategiesUtils.getStrategiesHash(newPackedStrategies);
-        
+
         emit StrategyRemoved(newPackedStrategies);
     }
-
 }
-
-
-
-
-
 
 // ============== TO THINK  ================
 
@@ -317,7 +442,6 @@ contract DebtAllocator is Ownable {
 //         }
 //         emit targetAllocationForced(_newTargetAllocation);
 //     }
-
 
 // function updateTargetAllocation(address[] memory strategies) internal {
 //         uint256[] memory realAllocations = new uint256[](strategies.length);

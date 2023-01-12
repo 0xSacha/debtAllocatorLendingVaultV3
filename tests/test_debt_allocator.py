@@ -10,6 +10,8 @@ SELECTOR_1 = "dd384acb"
 SELECTOR_2 = "9c47575f"
 
 RANDOM_ADDRESS = "0xAB43bA48c9edF4C2C4bB01237348D1D7B28ef168"
+RANDOM_ADDRESS_2 = "0xAB43bA48c9edF4C2C4bB01237348D1D7B28ef168"
+
 RANDOM_SELECTOR = "0xf84b04f5"
 
 
@@ -24,7 +26,7 @@ def owner2(accounts):
 
 @pytest.fixture
 def debt_allo(project, owner):
-    return owner.deploy(project.DebtAllocator, CAIRO_VERIFIER, CAIRO_PROGRAM_HASH)
+    return owner.deploy(project.DebtAllocator, CAIRO_VERIFIER, CAIRO_PROGRAM_HASH, RANDOM_ADDRESS_2)
 
 @pytest.fixture
 def strat(project, owner):

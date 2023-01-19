@@ -274,22 +274,6 @@ contract DebtAllocator is Ownable {
             }
         }
 
-        // We get the index of the highest apr strategy
-        uint256 highest_apr_index = 0;
-        for (
-            uint256 index = 1;
-            index < _programOutput.currentTargetAllocation.length;
-            index++
-        ) {
-            if (
-                _programOutput.newTargetAllocation[index] >
-                (_programOutput.newTargetAllocation[index - 1])
-            ) {
-                highest_apr_index = index;
-            }
-        }
-
-        uint256 _totalIdle = vault.total_idle();
         // We then update debt for increasing apr, the remaining funds in the vault is transfered to the most promising strategy
         for (
             uint256 index = 0;
@@ -301,17 +285,10 @@ contract DebtAllocator is Ownable {
                 _programOutput.currentTargetAllocation[index]
             ) {
                 address _strategy = _packedStrategies.addresses[index];
-                if (index == highest_apr_index) {
-                    vault.update_debt(
-                        _strategy,
-                        _programOutput.newTargetAllocation[index] + _totalIdle
-                    );
-                } else {
-                    vault.update_debt(
-                        _strategy,
-                        _programOutput.newTargetAllocation[index]
-                    );
-                }
+                vault.update_debt(
+                    _strategy,
+                    _programOutput.newTargetAllocation[index] + _totalIdle
+                );
             }
         }
         return;

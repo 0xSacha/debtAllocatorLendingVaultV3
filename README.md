@@ -75,7 +75,7 @@ BIN_PATH=  EXEMPLE: "/Users/sacha/cairo_venv/bin"
 STEPS_LIMIT=1000000 
 NODE_RPC_URL= YOUR GOERLI RPC
 
-- deploy yearn vault, a mock file + script is provided : ape run deploy_mock_vault. Once executed add the deployed address in config_testnet at "vault_address"
+- deploy yearn vault, and add wanted strategies. For test purpose, a mock file + script is provided : ape run deploy_mock_vault. Once executed add the deployed address in config_testnet at "vault_address"
 
 - ape run deploy_debt_allocator. Once executed add the deployed address in config_testnet at "debt_allocator_address"
 

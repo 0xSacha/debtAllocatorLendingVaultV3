@@ -1,163 +1,188 @@
 # TODO: import different functions and use this script as a router / proxy to setup folder functions
-from ape import accounts, project
+from web3 import Web3
+import requests
+from web3._utils.abi import get_constructor_abi, merge_args_and_kwargs
+from web3._utils.events import get_event_data
+from web3._utils.filters import construct_event_filter_params
+from web3._utils.contracts import encode_abi
 import json
 import os
 from dotenv import load_dotenv
 
-BASE_TOKEN = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
-cTOKEN = "0xc3d688B66703497DAA19211EEdff47f25384cdc3"
-
-COMP_USD = "0xdbd020CAeF83eFd542f4De03e3cF0C28A4428bd5"
-WANTED_TOKEN_USD = "0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6"
 
 
-## totalSupply()
-CONTRACT_ADDRESS_0 = cTOKEN
-## 0x18160ddd (selector from totalSupply()
-CHECKDATA_0 = "0x18160ddd"
-STRATEGYY_OFFSET_0 = 0
-
-## totalBorrow()
-CONTRACT_ADDRESS_1 = cTOKEN
-## 0x8285ef40 (selector from totalBorrow()) 
-CHECKDATA_1 = "0x8285ef40"
-STRATEGYY_OFFSET_1 = 0
-
-## supplyPerSecondInterestRateBase() Rslop 0
-CONTRACT_ADDRESS_2 = cTOKEN
-## 0x94920cca (selector from supplyPerSecondInterestRateBase() ) 
-CHECKDATA_2 = "0x94920cca"
-STRATEGYY_OFFSET_2 = 0
-
-## supplyPerSecondInterestRateSlopeLow() Rslop 1
-CONTRACT_ADDRESS_3 = cTOKEN
-## 0x5a94b8d1 (selector from supplyPerSecondInterestRateSlopeLow() ) 
-CHECKDATA_3 = "0x5a94b8d1"
-STRATEGYY_OFFSET_3 = 0
-
-## supplyPerSecondInterestRateSlopeHigh() Rslop 2
-CONTRACT_ADDRESS_4 = cTOKEN
-## 0x804de71f (selector from supplyPerSecondInterestRateSlopeHigh() ) 
-CHECKDATA_4 = "0x804de71f"
-STRATEGYY_OFFSET_4 = 0
-
-## supplyKink() Uo
-CONTRACT_ADDRESS_5 = cTOKEN
-## 0xa5b4ff79 (selector from supplyKink() ) 
-CHECKDATA_5 = "0xa5b4ff79"
-STRATEGYY_OFFSET_5 = 0
-
-##baseTrackingSupplySpeed()
-CONTRACT_ADDRESS_6 = cTOKEN
-## 0x189bb2f1 (selector from baseTrackingSupplySpeed() ) 
-CHECKDATA_6 = "0x189bb2f1"
-STRATEGYY_OFFSET_6 = 0
-
-## baseScale()
-CONTRACT_ADDRESS_7 = cTOKEN
-## 0x44c1e5eb (selector from baseScale() ) 
-CHECKDATA_7 = "0x44c1e5eb"
-STRATEGYY_OFFSET_7 = 0
-
-## PriceFEED
-
-##latestAnswer()
-CONTRACT_ADDRESS_8 = COMP_USD
-## 0x50d25bcd (selector from latestAnswer() ) 
-CHECKDATA_8 = "0x50d25bcd"
-STRATEGYY_OFFSET_8 = 0
-
-##decimals()
-CONTRACT_ADDRESS_9 = COMP_USD
-## 0x313ce567 (selector from decimals() ) 
-CHECKDATA_9 = "0x313ce567"
-STRATEGYY_OFFSET_9 = 0
-
-##latestAnswer()
-CONTRACT_ADDRESS_10 = WANTED_TOKEN_USD
-## 0x50d25bcd (selector from latestAnswer() ) 
-CHECKDATA_10 = "0x50d25bcd"
-STRATEGYY_OFFSET_10 = 0
-
-##decimals()
-CONTRACT_ADDRESS_11 = WANTED_TOKEN_USD
-## 0x313ce567 (selector from decimals() ) 
-CHECKDATA_11 = "0x313ce567"
-STRATEGYY_OFFSET_11 = 0
-
-##decimals()
-CONTRACT_ADDRESS_12 = BASE_TOKEN
-## 0x313ce567 (selector from decimals() ) 
-CHECKDATA_12 = "0x313ce567"
-STRATEGYY_OFFSET_12 = 0
-
-
-
-# contracts to get data from
-STRATEGY_CONTRACTS = [CONTRACT_ADDRESS_0, CONTRACT_ADDRESS_1, CONTRACT_ADDRESS_2, CONTRACT_ADDRESS_3, CONTRACT_ADDRESS_4, CONTRACT_ADDRESS_5, CONTRACT_ADDRESS_6, CONTRACT_ADDRESS_7, CONTRACT_ADDRESS_8, CONTRACT_ADDRESS_9, CONTRACT_ADDRESS_10, CONTRACT_ADDRESS_11, CONTRACT_ADDRESS_12]
-
-# checkdata (selector + neccessary args bytes32)
-STRATEGYY_CHECKDATA = [CHECKDATA_0, CHECKDATA_1, CHECKDATA_2, CHECKDATA_3, CHECKDATA_4, CHECKDATA_5, CHECKDATA_6, CHECKDATA_7, CHECKDATA_8, CHECKDATA_9, CHECKDATA_10, CHECKDATA_11, CHECKDATA_12]
-
-# offset, which args we need from the data received from the call, 0 by default
-STRATEGYY_OFFSET = [STRATEGYY_OFFSET_0, STRATEGYY_OFFSET_1, STRATEGYY_OFFSET_2, STRATEGYY_OFFSET_3, STRATEGYY_OFFSET_4, STRATEGYY_OFFSET_5, STRATEGYY_OFFSET_6, STRATEGYY_OFFSET_7, STRATEGYY_OFFSET_8, STRATEGYY_OFFSET_9, STRATEGYY_OFFSET_10, STRATEGYY_OFFSET_11, STRATEGYY_OFFSET_12]
-
-
-STRATEGYY_CALCULATION = [0, 0, 5, 1, 1000000000000020000, 2, 10001, 10000, 3, 5, 3, 2, 10003, 1000000000000020000, 3, 10004, 2, 0, 10002, 5, 1, 10006, 4, 2, 10007, 1000000000000020000, 3, 10008, 10005, 0,
-10009, 31556000, 2, 8, 6, 2, 12, 11, 2, 31556000, 1000000000000020000, 2, 10010, 10011, 2, 10013, 10012, 2, 9, 7, 2, 10000, 10, 2, 10015, 10016, 2, 10014, 10017, 3, 10010, 10018, 0, 10019, 1000020000, 2,
-0, 0, 5, 1, 1000000000000020000, 2, 10001, 10000, 3, 10002, 3, 2, 10003, 1000000000000020000, 3, 10004, 2, 0, 10005, 31556000, 2, 8, 6, 2, 12, 11, 2, 31556000, 1000000000000020000, 2,
-10007, 10008, 2, 10010, 10009, 2, 9, 7, 2, 10000, 10, 2, 10012, 10013, 2, 10011, 10014, 3, 10006, 10015, 0, 10016, 1000020000, 2]
-CALCULATION_CONDITION = [0, 0, 5, 1, 1000000000000020000, 2, 10001, 10000, 3, 10002, 5, 22, 18]
-
-
-def main():
-    load_dotenv()
-    f = open("./scripts/config_mainnet.json")
-    config_dict = json.load(f)
-    f.close()
-    f = open("./scripts/strategies_info.json")
-    strategies_info = json.load(f)
-    f.close()
-    account = accounts.load(os.environ["ACCOUNT_ALIAS"])
-    contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
-    compound_v3_strategy = config_dict["strategy_compound_v3_address"]
-    addresses = strategies_info["addresses"]
-    callLen = strategies_info["callLen"]
-    contracts = strategies_info["contracts"]
-    checkdata = strategies_info["checkdata"]
-    offset = strategies_info["offset"]
-    calculationsLen = strategies_info["calculationsLen"]
-    calculations = strategies_info["calculations"]
-    conditionsLen = strategies_info["conditionsLen"]
-    conditions = strategies_info["conditions"]
-
-    tx = contract.addStrategy((addresses, callLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions), compound_v3_strategy, (int(len(STRATEGY_CONTRACTS)), STRATEGY_CONTRACTS, STRATEGYY_CHECKDATA, STRATEGYY_OFFSET, int(len(STRATEGYY_CALCULATION)), STRATEGYY_CALCULATION, int(len(CALCULATION_CONDITION)), CALCULATION_CONDITION),sender=account, max_priority_fee="1 gwei")
-    logs = list(tx.decode_logs(contract.StrategyAdded))
-    addresses = logs[0].Strategies
-    callLen = logs[0].StrategiesCallLen
-    contracts = logs[0].Contracts
-    for i in STRATEGYY_CHECKDATA:
-        checkdata.append(i[2:])
+def run():    
+    ADDRESSES = []
+    CALL_LEN = []
+    CONTRACTS = []
+    SELECTORS = []
+    CALLDATA = []
+    OFFSET = []
+    CALCULATIONS_LEN = []
+    CALCULATIONS = []
+    CONDTIONS_LEN = []
+    CONDTIONS = []
+    CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_testnet.json")
+    ABI_PATH = os.path.join(os.path.dirname(__file__), "DebtAllocatorAbi.json")
     
-    offset = logs[0].Offset
-    calculationsLen = logs[0].CalculationsLen
-    calculations = logs[0].Calculations
-    ConditionsLen = logs[0].ConditionsLen
-    conditions = logs[0].Conditions
+    with open(CONFIG_PATH, "r") as config_file:
+        config = json.load(config_file)
+
+    with open(ABI_PATH, "r") as abi_file:
+        abi = json.load(abi_file)
+
+    load_dotenv()
+    RPC = os.getenv('NODE_RPC_URL')
+    web3 = Web3(Web3.HTTPProvider(RPC))
+    address = config["debt_allocator_address"]
+    contract = web3.eth.contract(address, abi=abi)
+    abi_codec = web3.codec
+
+    current_block = 0
     result = {}
-    result["addresses"] = addresses
-    result["callLen"] = callLen
-    result["contracts"] = contracts
-    result["checkdata"] = checkdata
-    result["offset"] = offset
-    result["calculationsLen"] = calculationsLen
-    result["calculations"] = calculations
-    result["conditionsLen"] = ConditionsLen
-    result["conditions"] = conditions
+    result["addresses"] = []
+    result["callLen"] = []
+    result["contracts"] = []
+    result["selectors"] = []
+    result["callData"] = []
+    result["offset"] = []
+    result["calculationsLen"] = []
+    result["calculations"] = []
+    result["conditionsLen"] = []
+    result["conditions"] = []
+
+    abi = contract.events.StrategyAdded._get_event_abi()
+    data_filter_set, event_filter_params = construct_event_filter_params(
+        abi,
+        abi_codec,
+        contract_address=config["debt_allocator_address"],
+        argument_filters=None,
+        fromBlock=7958605,
+        toBlock="latest",
+        address=None,
+        topics=None,
+    )
+    logs = web3.eth.get_logs(event_filter_params)
+
+    if len(logs) > 0:
+        last_block = logs[len(logs) - 1].blockNumber
+        last_strategy_added = get_event_data(abi_codec, abi, logs[len(logs) - 1])
+        strat_array = last_strategy_added.args.Strategies
+        if(last_block > current_block):
+            current_block = last_block
+            ADDRESSES = strat_array[0]
+            CALL_LEN = strat_array[1]
+            CONTRACTS = strat_array[2]
+            SELECTORS = strat_array[3]
+            for i in range(len(SELECTORS)):
+                SELECTORS[i] = SELECTORS[i].hex()
+
+            CALLDATA = strat_array[4]
+            for i in range(len(CALLDATA)):
+                for j in range(len(CALLDATA[i])):
+                    CALLDATA[i][j] = CALLDATA[i][j].hex()
+            OFFSET = strat_array[5]
+            CALCULATIONS_LEN = strat_array[6]
+            CALCULATIONS = strat_array[7]
+            CONDTIONS_LEN = strat_array[8]
+            CONDTIONS = strat_array[9]
+
+    abi = contract.events.StrategyUpdated._get_event_abi()
+    data_filter_set, event_filter_params = construct_event_filter_params(
+        abi,
+        abi_codec,
+        contract_address=config["debt_allocator_address"],
+        argument_filters=None,
+        fromBlock=7958605,
+        toBlock="latest",
+        address=None,
+        topics=None,
+    )
+
+
+    logs = web3.eth.get_logs(event_filter_params)
+
+    if len(logs) > 0:
+        last_block = logs[len(logs) - 1].blockNumber
+        last_strategy_added = get_event_data(abi_codec, abi, logs[len(logs) - 1])
+        strat_array = last_strategy_added.args.Strategies
+        if(last_block > current_block):
+            current_block = last_block
+            ADDRESSES = strat_array[0]
+            CALL_LEN = strat_array[1]
+            CONTRACTS = strat_array[2]
+            SELECTORS = strat_array[3]
+            for i in range(len(SELECTORS)):
+                SELECTORS[i] = SELECTORS[i].hex()
+
+            CALLDATA = strat_array[4]
+            for i in range(len(CALLDATA)):
+                for j in range(len(CALLDATA[i])):
+                    print(CALLDATA[i][j].hex())
+                    CALLDATA[i][j] = CALLDATA[i][j].hex()
+            OFFSET = strat_array[5]
+            CALCULATIONS_LEN = strat_array[6]
+            CALCULATIONS = strat_array[7]
+            CONDTIONS_LEN = strat_array[8]
+            CONDTIONS = strat_array[9]
+
+    abi = contract.events.StrategyRemoved._get_event_abi()
+    data_filter_set, event_filter_params = construct_event_filter_params(
+        abi,
+        abi_codec,
+        contract_address=config["debt_allocator_address"],
+        argument_filters=None,
+        fromBlock=7958605,
+        toBlock="latest",
+        address=None,
+        topics=None,
+    )
+    logs = web3.eth.get_logs(event_filter_params)
+
+    if len(logs) > 0:
+        last_block = logs[len(logs) - 1].blockNumber
+        last_strategy_added = get_event_data(abi_codec, abi, logs[len(logs) - 1])
+        strat_array = last_strategy_added.args.Strategies
+        if(last_block > current_block):
+            current_block = last_block
+            ADDRESSES = strat_array[0]
+            CALL_LEN = strat_array[1]
+            CONTRACTS = strat_array[2]
+            SELECTORS = strat_array[3]
+            for i in range(len(SELECTORS)):
+                SELECTORS[i] = SELECTORS[i].hex()
+
+            CALLDATA = strat_array[4]
+            for i in range(len(CALLDATA)):
+                for j in range(len(CALLDATA[i])):
+                    print(CALLDATA[i][j].hex())
+                    CALLDATA[i][j] = CALLDATA[i][j].hex()
+            OFFSET = strat_array[5]
+            CALCULATIONS_LEN = strat_array[6]
+            CALCULATIONS = strat_array[7]
+            CONDTIONS_LEN = strat_array[8]
+            CONDTIONS = strat_array[9]
+            
+
+
+    
+    result = {}
+    result["addresses"] = ADDRESSES
+    result["callLen"] = CALL_LEN
+    result["contracts"] = CONTRACTS
+    result["selectors"] = SELECTORS
+    result["callData"] = CALLDATA
+    result["offset"] = OFFSET
+    result["calculationsLen"] = CALCULATIONS_LEN
+    result["calculations"] = CALCULATIONS
+    result["conditionsLen"] = CONDTIONS_LEN
+    result["conditions"] = CONDTIONS
     f = open("./scripts/strategies_info.json", "w")
     json.dump(result, f)
     f.close()
-    print("new strategies: ")
-    print(result)
- 
+    print("✅ Data Strategies load")
 
+    
+
+
+run()

@@ -33,6 +33,8 @@ def main():
     print("PROGRAM OUTPUT")
     print(program_output)
     print(program_output[-1]/1e16, "% vs.", program_output[-2]/1e16, "%")
+    # print(program_output[-1]/1e27, "% vs.", program_output[-2]/1e27, "%")
+
 
     job_key = client.submit_cairo_pie(cairo_pie=cairo_pie)
     fact = client.get_fact(cairo_pie)
@@ -51,9 +53,28 @@ def main():
         time.sleep(60)
         print("Job is still pending... sleeping for 60 secs")
 
-    # now that job has been processed, we can verify on-chain
+    # now that job has been processed, we can verify on-chain, just need to wait a bit
+
+    time.sleep(10)
+
     #### SOLUTION VERIFICATION ####
-    tx = contract.verifySolution(program_output, max_priority_fee="1 gwei", sender=account)
+
+    f = open(strategies_info_path)
+    strategies_info = json.load(f)
+    f.close()
+
+    addresses = strategies_info["addresses"]
+    callLen = strategies_info["callLen"]
+    contracts = strategies_info["contracts"]
+    selectors = strategies_info["selectors"]
+    callData = strategies_info["callData"]
+    offset = strategies_info["offset"]
+    calculationsLen = strategies_info["calculationsLen"]
+    calculations = strategies_info["calculations"]
+    conditionsLen = strategies_info["conditionsLen"]
+    conditions = strategies_info["conditions"]
+
+    tx = contract.verifySolution(program_output, (addresses, callLen, contracts, selectors, callData, offset, calculationsLen, calculations, conditionsLen, conditions), max_priority_fee="1 gwei", sender=account)
     logs = list(tx.decode_logs(contract.NewSolution))
     print(logs)
 
@@ -63,10 +84,12 @@ def save_snapshot(account, contract, new_allocation, strategies_info_path, cairo
     f = open(strategies_info_path)
     strategies_info = json.load(f)
     f.close()
+
     addresses = strategies_info["addresses"]
     callLen = strategies_info["callLen"]
     contracts = strategies_info["contracts"]
-    checkdata = strategies_info["checkdata"]
+    selectors = strategies_info["selectors"]
+    callData = strategies_info["callData"]
     offset = strategies_info["offset"]
     calculationsLen = strategies_info["calculationsLen"]
     calculations = strategies_info["calculations"]
@@ -74,7 +97,7 @@ def save_snapshot(account, contract, new_allocation, strategies_info_path, cairo
     conditions = strategies_info["conditions"]
     
     ## TAKE ON-CHAIN SNAPSHOT
-    tx = contract.saveSnapshot((addresses, callLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions), max_priority_fee="1 gwei", sender=account)
+    tx = contract.saveSnapshot((addresses, callLen, contracts, selectors, callData, offset, calculationsLen, calculations, conditionsLen, conditions), max_priority_fee="1 gwei", sender=account)
 
     ## SAVE INFO TO FEED CAIRO PROGRAM
     logs = list(tx.decode_logs(contract.NewSnapshot))

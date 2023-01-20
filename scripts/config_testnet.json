@@ -1,5 +1,6 @@
 {
-  "debt_allocator_address": "0xFffb977827715cAd97ED1e27a0d2CD876E0F9EA9",
+  "vault_address": "0x30e0E4Aa6116c0f0b274a29c7F0D6cDc4C58822B",
+  "debt_allocator_address": "0x6bDcCe6D3e02054bCb205f963aE5c90DC96d4ebc",
   "strategy_aave_address": "0xEbc69526A626F66397949c972de5D5227Dc8d8Af",
   "strategy_compound_address": "0x53A3FB71a9Eb07Eee11d63273780Ed5e43f77359",
   "strategy_compound_v3_address": "0xF7aF1dFe11aC07ecb155efFADdaE70E38e559431",
@@ -8,7 +9,10 @@
   "cairo_program_path": "./cairoScripts/apy_calculator.cairo",
   "cairo_program_input_path": "./cairoScripts/input/apy_calculator_input.json",
   "cairo_program_output_path": "./cairoScripts/output/apy_calculator.pie",
-  "new_allocation_array": [50000000, 70000000],
+  "new_allocation_array": [
+    2000000000,
+    1000000000
+  ],
   "prover_url": "https://testnet.provingservice.io/",
   "steps_limit": 1000000,
   "strategies_info_path": "./scripts/strategies_info.json"

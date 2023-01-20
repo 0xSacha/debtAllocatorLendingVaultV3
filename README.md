@@ -75,6 +75,8 @@ BIN_PATH=  EXEMPLE: "/Users/sacha/cairo_venv/bin"
 STEPS_LIMIT=1000000 
 NODE_RPC_URL= YOUR GOERLI RPC
 
+- deploy yearn vault, a mock file + script is provided : ape run deploy_mock_vault. Once executed add the deployed address in config_testnet at "vault_address"
+
 - ape run deploy_debt_allocator. Once executed add the deployed address in config_testnet at "debt_allocator_address"
 
 - from scripts/setup/testnet, move add_AaveV2_strategy and add_CompoundV2_strategy to scripts/
@@ -87,9 +89,9 @@ NODE_RPC_URL= YOUR GOERLI RPC
 
 - ape run add_CompoundV2_strategy --network ethereum:goerli:infura  
 
--  add the wanted assets amount in config_testnet at  "new_allocation_array" (don't forget decimals) [50000000, 70000000], 50 USDC + 70 USDC
+- ape run setup 
 
-- ape run setup --network ethereum:goerli:infura  
+-  add the wanted assets amount in config_testnet at  "new_allocation_array" (don't forget decimals) [50000000, 70000000], 50 USDC + 70 USDC. The sum of the new allocation elements must be equal to the different strategies allocation.
 
 - ape run full_ops
 This last step will take a snapshot, run the cairo program with data taken from snapshot event, submit to the sharp the proof of execution and wait until the job is processed (be patient, it can takes until 15 minutes). Once processed, the solution will be verified and you'll be rewarded as the new proposer! 
@@ -132,7 +134,7 @@ Step 0 ->  4 (input 0) x 2 (input 2)
 Step 1 ->  7 (input 1) - 2 (20002 - 20000)
 
 FinalStep ->  5(step1) <= 8(step0) ? 
-oui -> jump offset 26 and tab len = 20
+yes -> jump offset 26 and tab len = 20
 
 Jump into scripts/setup/tutorial_addStrategy.txt to know more! 
 
@@ -146,8 +148,6 @@ When you are ready, write a script in the same format than scripts/setup/testnet
 
 
 ## To improve
-
-- Verify solution doesn't check if the current target solution from the cairo output is the same as the one stored and it doesn't check the new neither, that should be equal to each strategy real amount of tokens. 
 
 - Add test for LLamapay 
 

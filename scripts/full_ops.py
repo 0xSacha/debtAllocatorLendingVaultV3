@@ -61,7 +61,22 @@ def main():
 
     #### SOLUTION VERIFICATION ####
 
-    tx = contract.verifySolution(program_output, max_priority_fee="1 gwei", sender=account)
+    f = open(strategies_info_path)
+    strategies_info = json.load(f)
+    f.close()
+
+    addresses = strategies_info["addresses"]
+    callLen = strategies_info["callLen"]
+    contracts = strategies_info["contracts"]
+    selectors = strategies_info["selectors"]
+    callData = strategies_info["callData"]
+    offset = strategies_info["offset"]
+    calculationsLen = strategies_info["calculationsLen"]
+    calculations = strategies_info["calculations"]
+    conditionsLen = strategies_info["conditionsLen"]
+    conditions = strategies_info["conditions"]
+
+    tx = contract.verifySolution(program_output, (addresses, callLen, contracts, selectors, callData, offset, calculationsLen, calculations, conditionsLen, conditions), max_priority_fee="1 gwei", sender=account)
     logs = list(tx.decode_logs(contract.NewSolution))
     print(logs)
 

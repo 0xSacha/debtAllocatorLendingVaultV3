@@ -266,14 +266,13 @@ contract DebtAllocator is Ownable {
                 // report to the vault so it doesnt leave anything behind
                 vault.process_report(_strategy);
 
-                // update the debt down to 0
+                // update the debt down to new allocation
                 vault.update_debt(
                     _strategy,
                     _programOutput.newTargetAllocation[index]
                 );
             }
         }
-
         // We then update debt for increasing apr, the remaining funds in the vault is transfered to the most promising strategy
         for (
             uint256 index = 0;
@@ -287,7 +286,7 @@ contract DebtAllocator is Ownable {
                 address _strategy = _packedStrategies.addresses[index];
                 vault.update_debt(
                     _strategy,
-                    _programOutput.newTargetAllocation[index] + _totalIdle
+                    _programOutput.newTargetAllocation[index]
                 );
             }
         }

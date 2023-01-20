@@ -25,8 +25,12 @@ def owner2(accounts):
     return accounts[1]
 
 @pytest.fixture
-def debt_allo(project, owner):
-    return owner.deploy(project.DebtAllocator, CAIRO_VERIFIER, CAIRO_PROGRAM_HASH, RANDOM_ADDRESS_2)
+def vault(project, owner):
+    return owner.deploy(project.MockVault)
+
+@pytest.fixture
+def debt_allo(project, owner, vault):
+    return owner.deploy(project.DebtAllocator, CAIRO_VERIFIER, CAIRO_PROGRAM_HASH, vault)
 
 @pytest.fixture
 def strat(project, owner):
@@ -256,7 +260,8 @@ def test_save_snapshot_1(debt_allo, owner, strat, stratData1, stratData2):
     with reverts("NO_STRATEGIES"):
         debt_allo.saveSnapshot(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [[], []], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]),sender=owner)
 
-def test_save_snapshot_2(debt_allo, owner, strat, stratData1, stratData2):
+def test_save_snapshot_2(debt_allo, owner, strat, stratData1, stratData2, vault):
+    vault.addStrategy(strat.address, (0,0,10000,0), sender=owner)
     debt_allo.addStrategy(([], [], [], [], [], [], [], [], [], []), strat.address, (2, [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [[], []], [0, 0], 3, [0, 1, 0], 4, [0,0,0,0]),sender=owner)
     tx = debt_allo.saveSnapshot(([strat.address], [2], [stratData1.address, stratData2.address], [SELECTOR_1, SELECTOR_2], [[], []], [0, 0], [3], [0, 1, 0], [4], [0,0,0,0]),sender=owner)
     logs = list(tx.decode_logs(debt_allo.NewSnapshot))
@@ -269,6 +274,8 @@ def test_save_snapshot_2(debt_allo, owner, strat, stratData1, stratData2):
     assert logs[0].condition[1] == 0
     assert logs[0].condition[2] == 0
     assert logs[0].condition[3] == 0
+    alloc = debt_allo.targetAllocation(0)
+    assert alloc == 10000
 
 
 

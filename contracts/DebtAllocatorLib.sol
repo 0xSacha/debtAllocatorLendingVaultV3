@@ -81,10 +81,7 @@ library StrategiesUtils {
             cumulative_new_debt += _programOutput.newTargetAllocation[index];
         }
         require(
-            _targetAllocation.length ==
-                _programOutput.currentTargetAllocation.length &&
-                _targetAllocation.length ==
-                _programOutput.newTargetAllocation.length,
+            cumulative_current_debt == cumulative_new_debt,
             "INVALID_NEW_ALLOCATION"
         );
     }

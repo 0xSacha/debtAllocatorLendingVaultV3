@@ -16,3 +16,15 @@ solidity:
       #  default_network: <goerli-network>
       #  <goerli-network>:
       #    default_provider: <https://goerli.infura.io/v3/>
+      #
+
+ethereum:
+  default_network: mainnet-fork
+  mainnet_fork:
+    default_provider: hardhat
+
+hardhat:
+  fork:
+    ethereum:
+      mainnet:
+        upstream_provider: infura

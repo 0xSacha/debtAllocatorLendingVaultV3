@@ -4,7 +4,7 @@ import json
 import urllib3
 from starkware.cairo.lang.vm.cairo_pie import CairoPie
 
-from sharp.lambda_function import add_job, get_status
+from lambda_function import add_job, get_status
 
 
 class ClientLib:
@@ -53,7 +53,7 @@ class ClientLib:
             "request": payload,
         }
 
-        CA_CERTS = ("client-2048.crt", "client-2048.key")
+        CA_CERTS = ("../../certs/user.crt", "../../certs/user.key")
 
         http = urllib3.PoolManager(cert_reqs="REQUIRED", ca_certs=CA_CERTS)
 

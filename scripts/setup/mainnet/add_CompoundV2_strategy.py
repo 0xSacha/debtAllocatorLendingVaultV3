@@ -104,7 +104,10 @@ COMPOUND_CALCULATION_CONDITION = [0, 0, 5, 10000, 1, 0, 10001, 2, 1, 1, 10000000
 
 
 def main():
+<<<<<<< HEAD
     load_dotenv()
+=======
+>>>>>>> main
     f = open("./scripts/config_mainnet.json")
     config_dict = json.load(f)
     f.close()
@@ -114,8 +117,12 @@ def main():
 
     account = accounts.load(os.environ["ACCOUNT_ALIAS"])
     contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
+<<<<<<< HEAD
     compound_strategy = config_dict["strategy_compound_address"]
 
+=======
+    compound_strategy = config_dict["strategy_compound_v2_address"]
+>>>>>>> main
     addresses = strategies_info["addresses"]
     callLen = strategies_info["callLen"]
     contracts = strategies_info["contracts"]
@@ -127,6 +134,37 @@ def main():
     conditionsLen = strategies_info["conditionsLen"]
     conditions = strategies_info["conditions"]
 
+<<<<<<< HEAD
     contract.addStrategy((addresses, callLen, contracts, selectors, callData, offset, calculationsLen, calculations, conditionsLen, conditions), compound_strategy, (int(len(COMPOUND_STRATEGY_CONTRACTS)), COMPOUND_STRATEGY_CONTRACTS, COMPOUND_STRATEGYY_SELECTORS, COMPOUND_STRATEGYY_CALLDATA, COMPOUND_STRATEGYY_OFFSET, int(len(COMPOUND_STRATEGYY_CALCULATION)), COMPOUND_STRATEGYY_CALCULATION, int(len(COMPOUND_CALCULATION_CONDITION)), COMPOUND_CALCULATION_CONDITION),sender=account, max_priority_fee="1 gwei")
     print("✅ Success")
+=======
+    tx = contract.addStrategy((addresses, callLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions), compound_strategy, (int(len(COMPOUND_STRATEGY_CONTRACTS)), COMPOUND_STRATEGY_CONTRACTS, COMPOUND_STRATEGYY_CHECKDATA, COMPOUND_STRATEGYY_OFFSET, int(len(COMPOUND_STRATEGYY_CALCULATION)), COMPOUND_STRATEGYY_CALCULATION, int(len(COMPOUND_CALCULATION_CONDITION)), COMPOUND_CALCULATION_CONDITION),sender=account, max_priority_fee="1 gwei")
+    logs = list(tx.decode_logs(contract.StrategyAdded))
+    addresses = logs[0].Strategies
+    callLen = logs[0].StrategiesCallLen
+    contracts = logs[0].Contracts
+    for i in COMPOUND_STRATEGYY_CHECKDATA:
+        checkdata.append(i[2:])
+    
+    offset = logs[0].Offset
+    calculationsLen = logs[0].CalculationsLen
+    calculations = logs[0].Calculations
+    ConditionsLen = logs[0].ConditionsLen
+    conditions = logs[0].Conditions
+    result = {}
+    result["addresses"] = addresses
+    result["callLen"] = callLen
+    result["contracts"] = contracts
+    result["checkdata"] = checkdata
+    result["offset"] = offset
+    result["calculationsLen"] = calculationsLen
+    result["calculations"] = calculations
+    result["conditionsLen"] = ConditionsLen
+    result["conditions"] = conditions
+    f = open("./scripts/strategies_info.json", "w")
+    json.dump(result, f)
+    f.close()
+    print("new strategies: ")
+    print(result)
+>>>>>>> main
  

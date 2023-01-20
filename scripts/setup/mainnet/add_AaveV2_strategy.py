@@ -80,8 +80,11 @@ AAVE_CALCULATION_CONDITION = [1, 0, 5, 10000, 2, 0, 10001, 3, 0, 2, 3, 0, 10003,
 
 
 def main():
+<<<<<<< HEAD
 
     load_dotenv()
+=======
+>>>>>>> main
     f = open("./scripts/config_mainnet.json")
     config_dict = json.load(f)
     f.close()
@@ -105,5 +108,37 @@ def main():
     conditionsLen = strategies_info["conditionsLen"]
     conditions = strategies_info["conditions"]
 
+<<<<<<< HEAD
     contract.addStrategy((addresses, callLen, contracts, selectors, callData, offset, calculationsLen, calculations, conditionsLen, conditions), aave_strategy, (int(len(AAVE_STRATEGY_CONTRACTS)), AAVE_STRATEGY_CONTRACTS, AAVE_STRATEGYY_SELECTORS, AAVE_STRATEGYY_CALLDATA, AAVE_STRATEGYY_OFFSET, int(len(AAVE_STRATEGYY_CALCULATION)), AAVE_STRATEGYY_CALCULATION, int(len(AAVE_CALCULATION_CONDITION)), AAVE_CALCULATION_CONDITION),sender=account, max_priority_fee="1 gwei")
     print("✅ Success")
+=======
+    tx = contract.addStrategy((addresses, callLen, contracts, checkdata, offset, calculationsLen, calculations, conditionsLen, conditions), aave_strategy, (int(len(AAVE_STRATEGY_CONTRACTS)), AAVE_STRATEGY_CONTRACTS, AAVE_STRATEGYY_CHECKDATA, AAVE_STRATEGYY_OFFSET, int(len(AAVE_STRATEGYY_CALCULATION)), AAVE_STRATEGYY_CALCULATION, int(len(AAVE_CALCULATION_CONDITION)), AAVE_CALCULATION_CONDITION), sender=account, max_priority_fee="1 gwei")
+    logs = list(tx.decode_logs(contract.StrategyAdded))
+    addresses = logs[0].Strategies
+    callLen = logs[0].StrategiesCallLen
+    contracts = logs[0].Contracts
+
+    for i in AAVE_STRATEGYY_CHECKDATA:
+        checkdata.append(i[2:])
+    
+    offset = logs[0].Offset
+    calculationsLen = logs[0].CalculationsLen
+    calculations = logs[0].Calculations
+    ConditionsLen = logs[0].ConditionsLen
+    conditions = logs[0].Conditions
+    result = {}
+    result["addresses"] = addresses
+    result["callLen"] = callLen
+    result["contracts"] = contracts
+    result["checkdata"] = checkdata
+    result["offset"] = offset
+    result["calculationsLen"] = calculationsLen
+    result["calculations"] = calculations
+    result["conditionsLen"] = ConditionsLen
+    result["conditions"] = conditions
+    f = open("./scripts/strategies_info.json", "w")
+    json.dump(result, f)
+    f.close()
+    print("new strategies: ")
+    print(result)
+>>>>>>> main

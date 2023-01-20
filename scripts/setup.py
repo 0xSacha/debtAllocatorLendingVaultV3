@@ -1,10 +1,8 @@
 # TODO: import different functions and use this script as a router / proxy to setup folder functions
 from web3 import Web3
-import requests
-from web3._utils.abi import get_constructor_abi, merge_args_and_kwargs
 from web3._utils.events import get_event_data
 from web3._utils.filters import construct_event_filter_params
-from web3._utils.contracts import encode_abi
+from ape import accounts, project
 import json
 import os
 from dotenv import load_dotenv
@@ -181,8 +179,5 @@ def run():
     json.dump(result, f)
     f.close()
     print("✅ Data Strategies load")
-
-    
-
 
 run()

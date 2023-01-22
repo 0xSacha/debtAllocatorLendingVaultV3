@@ -6,6 +6,7 @@ import json
 import os
 from dotenv import load_dotenv
 
+
 def run():
     ADDRESSES = []
     CALL_LEN = []

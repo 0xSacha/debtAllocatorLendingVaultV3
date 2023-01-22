@@ -3,11 +3,13 @@ import json
 import os
 from dotenv import load_dotenv
 
+
 def _load_config(config_file):
     CONFIG_PATH = os.path.join(os.path.dirname(__file__), config_file)
     with open(CONFIG_PATH, "r") as file:
         config = json.load(file)
     return config
+
 
 def _save_debt_allocator_address(config_file, config, address):
     CONFIG_PATH = os.path.join(os.path.dirname(__file__), config_file)
@@ -15,6 +17,7 @@ def _save_debt_allocator_address(config_file, config, address):
     with open(CONFIG_PATH, "w") as file:
         json.dump(config, file)
     return config
+
 
 def main():
     load_dotenv()
@@ -33,7 +36,7 @@ def main():
         sender=account,
         max_priority_fee="1 gwei",
     )
-    
+
     _save_debt_allocator_address("config_mainnet.json", config, str(debt_allocator))
 
     project.track_deployment(debt_allocator)

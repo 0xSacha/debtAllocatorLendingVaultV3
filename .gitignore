@@ -11,3 +11,4 @@ pyvenv.cfg
 share/
 certs/
 node_modules/
+cairoScripts/output

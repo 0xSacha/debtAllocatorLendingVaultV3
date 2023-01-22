@@ -126,7 +126,7 @@ COMPOUND_STRATEGY_CONTRACTS = [
 ]
 
 # selector
-COMPOUND_STRATEGYY_SELECTOR = [
+COMPOUND_STRATEGYY_SELECTORS = [
     SELECTOR_0,
     SELECTOR_1,
     SELECTOR_2,
@@ -350,7 +350,7 @@ def main():
             conditionsLen,
             conditions,
         ),
-        compound_strategy,
+        compound_strategy_v3,
         (
             int(len(COMPOUND_STRATEGY_CONTRACTS)),
             COMPOUND_STRATEGY_CONTRACTS,

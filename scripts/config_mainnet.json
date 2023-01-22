@@ -1,17 +1,18 @@
 {
   "vault_address": "0x2438960887b40f1812ec28ebFE2f229D6136BcF7",
   "debt_allocator_address": "0x08677D13Ea8ef4bFC39c71477F5420352038306e",
-  "strategy_aave_address": "",
-  "strategy_compound_address": "",
-  "strategy_compound_v3_address": "",
+  "strategy_aave_address": "0x8dBd36AEa005F09e63Bed2E5A08B951Ebf3f126C",
+  "strategy_compound_address": "0x8dD4c2efB86F25A57B77B8ce2228903174609116",
+  "strategy_compound_v3_address": "0x0672a50D71Dc2F4893d957E7a368D6Ce7315e1Ef",
   "verifier_address": "0x47312450B3Ac8b5b8e247a6bB6d523e7605bDb60",
   "bin_path": "./bin",
   "cairo_program_hash": "0x5ca573cf10164674ca0ef484dc302cf265cbba25db4559dbfb68831b4512c3c",
   "cairo_program_path": "./cairoScripts/apy_calculator.cairo",
   "cairo_program_input_path": "./cairoScripts/input/apy_calculator_input.json",
   "cairo_program_output_path": "./cairoScripts/output/apy_calculator.pie",
-  "new_allocation_array": [30000000000000000000, 30000000000000000000],
+  "new_allocation_array": [30000000000000000000, 30000000000000000000, 30000000000000000000],
   "prover_url": "https://gw1.external.provingservice.io/v1/gateway",
   "steps_limit": 1000000,
-  "data_strat_test": "0x05144c0aA4Fcb45e0F929CE966bfB202aCB86dA0"
+  "data_strat_test": "0x05144c0aA4Fcb45e0F929CE966bfB202aCB86dA0",
+  "strategies_info_path": "./scripts/strategies_info.json"
 }

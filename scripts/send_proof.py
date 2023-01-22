@@ -1,8 +1,10 @@
-from client_lib import ClientLib
-from sharp_client import SharpClient
-import os, json
+from .sharp.client_lib import ClientLib
+from .sharp.sharp_client import SharpClient
+import os, json, time
 from dotenv import load_dotenv
 from starkware.cairo.bootloaders.generate_fact import get_program_output
+from typing import Optional
+from starkware.cairo.sharp.fact_checker import FactChecker
 
 def _load_config(config_file):
     CONFIG_PATH = os.path.join(os.path.dirname(__file__), config_file)
@@ -14,7 +16,7 @@ def _load_config(config_file):
 def main():
     load_dotenv()
     config = _load_config("config_mainnet.json")
-    
+
     #### START CLIENT ####
     client = init_client(os.environ["BIN_PATH"], [os.environ["NODE_RPC_URL"]])
 

@@ -2,6 +2,7 @@ import os, json
 from dotenv import load_dotenv
 from ape import accounts, project
 
+
 def _load_config(config_file):
     CONFIG_PATH = os.path.join(os.path.dirname(__file__), config_file)
     with open(CONFIG_PATH, "r") as file:
@@ -86,6 +87,7 @@ def save_snapshot(
         current_allocation_vault.append(target_allocation[i])
 
     result = {}
+    assert len(current_allocation_vault) == len(new_allocation)
     result["current_allocation"] = current_allocation_vault
     result["new_allocation"] = new_allocation
     result["strategies_data"] = strategies_data_result
@@ -99,12 +101,17 @@ def save_snapshot(
     print("SNAPSHOT RESULT:")
     print(result)
 
+
 def main():
     load_dotenv()
     account = accounts.load(os.environ["ACCOUNT_ALIAS"])
     config = _load_config("config_mainnet.json")
-    
+
     debt_allocator = project.DebtAllocator.at(config["debt_allocator_address"])
-    save_snapshot(account, debt_allocator, config["new_allocation_array"], config["strategies_info_path"], config["cairo_program_input_path"])
-
-
+    save_snapshot(
+        account,
+        debt_allocator,
+        config["new_allocation_array"],
+        config["strategies_info_path"],
+        config["cairo_program_input_path"],
+    )

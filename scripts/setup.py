@@ -2,13 +2,25 @@ import json
 import os
 from ape import project
 
+
 def _load_config(config_file):
     CONFIG_PATH = os.path.join(os.path.dirname(__file__), config_file)
     with open(CONFIG_PATH, "r") as file:
         config = json.load(file)
     return config
 
+
 def main():
+    ADDRESSES = []
+    CALL_LEN = []
+    CONTRACTS = []
+    SELECTORS = []
+    CALLDATA = []
+    OFFSET = []
+    CALCULATIONS_LEN = []
+    CALCULATIONS = []
+    CONDITIONS_LEN = []
+    CONDITIONS = []
     config = _load_config("config_mainnet.json")
     block_number_start = 16464656
     block_number_range = 10000
@@ -16,11 +28,21 @@ def main():
 
     debt_allocator = project.DebtAllocator.at(config["debt_allocator_address"])
     ## Get all events that changed strategies
-    list_strategy_added_events = list(debt_allocator.StrategyAdded.range(block_number_start, block_number_stop))
-    list_strategy_updated_events = list(debt_allocator.StrategyUpdated.range(block_number_start, block_number_stop))
-    list_strategy_removed_events = list(debt_allocator.StrategyRemoved.range(block_number_start, block_number_stop))
+    list_strategy_added_events = list(
+        debt_allocator.StrategyAdded.range(block_number_start, block_number_stop)
+    )
+    list_strategy_updated_events = list(
+        debt_allocator.StrategyUpdated.range(block_number_start, block_number_stop)
+    )
+    list_strategy_removed_events = list(
+        debt_allocator.StrategyRemoved.range(block_number_start, block_number_stop)
+    )
 
-    list_all_events = list(list_strategy_added_events+list_strategy_removed_events+list_strategy_updated_events)
+    list_all_events = list(
+        list_strategy_added_events
+        + list_strategy_removed_events
+        + list_strategy_updated_events
+    )
 
     # Find last update
     latest_block = 0
@@ -31,7 +53,7 @@ def main():
             if e.block_number > latest_block:
                 latest_block = e.block_number
                 latest_event = e
- 
+
     # No update events
     if latest_event == "":
         print("No update events")
@@ -42,12 +64,15 @@ def main():
     ADDRESSES = strat_array[0]
     CALL_LEN = strat_array[1]
     CONTRACTS = strat_array[2]
-    SELECTORS = strat_array[3]
+    SELECTORS = []
+    SELECTORS = list(strat_array[3])
     for i in range(len(SELECTORS)):
         SELECTORS[i] = SELECTORS[i].hex()
 
-    CALLDATA = strat_array[4]
-    for i in range(len(CALLDATA)):
+    CALLDATA = []
+    CALLDATA = list(strat_array[4])
+    for i in range(len(list(strat_array[4]))):
+        CALLDATA[i] = list(strat_array[4][i])
         for j in range(len(CALLDATA[i])):
             CALLDATA[i][j] = CALLDATA[i][j].hex()
     OFFSET = strat_array[5]

@@ -2,8 +2,8 @@ import asyncio
 import logging
 import os
 
-from cairo_job_status import CairoJobStatus
-from gateway_client import GatewayClient
+from .cairo_job_status import CairoJobStatus
+from .gateway_client import GatewayClient
 
 logger = logging.getLogger(__name__)
 
@@ -45,5 +45,5 @@ def gps_gateway() -> GatewayClient:
     Returns GatewayClient instance.
     """
     gateway_url = os.environ["GATEWAY_URL"]
-    gateway_client = GatewayClient(url=gateway_url, certificates_path="../../certs")
+    gateway_client = GatewayClient(url=gateway_url, certificates_path="./certs")
     return gateway_client

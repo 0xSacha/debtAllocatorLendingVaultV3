@@ -5,6 +5,7 @@ from ape import accounts, project
 from starkware.cairo.bootloaders.generate_fact import get_program_output
 from starkware.cairo.lang.vm.cairo_pie import CairoPie
 
+
 def _load_config(config_file):
     CONFIG_PATH = os.path.join(os.path.dirname(__file__), config_file)
     with open(CONFIG_PATH, "r") as file:
@@ -56,4 +57,3 @@ def main():
     )
     logs = list(tx.decode_logs(debt_allocator.NewSolution))
     print(logs)
-

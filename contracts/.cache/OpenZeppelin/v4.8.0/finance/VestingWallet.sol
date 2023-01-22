@@ -34,7 +34,10 @@ contract VestingWallet is Context {
         uint64 startTimestamp,
         uint64 durationSeconds
     ) payable {
-        require(beneficiaryAddress != address(0), "VestingWallet: beneficiary is zero address");
+        require(
+            beneficiaryAddress != address(0),
+            "VestingWallet: beneficiary is zero address"
+        );
         _beneficiary = beneficiaryAddress;
         _start = startTimestamp;
         _duration = durationSeconds;
@@ -122,22 +125,34 @@ contract VestingWallet is Context {
     /**
      * @dev Calculates the amount of ether that has already vested. Default implementation is a linear vesting curve.
      */
-    function vestedAmount(uint64 timestamp) public view virtual returns (uint256) {
+    function vestedAmount(
+        uint64 timestamp
+    ) public view virtual returns (uint256) {
         return _vestingSchedule(address(this).balance + released(), timestamp);
     }
 
     /**
      * @dev Calculates the amount of tokens that has already vested. Default implementation is a linear vesting curve.
      */
-    function vestedAmount(address token, uint64 timestamp) public view virtual returns (uint256) {
-        return _vestingSchedule(IERC20(token).balanceOf(address(this)) + released(token), timestamp);
+    function vestedAmount(
+        address token,
+        uint64 timestamp
+    ) public view virtual returns (uint256) {
+        return
+            _vestingSchedule(
+                IERC20(token).balanceOf(address(this)) + released(token),
+                timestamp
+            );
     }
 
     /**
      * @dev Virtual implementation of the vesting formula. This returns the amount vested, as a function of time, for
      * an asset given its total historical allocation.
      */
-    function _vestingSchedule(uint256 totalAllocation, uint64 timestamp) internal view virtual returns (uint256) {
+    function _vestingSchedule(
+        uint256 totalAllocation,
+        uint64 timestamp
+    ) internal view virtual returns (uint256) {
         if (timestamp < start()) {
             return 0;
         } else if (timestamp > start() + duration()) {

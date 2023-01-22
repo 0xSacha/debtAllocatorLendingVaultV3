@@ -21,7 +21,10 @@ library Arrays {
      * `array` is expected to be sorted in ascending order, and to contain no
      * repeated elements.
      */
-    function findUpperBound(uint256[] storage array, uint256 element) internal view returns (uint256) {
+    function findUpperBound(
+        uint256[] storage array,
+        uint256 element
+    ) internal view returns (uint256) {
         if (array.length == 0) {
             return 0;
         }
@@ -54,7 +57,10 @@ library Arrays {
      *
      * WARNING: Only use if you are certain `pos` is lower than the array length.
      */
-    function unsafeAccess(address[] storage arr, uint256 pos) internal pure returns (StorageSlot.AddressSlot storage) {
+    function unsafeAccess(
+        address[] storage arr,
+        uint256 pos
+    ) internal pure returns (StorageSlot.AddressSlot storage) {
         bytes32 slot;
         /// @solidity memory-safe-assembly
         assembly {
@@ -69,7 +75,10 @@ library Arrays {
      *
      * WARNING: Only use if you are certain `pos` is lower than the array length.
      */
-    function unsafeAccess(bytes32[] storage arr, uint256 pos) internal pure returns (StorageSlot.Bytes32Slot storage) {
+    function unsafeAccess(
+        bytes32[] storage arr,
+        uint256 pos
+    ) internal pure returns (StorageSlot.Bytes32Slot storage) {
         bytes32 slot;
         /// @solidity memory-safe-assembly
         assembly {
@@ -84,7 +93,10 @@ library Arrays {
      *
      * WARNING: Only use if you are certain `pos` is lower than the array length.
      */
-    function unsafeAccess(uint256[] storage arr, uint256 pos) internal pure returns (StorageSlot.Uint256Slot storage) {
+    function unsafeAccess(
+        uint256[] storage arr,
+        uint256 pos
+    ) internal pure returns (StorageSlot.Uint256Slot storage) {
         bytes32 slot;
         /// @solidity memory-safe-assembly
         assembly {

@@ -11,7 +11,12 @@ import "../token/ERC721/extensions/ERC721Votes.sol";
 /**
  * @title ERC721ConsecutiveMock
  */
-contract ERC721ConsecutiveMock is ERC721Burnable, ERC721Consecutive, ERC721Pausable, ERC721Votes {
+contract ERC721ConsecutiveMock is
+    ERC721Burnable,
+    ERC721Consecutive,
+    ERC721Pausable,
+    ERC721Votes
+{
     constructor(
         string memory name,
         string memory symbol,
@@ -52,11 +57,22 @@ contract ERC721ConsecutiveMock is ERC721Burnable, ERC721Consecutive, ERC721Pausa
         _safeMint(to, tokenId);
     }
 
-    function _ownerOf(uint256 tokenId) internal view virtual override(ERC721, ERC721Consecutive) returns (address) {
+    function _ownerOf(
+        uint256 tokenId
+    )
+        internal
+        view
+        virtual
+        override(ERC721, ERC721Consecutive)
+        returns (address)
+    {
         return super._ownerOf(tokenId);
     }
 
-    function _mint(address to, uint256 tokenId) internal virtual override(ERC721, ERC721Consecutive) {
+    function _mint(
+        address to,
+        uint256 tokenId
+    ) internal virtual override(ERC721, ERC721Consecutive) {
         super._mint(to, tokenId);
     }
 

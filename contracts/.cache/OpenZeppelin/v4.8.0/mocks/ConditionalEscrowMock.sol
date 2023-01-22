@@ -12,7 +12,9 @@ contract ConditionalEscrowMock is ConditionalEscrow {
         _allowed[payee] = allowed;
     }
 
-    function withdrawalAllowed(address payee) public view override returns (bool) {
+    function withdrawalAllowed(
+        address payee
+    ) public view override returns (bool) {
         return _allowed[payee];
     }
 }

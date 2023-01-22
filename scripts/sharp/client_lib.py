@@ -27,7 +27,9 @@ class ClientLib:
         Returns job_key - a unique id of the job in the SHARP system.
         """
 
-        return add_job({"cairo_pie": base64.b64encode(cairo_pie.serialize()).decode("ascii")})
+        return add_job(
+            {"cairo_pie": base64.b64encode(cairo_pie.serialize()).decode("ascii")}
+        )
 
     def get_status(self, job_key: str) -> str:
         """

@@ -44,7 +44,9 @@ abstract contract Votes is IVotes, Context, EIP712 {
     /**
      * @dev Returns the current amount of votes that `account` has.
      */
-    function getVotes(address account) public view virtual override returns (uint256) {
+    function getVotes(
+        address account
+    ) public view virtual override returns (uint256) {
         return _delegateCheckpoints[account].latest();
     }
 
@@ -55,8 +57,12 @@ abstract contract Votes is IVotes, Context, EIP712 {
      *
      * - `blockNumber` must have been already mined
      */
-    function getPastVotes(address account, uint256 blockNumber) public view virtual override returns (uint256) {
-        return _delegateCheckpoints[account].getAtProbablyRecentBlock(blockNumber);
+    function getPastVotes(
+        address account,
+        uint256 blockNumber
+    ) public view virtual override returns (uint256) {
+        return
+            _delegateCheckpoints[account].getAtProbablyRecentBlock(blockNumber);
     }
 
     /**
@@ -70,7 +76,9 @@ abstract contract Votes is IVotes, Context, EIP712 {
      *
      * - `blockNumber` must have been already mined
      */
-    function getPastTotalSupply(uint256 blockNumber) public view virtual override returns (uint256) {
+    function getPastTotalSupply(
+        uint256 blockNumber
+    ) public view virtual override returns (uint256) {
         require(blockNumber < block.number, "Votes: block not yet mined");
         return _totalCheckpoints.getAtProbablyRecentBlock(blockNumber);
     }
@@ -85,7 +93,9 @@ abstract contract Votes is IVotes, Context, EIP712 {
     /**
      * @dev Returns the delegate that `account` has chosen.
      */
-    function delegates(address account) public view virtual override returns (address) {
+    function delegates(
+        address account
+    ) public view virtual override returns (address) {
         return _delegation[account];
     }
 
@@ -110,7 +120,11 @@ abstract contract Votes is IVotes, Context, EIP712 {
     ) public virtual override {
         require(block.timestamp <= expiry, "Votes: signature expired");
         address signer = ECDSA.recover(
-            _hashTypedDataV4(keccak256(abi.encode(_DELEGATION_TYPEHASH, delegatee, nonce, expiry))),
+            _hashTypedDataV4(
+                keccak256(
+                    abi.encode(_DELEGATION_TYPEHASH, delegatee, nonce, expiry)
+                )
+            ),
             v,
             r,
             s
@@ -160,11 +174,14 @@ abstract contract Votes is IVotes, Context, EIP712 {
     ) private {
         if (from != to && amount > 0) {
             if (from != address(0)) {
-                (uint256 oldValue, uint256 newValue) = _delegateCheckpoints[from].push(_subtract, amount);
+                (uint256 oldValue, uint256 newValue) = _delegateCheckpoints[
+                    from
+                ].push(_subtract, amount);
                 emit DelegateVotesChanged(from, oldValue, newValue);
             }
             if (to != address(0)) {
-                (uint256 oldValue, uint256 newValue) = _delegateCheckpoints[to].push(_add, amount);
+                (uint256 oldValue, uint256 newValue) = _delegateCheckpoints[to]
+                    .push(_add, amount);
                 emit DelegateVotesChanged(to, oldValue, newValue);
             }
         }
@@ -183,7 +200,9 @@ abstract contract Votes is IVotes, Context, EIP712 {
      *
      * Returns the current value and increments nonce.
      */
-    function _useNonce(address owner) internal virtual returns (uint256 current) {
+    function _useNonce(
+        address owner
+    ) internal virtual returns (uint256 current) {
         Counters.Counter storage nonce = _nonces[owner];
         current = nonce.current();
         nonce.increment();

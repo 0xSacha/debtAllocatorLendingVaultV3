@@ -18,24 +18,42 @@ interface IERC777 {
      *
      * Note that some additional user `data` and `operatorData` can be logged in the event.
      */
-    event Minted(address indexed operator, address indexed to, uint256 amount, bytes data, bytes operatorData);
+    event Minted(
+        address indexed operator,
+        address indexed to,
+        uint256 amount,
+        bytes data,
+        bytes operatorData
+    );
 
     /**
      * @dev Emitted when `operator` destroys `amount` tokens from `account`.
      *
      * Note that some additional user `data` and `operatorData` can be logged in the event.
      */
-    event Burned(address indexed operator, address indexed from, uint256 amount, bytes data, bytes operatorData);
+    event Burned(
+        address indexed operator,
+        address indexed from,
+        uint256 amount,
+        bytes data,
+        bytes operatorData
+    );
 
     /**
      * @dev Emitted when `operator` is made operator for `tokenHolder`.
      */
-    event AuthorizedOperator(address indexed operator, address indexed tokenHolder);
+    event AuthorizedOperator(
+        address indexed operator,
+        address indexed tokenHolder
+    );
 
     /**
      * @dev Emitted when `operator` is revoked its operator status for `tokenHolder`.
      */
-    event RevokedOperator(address indexed operator, address indexed tokenHolder);
+    event RevokedOperator(
+        address indexed operator,
+        address indexed tokenHolder
+    );
 
     /**
      * @dev Returns the name of the token.
@@ -111,7 +129,10 @@ interface IERC777 {
      *
      * See {operatorSend} and {operatorBurn}.
      */
-    function isOperatorFor(address operator, address tokenHolder) external view returns (bool);
+    function isOperatorFor(
+        address operator,
+        address tokenHolder
+    ) external view returns (bool);
 
     /**
      * @dev Make an account an operator of the caller.

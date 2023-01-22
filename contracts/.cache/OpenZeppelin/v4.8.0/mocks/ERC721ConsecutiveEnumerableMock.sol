@@ -5,7 +5,10 @@ pragma solidity ^0.8.0;
 import "../token/ERC721/extensions/ERC721Consecutive.sol";
 import "../token/ERC721/extensions/ERC721Enumerable.sol";
 
-contract ERC721ConsecutiveEnumerableMock is ERC721Consecutive, ERC721Enumerable {
+contract ERC721ConsecutiveEnumerableMock is
+    ERC721Consecutive,
+    ERC721Enumerable
+{
     constructor(
         string memory name,
         string memory symbol,
@@ -17,21 +20,28 @@ contract ERC721ConsecutiveEnumerableMock is ERC721Consecutive, ERC721Enumerable 
         }
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(ERC721, ERC721Enumerable)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(ERC721, ERC721Enumerable) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 
-    function _ownerOf(uint256 tokenId) internal view virtual override(ERC721, ERC721Consecutive) returns (address) {
+    function _ownerOf(
+        uint256 tokenId
+    )
+        internal
+        view
+        virtual
+        override(ERC721, ERC721Consecutive)
+        returns (address)
+    {
         return super._ownerOf(tokenId);
     }
 
-    function _mint(address to, uint256 tokenId) internal virtual override(ERC721, ERC721Consecutive) {
+    function _mint(
+        address to,
+        uint256 tokenId
+    ) internal virtual override(ERC721, ERC721Consecutive) {
         super._mint(to, tokenId);
     }
 

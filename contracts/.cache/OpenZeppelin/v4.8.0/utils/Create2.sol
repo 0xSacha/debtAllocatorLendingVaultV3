@@ -32,7 +32,10 @@ library Create2 {
         bytes32 salt,
         bytes memory bytecode
     ) internal returns (address addr) {
-        require(address(this).balance >= amount, "Create2: insufficient balance");
+        require(
+            address(this).balance >= amount,
+            "Create2: insufficient balance"
+        );
         require(bytecode.length != 0, "Create2: bytecode length is zero");
         /// @solidity memory-safe-assembly
         assembly {
@@ -45,7 +48,10 @@ library Create2 {
      * @dev Returns the address where a contract will be stored if deployed via {deploy}. Any change in the
      * `bytecodeHash` or `salt` will result in a new destination address.
      */
-    function computeAddress(bytes32 salt, bytes32 bytecodeHash) internal view returns (address) {
+    function computeAddress(
+        bytes32 salt,
+        bytes32 bytecodeHash
+    ) internal view returns (address) {
         return computeAddress(salt, bytecodeHash, address(this));
     }
 

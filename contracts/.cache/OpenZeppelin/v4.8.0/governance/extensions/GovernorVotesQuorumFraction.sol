@@ -19,7 +19,10 @@ abstract contract GovernorVotesQuorumFraction is GovernorVotes {
     uint256 private _quorumNumerator; // DEPRECATED
     Checkpoints.History private _quorumNumeratorHistory;
 
-    event QuorumNumeratorUpdated(uint256 oldQuorumNumerator, uint256 newQuorumNumerator);
+    event QuorumNumeratorUpdated(
+        uint256 oldQuorumNumerator,
+        uint256 newQuorumNumerator
+    );
 
     /**
      * @dev Initialize quorum as a fraction of the token's total supply.
@@ -36,13 +39,18 @@ abstract contract GovernorVotesQuorumFraction is GovernorVotes {
      * @dev Returns the current quorum numerator. See {quorumDenominator}.
      */
     function quorumNumerator() public view virtual returns (uint256) {
-        return _quorumNumeratorHistory._checkpoints.length == 0 ? _quorumNumerator : _quorumNumeratorHistory.latest();
+        return
+            _quorumNumeratorHistory._checkpoints.length == 0
+                ? _quorumNumerator
+                : _quorumNumeratorHistory.latest();
     }
 
     /**
      * @dev Returns the quorum numerator at a specific block number. See {quorumDenominator}.
      */
-    function quorumNumerator(uint256 blockNumber) public view virtual returns (uint256) {
+    function quorumNumerator(
+        uint256 blockNumber
+    ) public view virtual returns (uint256) {
         // If history is empty, fallback to old storage
         uint256 length = _quorumNumeratorHistory._checkpoints.length;
         if (length == 0) {
@@ -50,7 +58,8 @@ abstract contract GovernorVotesQuorumFraction is GovernorVotes {
         }
 
         // Optimistic search, check the latest checkpoint
-        Checkpoints.Checkpoint memory latest = _quorumNumeratorHistory._checkpoints[length - 1];
+        Checkpoints.Checkpoint memory latest = _quorumNumeratorHistory
+            ._checkpoints[length - 1];
         if (latest._blockNumber <= blockNumber) {
             return latest._value;
         }
@@ -69,8 +78,12 @@ abstract contract GovernorVotesQuorumFraction is GovernorVotes {
     /**
      * @dev Returns the quorum for a block number, in terms of number of votes: `supply * numerator / denominator`.
      */
-    function quorum(uint256 blockNumber) public view virtual override returns (uint256) {
-        return (token.getPastTotalSupply(blockNumber) * quorumNumerator(blockNumber)) / quorumDenominator();
+    function quorum(
+        uint256 blockNumber
+    ) public view virtual override returns (uint256) {
+        return
+            (token.getPastTotalSupply(blockNumber) *
+                quorumNumerator(blockNumber)) / quorumDenominator();
     }
 
     /**
@@ -83,7 +96,9 @@ abstract contract GovernorVotesQuorumFraction is GovernorVotes {
      * - Must be called through a governance proposal.
      * - New numerator must be smaller or equal to the denominator.
      */
-    function updateQuorumNumerator(uint256 newQuorumNumerator) external virtual onlyGovernance {
+    function updateQuorumNumerator(
+        uint256 newQuorumNumerator
+    ) external virtual onlyGovernance {
         _updateQuorumNumerator(newQuorumNumerator);
     }
 
@@ -96,7 +111,9 @@ abstract contract GovernorVotesQuorumFraction is GovernorVotes {
      *
      * - New numerator must be smaller or equal to the denominator.
      */
-    function _updateQuorumNumerator(uint256 newQuorumNumerator) internal virtual {
+    function _updateQuorumNumerator(
+        uint256 newQuorumNumerator
+    ) internal virtual {
         require(
             newQuorumNumerator <= quorumDenominator(),
             "GovernorVotesQuorumFraction: quorumNumerator over quorumDenominator"
@@ -105,9 +122,15 @@ abstract contract GovernorVotesQuorumFraction is GovernorVotes {
         uint256 oldQuorumNumerator = quorumNumerator();
 
         // Make sure we keep track of the original numerator in contracts upgraded from a version without checkpoints.
-        if (oldQuorumNumerator != 0 && _quorumNumeratorHistory._checkpoints.length == 0) {
+        if (
+            oldQuorumNumerator != 0 &&
+            _quorumNumeratorHistory._checkpoints.length == 0
+        ) {
             _quorumNumeratorHistory._checkpoints.push(
-                Checkpoints.Checkpoint({_blockNumber: 0, _value: SafeCast.toUint224(oldQuorumNumerator)})
+                Checkpoints.Checkpoint({
+                    _blockNumber: 0,
+                    _value: SafeCast.toUint224(oldQuorumNumerator)
+                })
             );
         }
 

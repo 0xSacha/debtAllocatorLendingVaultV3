@@ -23,7 +23,11 @@ address constant DEFAULT_SENDER = 0x000000000000000000000000000000000000dEaD;
  *
  * _Available since v4.6._
  */
-abstract contract CrossChainEnabledPolygonChild is IFxMessageProcessor, CrossChainEnabled, ReentrancyGuard {
+abstract contract CrossChainEnabledPolygonChild is
+    IFxMessageProcessor,
+    CrossChainEnabled,
+    ReentrancyGuard
+{
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     address private immutable _fxChild;
     address private _sender = DEFAULT_SENDER;
@@ -43,7 +47,14 @@ abstract contract CrossChainEnabledPolygonChild is IFxMessageProcessor, CrossCha
     /**
      * @dev see {CrossChainEnabled-_crossChainSender}
      */
-    function _crossChainSender() internal view virtual override onlyCrossChain returns (address) {
+    function _crossChainSender()
+        internal
+        view
+        virtual
+        override
+        onlyCrossChain
+        returns (address)
+    {
         return _sender;
     }
 
@@ -59,14 +70,18 @@ abstract contract CrossChainEnabledPolygonChild is IFxMessageProcessor, CrossCha
      * then security could be compromised.
      */
     function processMessageFromRoot(
-        uint256, /* stateId */
+        uint256 /* stateId */,
         address rootMessageSender,
         bytes calldata data
     ) external override nonReentrant {
         if (!_isCrossChain()) revert NotCrossChainCall();
 
         _sender = rootMessageSender;
-        Address.functionDelegateCall(address(this), data, "cross-chain execution failed");
+        Address.functionDelegateCall(
+            address(this),
+            data,
+            "cross-chain execution failed"
+        );
         _sender = DEFAULT_SENDER;
     }
 }

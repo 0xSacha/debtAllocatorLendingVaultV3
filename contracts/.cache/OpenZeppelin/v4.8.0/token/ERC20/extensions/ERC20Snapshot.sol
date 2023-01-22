@@ -103,8 +103,14 @@ abstract contract ERC20Snapshot is ERC20 {
     /**
      * @dev Retrieves the balance of `account` at the time `snapshotId` was created.
      */
-    function balanceOfAt(address account, uint256 snapshotId) public view virtual returns (uint256) {
-        (bool snapshotted, uint256 value) = _valueAt(snapshotId, _accountBalanceSnapshots[account]);
+    function balanceOfAt(
+        address account,
+        uint256 snapshotId
+    ) public view virtual returns (uint256) {
+        (bool snapshotted, uint256 value) = _valueAt(
+            snapshotId,
+            _accountBalanceSnapshots[account]
+        );
 
         return snapshotted ? value : balanceOf(account);
     }
@@ -112,8 +118,13 @@ abstract contract ERC20Snapshot is ERC20 {
     /**
      * @dev Retrieves the total supply at the time `snapshotId` was created.
      */
-    function totalSupplyAt(uint256 snapshotId) public view virtual returns (uint256) {
-        (bool snapshotted, uint256 value) = _valueAt(snapshotId, _totalSupplySnapshots);
+    function totalSupplyAt(
+        uint256 snapshotId
+    ) public view virtual returns (uint256) {
+        (bool snapshotted, uint256 value) = _valueAt(
+            snapshotId,
+            _totalSupplySnapshots
+        );
 
         return snapshotted ? value : totalSupply();
     }
@@ -142,9 +153,15 @@ abstract contract ERC20Snapshot is ERC20 {
         }
     }
 
-    function _valueAt(uint256 snapshotId, Snapshots storage snapshots) private view returns (bool, uint256) {
+    function _valueAt(
+        uint256 snapshotId,
+        Snapshots storage snapshots
+    ) private view returns (bool, uint256) {
         require(snapshotId > 0, "ERC20Snapshot: id is 0");
-        require(snapshotId <= _getCurrentSnapshotId(), "ERC20Snapshot: nonexistent id");
+        require(
+            snapshotId <= _getCurrentSnapshotId(),
+            "ERC20Snapshot: nonexistent id"
+        );
 
         // When a valid snapshot is queried, there are three possibilities:
         //  a) The queried value was not modified after the snapshot was taken. Therefore, a snapshot entry was never
@@ -177,7 +194,10 @@ abstract contract ERC20Snapshot is ERC20 {
         _updateSnapshot(_totalSupplySnapshots, totalSupply());
     }
 
-    function _updateSnapshot(Snapshots storage snapshots, uint256 currentValue) private {
+    function _updateSnapshot(
+        Snapshots storage snapshots,
+        uint256 currentValue
+    ) private {
         uint256 currentId = _getCurrentSnapshotId();
         if (_lastSnapshotId(snapshots.ids) < currentId) {
             snapshots.ids.push(currentId);
@@ -185,7 +205,9 @@ abstract contract ERC20Snapshot is ERC20 {
         }
     }
 
-    function _lastSnapshotId(uint256[] storage ids) private view returns (uint256) {
+    function _lastSnapshotId(
+        uint256[] storage ids
+    ) private view returns (uint256) {
         if (ids.length == 0) {
             return 0;
         } else {

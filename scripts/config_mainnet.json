@@ -10,10 +10,7 @@
   "cairo_program_path": "./cairoScripts/apy_calculator.cairo",
   "cairo_program_input_path": "./cairoScripts/input/apy_calculator_input.json",
   "cairo_program_output_path": "./cairoScripts/output/apy_calculator.pie",
-  "new_allocation_array": [
-    30000000000000000000,
-    30000000000000000000
-  ],
+  "new_allocation_array": [30000000000000000000, 30000000000000000000],
   "prover_url": "https://gw1.external.provingservice.io/v1/gateway",
   "steps_limit": 1000000,
   "data_strat_test": "0x05144c0aA4Fcb45e0F929CE966bfB202aCB86dA0"

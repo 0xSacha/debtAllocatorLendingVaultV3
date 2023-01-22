@@ -28,7 +28,9 @@ library LibOptimism {
      * sender, as it will revert with `NotCrossChainCall` if the current
      * function call is not the result of a cross-chain message.
      */
-    function crossChainSender(address messenger) internal view returns (address) {
+    function crossChainSender(
+        address messenger
+    ) internal view returns (address) {
         if (!isCrossChain(messenger)) revert NotCrossChainCall();
 
         return Optimism_Bridge(messenger).xDomainMessageSender();

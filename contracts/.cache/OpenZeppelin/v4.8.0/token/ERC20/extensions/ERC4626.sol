@@ -60,7 +60,13 @@ abstract contract ERC4626 is ERC20, IERC4626 {
      * inheritance but is most likely 18). Override this function in order to set a guaranteed hardcoded value.
      * See {IERC20Metadata-decimals}.
      */
-    function decimals() public view virtual override(IERC20Metadata, ERC20) returns (uint8) {
+    function decimals()
+        public
+        view
+        virtual
+        override(IERC20Metadata, ERC20)
+        returns (uint8)
+    {
         return _decimals;
     }
 
@@ -75,17 +81,23 @@ abstract contract ERC4626 is ERC20, IERC4626 {
     }
 
     /** @dev See {IERC4626-convertToShares}. */
-    function convertToShares(uint256 assets) public view virtual override returns (uint256 shares) {
+    function convertToShares(
+        uint256 assets
+    ) public view virtual override returns (uint256 shares) {
         return _convertToShares(assets, Math.Rounding.Down);
     }
 
     /** @dev See {IERC4626-convertToAssets}. */
-    function convertToAssets(uint256 shares) public view virtual override returns (uint256 assets) {
+    function convertToAssets(
+        uint256 shares
+    ) public view virtual override returns (uint256 assets) {
         return _convertToAssets(shares, Math.Rounding.Down);
     }
 
     /** @dev See {IERC4626-maxDeposit}. */
-    function maxDeposit(address) public view virtual override returns (uint256) {
+    function maxDeposit(
+        address
+    ) public view virtual override returns (uint256) {
         return _isVaultCollateralized() ? type(uint256).max : 0;
     }
 
@@ -95,38 +107,56 @@ abstract contract ERC4626 is ERC20, IERC4626 {
     }
 
     /** @dev See {IERC4626-maxWithdraw}. */
-    function maxWithdraw(address owner) public view virtual override returns (uint256) {
+    function maxWithdraw(
+        address owner
+    ) public view virtual override returns (uint256) {
         return _convertToAssets(balanceOf(owner), Math.Rounding.Down);
     }
 
     /** @dev See {IERC4626-maxRedeem}. */
-    function maxRedeem(address owner) public view virtual override returns (uint256) {
+    function maxRedeem(
+        address owner
+    ) public view virtual override returns (uint256) {
         return balanceOf(owner);
     }
 
     /** @dev See {IERC4626-previewDeposit}. */
-    function previewDeposit(uint256 assets) public view virtual override returns (uint256) {
+    function previewDeposit(
+        uint256 assets
+    ) public view virtual override returns (uint256) {
         return _convertToShares(assets, Math.Rounding.Down);
     }
 
     /** @dev See {IERC4626-previewMint}. */
-    function previewMint(uint256 shares) public view virtual override returns (uint256) {
+    function previewMint(
+        uint256 shares
+    ) public view virtual override returns (uint256) {
         return _convertToAssets(shares, Math.Rounding.Up);
     }
 
     /** @dev See {IERC4626-previewWithdraw}. */
-    function previewWithdraw(uint256 assets) public view virtual override returns (uint256) {
+    function previewWithdraw(
+        uint256 assets
+    ) public view virtual override returns (uint256) {
         return _convertToShares(assets, Math.Rounding.Up);
     }
 
     /** @dev See {IERC4626-previewRedeem}. */
-    function previewRedeem(uint256 shares) public view virtual override returns (uint256) {
+    function previewRedeem(
+        uint256 shares
+    ) public view virtual override returns (uint256) {
         return _convertToAssets(shares, Math.Rounding.Down);
     }
 
     /** @dev See {IERC4626-deposit}. */
-    function deposit(uint256 assets, address receiver) public virtual override returns (uint256) {
-        require(assets <= maxDeposit(receiver), "ERC4626: deposit more than max");
+    function deposit(
+        uint256 assets,
+        address receiver
+    ) public virtual override returns (uint256) {
+        require(
+            assets <= maxDeposit(receiver),
+            "ERC4626: deposit more than max"
+        );
 
         uint256 shares = previewDeposit(assets);
         _deposit(_msgSender(), receiver, assets, shares);
@@ -135,7 +165,10 @@ abstract contract ERC4626 is ERC20, IERC4626 {
     }
 
     /** @dev See {IERC4626-mint}. */
-    function mint(uint256 shares, address receiver) public virtual override returns (uint256) {
+    function mint(
+        uint256 shares,
+        address receiver
+    ) public virtual override returns (uint256) {
         require(shares <= maxMint(receiver), "ERC4626: mint more than max");
 
         uint256 assets = previewMint(shares);
@@ -150,7 +183,10 @@ abstract contract ERC4626 is ERC20, IERC4626 {
         address receiver,
         address owner
     ) public virtual override returns (uint256) {
-        require(assets <= maxWithdraw(owner), "ERC4626: withdraw more than max");
+        require(
+            assets <= maxWithdraw(owner),
+            "ERC4626: withdraw more than max"
+        );
 
         uint256 shares = previewWithdraw(assets);
         _withdraw(_msgSender(), receiver, owner, assets, shares);
@@ -178,7 +214,10 @@ abstract contract ERC4626 is ERC20, IERC4626 {
      * Will revert if assets > 0, totalSupply > 0 and totalAssets = 0. That corresponds to a case where any asset
      * would represent an infinite amount of shares.
      */
-    function _convertToShares(uint256 assets, Math.Rounding rounding) internal view virtual returns (uint256 shares) {
+    function _convertToShares(
+        uint256 assets,
+        Math.Rounding rounding
+    ) internal view virtual returns (uint256 shares) {
         uint256 supply = totalSupply();
         return
             (assets == 0 || supply == 0)
@@ -201,10 +240,15 @@ abstract contract ERC4626 is ERC20, IERC4626 {
     /**
      * @dev Internal conversion function (from shares to assets) with support for rounding direction.
      */
-    function _convertToAssets(uint256 shares, Math.Rounding rounding) internal view virtual returns (uint256 assets) {
+    function _convertToAssets(
+        uint256 shares,
+        Math.Rounding rounding
+    ) internal view virtual returns (uint256 assets) {
         uint256 supply = totalSupply();
         return
-            (supply == 0) ? _initialConvertToAssets(shares, rounding) : shares.mulDiv(totalAssets(), supply, rounding);
+            (supply == 0)
+                ? _initialConvertToAssets(shares, rounding)
+                : shares.mulDiv(totalAssets(), supply, rounding);
     }
 
     /**

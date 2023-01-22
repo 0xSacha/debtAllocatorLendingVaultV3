@@ -72,7 +72,11 @@ contract TransparentUpgradeableProxy is ERC1967Proxy {
      * https://eth.wiki/json-rpc/API#eth_getstorageat[`eth_getStorageAt`] RPC call.
      * `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc`
      */
-    function implementation() external ifAdmin returns (address implementation_) {
+    function implementation()
+        external
+        ifAdmin
+        returns (address implementation_)
+    {
         implementation_ = _implementation();
     }
 
@@ -103,7 +107,10 @@ contract TransparentUpgradeableProxy is ERC1967Proxy {
      *
      * NOTE: Only the admin can call this function. See {ProxyAdmin-upgradeAndCall}.
      */
-    function upgradeToAndCall(address newImplementation, bytes calldata data) external payable ifAdmin {
+    function upgradeToAndCall(
+        address newImplementation,
+        bytes calldata data
+    ) external payable ifAdmin {
         _upgradeToAndCall(newImplementation, data, true);
     }
 
@@ -118,7 +125,10 @@ contract TransparentUpgradeableProxy is ERC1967Proxy {
      * @dev Makes sure the admin cannot access the fallback function. See {Proxy-_beforeFallback}.
      */
     function _beforeFallback() internal virtual override {
-        require(msg.sender != _getAdmin(), "TransparentUpgradeableProxy: admin cannot fallback to proxy target");
+        require(
+            msg.sender != _getAdmin(),
+            "TransparentUpgradeableProxy: admin cannot fallback to proxy target"
+        );
         super._beforeFallback();
     }
 }

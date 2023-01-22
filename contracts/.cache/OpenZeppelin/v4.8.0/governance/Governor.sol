@@ -26,14 +26,24 @@ import "./IGovernor.sol";
  *
  * _Available since v4.3._
  */
-abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receiver, IERC1155Receiver {
+abstract contract Governor is
+    Context,
+    ERC165,
+    EIP712,
+    IGovernor,
+    IERC721Receiver,
+    IERC1155Receiver
+{
     using DoubleEndedQueue for DoubleEndedQueue.Bytes32Deque;
     using SafeCast for uint256;
     using Timers for Timers.BlockNumber;
 
-    bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
+    bytes32 public constant BALLOT_TYPEHASH =
+        keccak256("Ballot(uint256 proposalId,uint8 support)");
     bytes32 public constant EXTENDED_BALLOT_TYPEHASH =
-        keccak256("ExtendedBallot(uint256 proposalId,uint8 support,string reason,bytes params)");
+        keccak256(
+            "ExtendedBallot(uint256 proposalId,uint8 support,string reason,bytes params)"
+        );
 
     struct ProposalCore {
         Timers.BlockNumber voteStart;
@@ -89,7 +99,9 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC165) returns (bool) {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(IERC165, ERC165) returns (bool) {
         // In addition to the current interfaceId, also support previous version of the interfaceId that did not
         // include the castVoteWithReasonAndParams() function as standard
         return
@@ -136,13 +148,20 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
         bytes[] memory calldatas,
         bytes32 descriptionHash
     ) public pure virtual override returns (uint256) {
-        return uint256(keccak256(abi.encode(targets, values, calldatas, descriptionHash)));
+        return
+            uint256(
+                keccak256(
+                    abi.encode(targets, values, calldatas, descriptionHash)
+                )
+            );
     }
 
     /**
      * @dev See {IGovernor-state}.
      */
-    function state(uint256 proposalId) public view virtual override returns (ProposalState) {
+    function state(
+        uint256 proposalId
+    ) public view virtual override returns (ProposalState) {
         ProposalCore storage proposal = _proposals[proposalId];
 
         if (proposal.executed) {
@@ -179,14 +198,18 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
     /**
      * @dev See {IGovernor-proposalSnapshot}.
      */
-    function proposalSnapshot(uint256 proposalId) public view virtual override returns (uint256) {
+    function proposalSnapshot(
+        uint256 proposalId
+    ) public view virtual override returns (uint256) {
         return _proposals[proposalId].voteStart.getDeadline();
     }
 
     /**
      * @dev See {IGovernor-proposalDeadline}.
      */
-    function proposalDeadline(uint256 proposalId) public view virtual override returns (uint256) {
+    function proposalDeadline(
+        uint256 proposalId
+    ) public view virtual override returns (uint256) {
         return _proposals[proposalId].voteEnd.getDeadline();
     }
 
@@ -200,12 +223,16 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
     /**
      * @dev Amount of votes already cast passes the threshold limit.
      */
-    function _quorumReached(uint256 proposalId) internal view virtual returns (bool);
+    function _quorumReached(
+        uint256 proposalId
+    ) internal view virtual returns (bool);
 
     /**
      * @dev Is the proposal successful or not.
      */
-    function _voteSucceeded(uint256 proposalId) internal view virtual returns (bool);
+    function _voteSucceeded(
+        uint256 proposalId
+    ) internal view virtual returns (bool);
 
     /**
      * @dev Get the voting weight of `account` at a specific `blockNumber`, for a vote as described by `params`.
@@ -253,14 +280,28 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
             "Governor: proposer votes below proposal threshold"
         );
 
-        uint256 proposalId = hashProposal(targets, values, calldatas, keccak256(bytes(description)));
+        uint256 proposalId = hashProposal(
+            targets,
+            values,
+            calldatas,
+            keccak256(bytes(description))
+        );
 
-        require(targets.length == values.length, "Governor: invalid proposal length");
-        require(targets.length == calldatas.length, "Governor: invalid proposal length");
+        require(
+            targets.length == values.length,
+            "Governor: invalid proposal length"
+        );
+        require(
+            targets.length == calldatas.length,
+            "Governor: invalid proposal length"
+        );
         require(targets.length > 0, "Governor: empty proposal");
 
         ProposalCore storage proposal = _proposals[proposalId];
-        require(proposal.voteStart.isUnset(), "Governor: proposal already exists");
+        require(
+            proposal.voteStart.isUnset(),
+            "Governor: proposal already exists"
+        );
 
         uint64 snapshot = block.number.toUint64() + votingDelay().toUint64();
         uint64 deadline = snapshot + votingPeriod().toUint64();
@@ -292,7 +333,12 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
         bytes[] memory calldatas,
         bytes32 descriptionHash
     ) public payable virtual override returns (uint256) {
-        uint256 proposalId = hashProposal(targets, values, calldatas, descriptionHash);
+        uint256 proposalId = hashProposal(
+            targets,
+            values,
+            calldatas,
+            descriptionHash
+        );
 
         ProposalState status = state(proposalId);
         require(
@@ -314,7 +360,7 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
      * @dev Internal execution mechanism. Can be overridden to implement different execution mechanism
      */
     function _execute(
-        uint256, /* proposalId */
+        uint256 /* proposalId */,
         address[] memory targets,
         uint256[] memory values,
         bytes[] memory calldatas,
@@ -322,7 +368,9 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
     ) internal virtual {
         string memory errorMessage = "Governor: call reverted without message";
         for (uint256 i = 0; i < targets.length; ++i) {
-            (bool success, bytes memory returndata) = targets[i].call{value: values[i]}(calldatas[i]);
+            (bool success, bytes memory returndata) = targets[i].call{
+                value: values[i]
+            }(calldatas[i]);
             Address.verifyCallResult(success, returndata, errorMessage);
         }
     }
@@ -331,9 +379,9 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
      * @dev Hook before execution is triggered.
      */
     function _beforeExecute(
-        uint256, /* proposalId */
+        uint256 /* proposalId */,
         address[] memory targets,
-        uint256[] memory, /* values */
+        uint256[] memory /* values */,
         bytes[] memory calldatas,
         bytes32 /*descriptionHash*/
     ) internal virtual {
@@ -350,10 +398,10 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
      * @dev Hook after execution is triggered.
      */
     function _afterExecute(
-        uint256, /* proposalId */
-        address[] memory, /* targets */
-        uint256[] memory, /* values */
-        bytes[] memory, /* calldatas */
+        uint256 /* proposalId */,
+        address[] memory /* targets */,
+        uint256[] memory /* values */,
+        bytes[] memory /* calldatas */,
         bytes32 /*descriptionHash*/
     ) internal virtual {
         if (_executor() != address(this)) {
@@ -375,11 +423,18 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
         bytes[] memory calldatas,
         bytes32 descriptionHash
     ) internal virtual returns (uint256) {
-        uint256 proposalId = hashProposal(targets, values, calldatas, descriptionHash);
+        uint256 proposalId = hashProposal(
+            targets,
+            values,
+            calldatas,
+            descriptionHash
+        );
         ProposalState status = state(proposalId);
 
         require(
-            status != ProposalState.Canceled && status != ProposalState.Expired && status != ProposalState.Executed,
+            status != ProposalState.Canceled &&
+                status != ProposalState.Expired &&
+                status != ProposalState.Executed,
             "Governor: proposal not active"
         );
         _proposals[proposalId].canceled = true;
@@ -392,7 +447,10 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
     /**
      * @dev See {IGovernor-getVotes}.
      */
-    function getVotes(address account, uint256 blockNumber) public view virtual override returns (uint256) {
+    function getVotes(
+        address account,
+        uint256 blockNumber
+    ) public view virtual override returns (uint256) {
         return _getVotes(account, blockNumber, _defaultParams());
     }
 
@@ -410,7 +468,10 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
     /**
      * @dev See {IGovernor-castVote}.
      */
-    function castVote(uint256 proposalId, uint8 support) public virtual override returns (uint256) {
+    function castVote(
+        uint256 proposalId,
+        uint8 support
+    ) public virtual override returns (uint256) {
         address voter = _msgSender();
         return _castVote(proposalId, voter, support, "");
     }
@@ -451,7 +512,9 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
         bytes32 s
     ) public virtual override returns (uint256) {
         address voter = ECDSA.recover(
-            _hashTypedDataV4(keccak256(abi.encode(BALLOT_TYPEHASH, proposalId, support))),
+            _hashTypedDataV4(
+                keccak256(abi.encode(BALLOT_TYPEHASH, proposalId, support))
+            ),
             v,
             r,
             s
@@ -503,7 +566,8 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
         uint8 support,
         string memory reason
     ) internal virtual returns (uint256) {
-        return _castVote(proposalId, account, support, reason, _defaultParams());
+        return
+            _castVote(proposalId, account, support, reason, _defaultParams());
     }
 
     /**
@@ -520,15 +584,29 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
         bytes memory params
     ) internal virtual returns (uint256) {
         ProposalCore storage proposal = _proposals[proposalId];
-        require(state(proposalId) == ProposalState.Active, "Governor: vote not currently active");
+        require(
+            state(proposalId) == ProposalState.Active,
+            "Governor: vote not currently active"
+        );
 
-        uint256 weight = _getVotes(account, proposal.voteStart.getDeadline(), params);
+        uint256 weight = _getVotes(
+            account,
+            proposal.voteStart.getDeadline(),
+            params
+        );
         _countVote(proposalId, account, support, weight, params);
 
         if (params.length == 0) {
             emit VoteCast(account, proposalId, support, weight, reason);
         } else {
-            emit VoteCastWithParams(account, proposalId, support, weight, reason, params);
+            emit VoteCastWithParams(
+                account,
+                proposalId,
+                support,
+                weight,
+                reason,
+                params
+            );
         }
 
         return weight;
@@ -545,8 +623,14 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor, IERC721Receive
         uint256 value,
         bytes calldata data
     ) external payable virtual onlyGovernance {
-        (bool success, bytes memory returndata) = target.call{value: value}(data);
-        Address.verifyCallResult(success, returndata, "Governor: relay reverted without message");
+        (bool success, bytes memory returndata) = target.call{value: value}(
+            data
+        );
+        Address.verifyCallResult(
+            success,
+            returndata,
+            "Governor: relay reverted without message"
+        );
     }
 
     /**

@@ -35,7 +35,10 @@ contract RefundEscrow is ConditionalEscrow {
      * @param beneficiary_ The beneficiary of the deposits.
      */
     constructor(address payable beneficiary_) {
-        require(beneficiary_ != address(0), "RefundEscrow: beneficiary is the zero address");
+        require(
+            beneficiary_ != address(0),
+            "RefundEscrow: beneficiary is the zero address"
+        );
         _beneficiary = beneficiary_;
         _state = State.Active;
     }
@@ -59,7 +62,10 @@ contract RefundEscrow is ConditionalEscrow {
      * @param refundee The address funds will be sent to if a refund occurs.
      */
     function deposit(address refundee) public payable virtual override {
-        require(state() == State.Active, "RefundEscrow: can only deposit while active");
+        require(
+            state() == State.Active,
+            "RefundEscrow: can only deposit while active"
+        );
         super.deposit(refundee);
     }
 
@@ -68,7 +74,10 @@ contract RefundEscrow is ConditionalEscrow {
      * further deposits.
      */
     function close() public virtual onlyOwner {
-        require(state() == State.Active, "RefundEscrow: can only close while active");
+        require(
+            state() == State.Active,
+            "RefundEscrow: can only close while active"
+        );
         _state = State.Closed;
         emit RefundsClosed();
     }
@@ -77,7 +86,10 @@ contract RefundEscrow is ConditionalEscrow {
      * @dev Allows for refunds to take place, rejecting further deposits.
      */
     function enableRefunds() public virtual onlyOwner {
-        require(state() == State.Active, "RefundEscrow: can only enable refunds while active");
+        require(
+            state() == State.Active,
+            "RefundEscrow: can only enable refunds while active"
+        );
         _state = State.Refunding;
         emit RefundsEnabled();
     }
@@ -86,7 +98,10 @@ contract RefundEscrow is ConditionalEscrow {
      * @dev Withdraws the beneficiary's funds.
      */
     function beneficiaryWithdraw() public virtual {
-        require(state() == State.Closed, "RefundEscrow: beneficiary can only withdraw while closed");
+        require(
+            state() == State.Closed,
+            "RefundEscrow: beneficiary can only withdraw while closed"
+        );
         beneficiary().sendValue(address(this).balance);
     }
 

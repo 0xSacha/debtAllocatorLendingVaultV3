@@ -39,7 +39,9 @@ abstract contract AccessControlCrossChain is AccessControl, CrossChainEnabled {
     /**
      * @dev Returns the aliased role corresponding to `role`.
      */
-    function _crossChainRoleAlias(bytes32 role) internal pure virtual returns (bytes32) {
+    function _crossChainRoleAlias(
+        bytes32 role
+    ) internal pure virtual returns (bytes32) {
         return role ^ CROSSCHAIN_ALIAS;
     }
 }

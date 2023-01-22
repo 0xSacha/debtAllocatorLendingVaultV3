@@ -14,7 +14,10 @@ contract MyGovernor is
     GovernorVotes,
     GovernorVotesQuorumFraction
 {
-    constructor(IVotes _token, TimelockController _timelock)
+    constructor(
+        IVotes _token,
+        TimelockController _timelock
+    )
         Governor("MyGovernor")
         GovernorVotes(_token)
         GovernorVotesQuorumFraction(4)
@@ -35,7 +38,9 @@ contract MyGovernor is
 
     // The following functions are overrides required by Solidity.
 
-    function quorum(uint256 blockNumber)
+    function quorum(
+        uint256 blockNumber
+    )
         public
         view
         override(IGovernor, GovernorVotesQuorumFraction)
@@ -44,7 +49,9 @@ contract MyGovernor is
         return super.quorum(blockNumber);
     }
 
-    function state(uint256 proposalId)
+    function state(
+        uint256 proposalId
+    )
         public
         view
         override(Governor, IGovernor, GovernorTimelockControl)
@@ -58,7 +65,11 @@ contract MyGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         string memory description
-    ) public override(Governor, GovernorCompatibilityBravo, IGovernor) returns (uint256) {
+    )
+        public
+        override(Governor, GovernorCompatibilityBravo, IGovernor)
+        returns (uint256)
+    {
         return super.propose(targets, values, calldatas, description);
     }
 
@@ -81,11 +92,18 @@ contract MyGovernor is
         return super._cancel(targets, values, calldatas, descriptionHash);
     }
 
-    function _executor() internal view override(Governor, GovernorTimelockControl) returns (address) {
+    function _executor()
+        internal
+        view
+        override(Governor, GovernorTimelockControl)
+        returns (address)
+    {
         return super._executor();
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         view
         override(Governor, IERC165, GovernorTimelockControl)

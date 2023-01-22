@@ -16,11 +16,7 @@ interface IStreamer {
 
     function streamToStart(bytes32) external view returns (uint256);
 
-    function withdraw(
-        address from,
-        address to,
-        uint216 amountPerSec
-    ) external;
+    function withdraw(address from, address to, uint216 amountPerSec) external;
 
     function getStreamId(
         address from,
@@ -114,10 +110,9 @@ contract DebtAllocator is Ownable {
         rewardsPerSec = _rewardsPerSec;
     }
 
-    function updateCairoProgramHash(bytes32 _cairoProgramHash)
-        public
-        onlyOwner
-    {
+    function updateCairoProgramHash(
+        bytes32 _cairoProgramHash
+    ) public onlyOwner {
         cairoProgramHash = _cairoProgramHash;
         emit NewCairoProgramHash(_cairoProgramHash);
     }
@@ -127,27 +122,25 @@ contract DebtAllocator is Ownable {
         emit NewCairoVerifier(_cairoVerifier);
     }
 
-    function updateStaleSnapshotPeriod(uint256 _staleSnapshotPeriod)
-        external
-        onlyOwner
-    {
+    function updateStaleSnapshotPeriod(
+        uint256 _staleSnapshotPeriod
+    ) external onlyOwner {
         staleSnapshotPeriod = _staleSnapshotPeriod;
         emit NewStaleSnapshotPeriod(_staleSnapshotPeriod);
     }
 
-    function updateMinimumApyIncrease(uint256 _minimumApyIncrease)
-        external
-        onlyOwner
-    {
+    function updateMinimumApyIncrease(
+        uint256 _minimumApyIncrease
+    ) external onlyOwner {
         minimumApyIncreaseForNewSolution = _minimumApyIncrease;
         emit NewMinimumApyIncrease(_minimumApyIncrease);
     }
 
     // ============== FRESH DATA  ================
 
-    function saveSnapshot(PackedStrategies calldata _packedStrategies)
-        external
-    {
+    function saveSnapshot(
+        PackedStrategies calldata _packedStrategies
+    ) external {
         StrategiesUtils.checkAtLeastOneStrategy(strategiesHash);
 
         // Checks strategies data is valid

@@ -30,19 +30,31 @@ contract MathMock {
         return Math.mulDiv(a, b, denominator, direction);
     }
 
-    function sqrt(uint256 a, Math.Rounding direction) public pure returns (uint256) {
+    function sqrt(
+        uint256 a,
+        Math.Rounding direction
+    ) public pure returns (uint256) {
         return Math.sqrt(a, direction);
     }
 
-    function log2(uint256 a, Math.Rounding direction) public pure returns (uint256) {
+    function log2(
+        uint256 a,
+        Math.Rounding direction
+    ) public pure returns (uint256) {
         return Math.log2(a, direction);
     }
 
-    function log10(uint256 a, Math.Rounding direction) public pure returns (uint256) {
+    function log10(
+        uint256 a,
+        Math.Rounding direction
+    ) public pure returns (uint256) {
         return Math.log10(a, direction);
     }
 
-    function log256(uint256 a, Math.Rounding direction) public pure returns (uint256) {
+    function log256(
+        uint256 a,
+        Math.Rounding direction
+    ) public pure returns (uint256) {
         return Math.log256(a, direction);
     }
 }

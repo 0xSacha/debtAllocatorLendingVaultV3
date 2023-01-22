@@ -21,11 +21,17 @@ contract MerkleProofWrapper {
         return MerkleProof.verifyCalldata(proof, root, leaf);
     }
 
-    function processProof(bytes32[] memory proof, bytes32 leaf) public pure returns (bytes32) {
+    function processProof(
+        bytes32[] memory proof,
+        bytes32 leaf
+    ) public pure returns (bytes32) {
         return MerkleProof.processProof(proof, leaf);
     }
 
-    function processProofCalldata(bytes32[] calldata proof, bytes32 leaf) public pure returns (bytes32) {
+    function processProofCalldata(
+        bytes32[] calldata proof,
+        bytes32 leaf
+    ) public pure returns (bytes32) {
         return MerkleProof.processProofCalldata(proof, leaf);
     }
 
@@ -44,7 +50,13 @@ contract MerkleProofWrapper {
         bytes32 root,
         bytes32[] memory leaves
     ) public pure returns (bool) {
-        return MerkleProof.multiProofVerifyCalldata(proofs, proofFlag, root, leaves);
+        return
+            MerkleProof.multiProofVerifyCalldata(
+                proofs,
+                proofFlag,
+                root,
+                leaves
+            );
     }
 
     function processMultiProof(

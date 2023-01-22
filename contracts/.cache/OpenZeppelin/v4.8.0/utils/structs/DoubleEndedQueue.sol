@@ -63,7 +63,9 @@ library DoubleEndedQueue {
      *
      * Reverts with `Empty` if the queue is empty.
      */
-    function popBack(Bytes32Deque storage deque) internal returns (bytes32 value) {
+    function popBack(
+        Bytes32Deque storage deque
+    ) internal returns (bytes32 value) {
         if (empty(deque)) revert Empty();
         int128 backIndex;
         unchecked {
@@ -91,7 +93,9 @@ library DoubleEndedQueue {
      *
      * Reverts with `Empty` if the queue is empty.
      */
-    function popFront(Bytes32Deque storage deque) internal returns (bytes32 value) {
+    function popFront(
+        Bytes32Deque storage deque
+    ) internal returns (bytes32 value) {
         if (empty(deque)) revert Empty();
         int128 frontIndex = deque._begin;
         value = deque._data[frontIndex];
@@ -106,7 +110,9 @@ library DoubleEndedQueue {
      *
      * Reverts with `Empty` if the queue is empty.
      */
-    function front(Bytes32Deque storage deque) internal view returns (bytes32 value) {
+    function front(
+        Bytes32Deque storage deque
+    ) internal view returns (bytes32 value) {
         if (empty(deque)) revert Empty();
         int128 frontIndex = deque._begin;
         return deque._data[frontIndex];
@@ -117,7 +123,9 @@ library DoubleEndedQueue {
      *
      * Reverts with `Empty` if the queue is empty.
      */
-    function back(Bytes32Deque storage deque) internal view returns (bytes32 value) {
+    function back(
+        Bytes32Deque storage deque
+    ) internal view returns (bytes32 value) {
         if (empty(deque)) revert Empty();
         int128 backIndex;
         unchecked {
@@ -132,9 +140,14 @@ library DoubleEndedQueue {
      *
      * Reverts with `OutOfBounds` if the index is out of bounds.
      */
-    function at(Bytes32Deque storage deque, uint256 index) internal view returns (bytes32 value) {
+    function at(
+        Bytes32Deque storage deque,
+        uint256 index
+    ) internal view returns (bytes32 value) {
         // int256(deque._begin) is a safe upcast
-        int128 idx = SafeCast.toInt128(int256(deque._begin) + SafeCast.toInt256(index));
+        int128 idx = SafeCast.toInt128(
+            int256(deque._begin) + SafeCast.toInt256(index)
+        );
         if (idx >= deque._end) revert OutOfBounds();
         return deque._data[idx];
     }
@@ -153,7 +166,9 @@ library DoubleEndedQueue {
     /**
      * @dev Returns the number of items in the queue.
      */
-    function length(Bytes32Deque storage deque) internal view returns (uint256) {
+    function length(
+        Bytes32Deque storage deque
+    ) internal view returns (uint256) {
         // The interface preserves the invariant that begin <= end so we assume this will not overflow.
         // We also assume there are at most int256.max items in the queue.
         unchecked {

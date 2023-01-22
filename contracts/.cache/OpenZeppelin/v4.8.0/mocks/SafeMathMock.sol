@@ -5,23 +5,38 @@ pragma solidity ^0.8.0;
 import "../utils/math/SafeMath.sol";
 
 contract SafeMathMock {
-    function tryAdd(uint256 a, uint256 b) public pure returns (bool flag, uint256 value) {
+    function tryAdd(
+        uint256 a,
+        uint256 b
+    ) public pure returns (bool flag, uint256 value) {
         return SafeMath.tryAdd(a, b);
     }
 
-    function trySub(uint256 a, uint256 b) public pure returns (bool flag, uint256 value) {
+    function trySub(
+        uint256 a,
+        uint256 b
+    ) public pure returns (bool flag, uint256 value) {
         return SafeMath.trySub(a, b);
     }
 
-    function tryMul(uint256 a, uint256 b) public pure returns (bool flag, uint256 value) {
+    function tryMul(
+        uint256 a,
+        uint256 b
+    ) public pure returns (bool flag, uint256 value) {
         return SafeMath.tryMul(a, b);
     }
 
-    function tryDiv(uint256 a, uint256 b) public pure returns (bool flag, uint256 value) {
+    function tryDiv(
+        uint256 a,
+        uint256 b
+    ) public pure returns (bool flag, uint256 value) {
         return SafeMath.tryDiv(a, b);
     }
 
-    function tryMod(uint256 a, uint256 b) public pure returns (bool flag, uint256 value) {
+    function tryMod(
+        uint256 a,
+        uint256 b
+    ) public pure returns (bool flag, uint256 value) {
         return SafeMath.tryMod(a, b);
     }
 

@@ -26,7 +26,13 @@ contract ERC1967Proxy is Proxy, ERC1967Upgrade {
     /**
      * @dev Returns the current implementation address.
      */
-    function _implementation() internal view virtual override returns (address impl) {
+    function _implementation()
+        internal
+        view
+        virtual
+        override
+        returns (address impl)
+    {
         return ERC1967Upgrade._getImplementation();
     }
 }

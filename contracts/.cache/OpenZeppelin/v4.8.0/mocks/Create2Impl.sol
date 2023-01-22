@@ -6,11 +6,7 @@ import "../utils/Create2.sol";
 import "../utils/introspection/ERC1820Implementer.sol";
 
 contract Create2Impl {
-    function deploy(
-        uint256 value,
-        bytes32 salt,
-        bytes memory code
-    ) public {
+    function deploy(uint256 value, bytes32 salt, bytes memory code) public {
         Create2.deploy(value, salt, code);
     }
 
@@ -18,7 +14,10 @@ contract Create2Impl {
         Create2.deploy(value, salt, type(ERC1820Implementer).creationCode);
     }
 
-    function computeAddress(bytes32 salt, bytes32 codeHash) public view returns (address) {
+    function computeAddress(
+        bytes32 salt,
+        bytes32 codeHash
+    ) public view returns (address) {
         return Create2.computeAddress(salt, codeHash);
     }
 

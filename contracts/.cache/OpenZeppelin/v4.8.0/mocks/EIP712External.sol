@@ -6,7 +6,10 @@ import "../utils/cryptography/ECDSA.sol";
 import "../utils/cryptography/EIP712.sol";
 
 contract EIP712External is EIP712 {
-    constructor(string memory name, string memory version) EIP712(name, version) {}
+    constructor(
+        string memory name,
+        string memory version
+    ) EIP712(name, version) {}
 
     function domainSeparator() external view returns (bytes32) {
         return _domainSeparatorV4();
@@ -19,7 +22,13 @@ contract EIP712External is EIP712 {
         string memory mailContents
     ) external view {
         bytes32 digest = _hashTypedDataV4(
-            keccak256(abi.encode(keccak256("Mail(address to,string contents)"), mailTo, keccak256(bytes(mailContents))))
+            keccak256(
+                abi.encode(
+                    keccak256("Mail(address to,string contents)"),
+                    mailTo,
+                    keccak256(bytes(mailContents))
+                )
+            )
         );
         address recoveredSigner = ECDSA.recover(digest, signature);
         require(recoveredSigner == signer);

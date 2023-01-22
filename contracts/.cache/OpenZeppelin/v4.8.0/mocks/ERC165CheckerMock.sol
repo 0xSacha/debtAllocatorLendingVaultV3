@@ -11,19 +11,31 @@ contract ERC165CheckerMock {
         return account.supportsERC165();
     }
 
-    function supportsInterface(address account, bytes4 interfaceId) public view returns (bool) {
+    function supportsInterface(
+        address account,
+        bytes4 interfaceId
+    ) public view returns (bool) {
         return account.supportsInterface(interfaceId);
     }
 
-    function supportsAllInterfaces(address account, bytes4[] memory interfaceIds) public view returns (bool) {
+    function supportsAllInterfaces(
+        address account,
+        bytes4[] memory interfaceIds
+    ) public view returns (bool) {
         return account.supportsAllInterfaces(interfaceIds);
     }
 
-    function getSupportedInterfaces(address account, bytes4[] memory interfaceIds) public view returns (bool[] memory) {
+    function getSupportedInterfaces(
+        address account,
+        bytes4[] memory interfaceIds
+    ) public view returns (bool[] memory) {
         return account.getSupportedInterfaces(interfaceIds);
     }
 
-    function supportsERC165InterfaceUnchecked(address account, bytes4 interfaceId) public view returns (bool) {
+    function supportsERC165InterfaceUnchecked(
+        address account,
+        bytes4 interfaceId
+    ) public view returns (bool) {
         return account.supportsERC165InterfaceUnchecked(interfaceId);
     }
 }

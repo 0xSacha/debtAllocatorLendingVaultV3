@@ -8,6 +8,7 @@ import os
 import time
 from dotenv import load_dotenv
 
+
 def main():
     # Load configuration files
     load_dotenv()
@@ -18,7 +19,13 @@ def main():
     account = accounts.load(os.environ["ACCOUNT_ALIAS"])
     contract = project.DebtAllocator.at(config["debt_allocator_address"])
 
-    save_snapshot(account, contract, config["new_allocation_array"], config["strategies_info_path"], config["cairo_program_input_path"])
+    save_snapshot(
+        account,
+        contract,
+        config["new_allocation_array"],
+        config["strategies_info_path"],
+        config["cairo_program_input_path"],
+    )
 
     #### START CLIENT ####
     client = init_client(os.environ["BIN_PATH"], [os.environ["NODE_RPC_URL"]])
@@ -32,9 +39,8 @@ def main():
     #### SUBMIT FOR VERIFICATION ####
     print("PROGRAM OUTPUT")
     print(program_output)
-    print(program_output[-1]/1e16, "% vs.", program_output[-2]/1e16, "%")
+    print(program_output[-1] / 1e16, "% vs.", program_output[-2] / 1e16, "%")
     # print(program_output[-1]/1e27, "% vs.", program_output[-2]/1e27, "%")
-
 
     job_key = client.submit_cairo_pie(cairo_pie=cairo_pie)
     fact = client.get_fact(cairo_pie)
@@ -47,7 +53,7 @@ def main():
     while True:
         if client.get_job_status(job_key) == "PROCESSED":
             print("Job has been processed!")
-            break;
+            break
         print(mins, "minutes passed")
         mins += 1
         time.sleep(60)
@@ -74,11 +80,30 @@ def main():
     conditionsLen = strategies_info["conditionsLen"]
     conditions = strategies_info["conditions"]
 
-    tx = contract.verifySolution(program_output, (addresses, callLen, contracts, selectors, callData, offset, calculationsLen, calculations, conditionsLen, conditions), max_priority_fee="1 gwei", sender=account)
+    tx = contract.verifySolution(
+        program_output,
+        (
+            addresses,
+            callLen,
+            contracts,
+            selectors,
+            callData,
+            offset,
+            calculationsLen,
+            calculations,
+            conditionsLen,
+            conditions,
+        ),
+        max_priority_fee="1 gwei",
+        sender=account,
+    )
     logs = list(tx.decode_logs(contract.NewSolution))
     print(logs)
 
-def save_snapshot(account, contract, new_allocation, strategies_info_path, cairo_program_input_path):
+
+def save_snapshot(
+    account, contract, new_allocation, strategies_info_path, cairo_program_input_path
+):
 
     ## LOAD CURRENT CONFIG FROM LOCAL
     f = open(strategies_info_path)
@@ -95,13 +120,28 @@ def save_snapshot(account, contract, new_allocation, strategies_info_path, cairo
     calculations = strategies_info["calculations"]
     conditionsLen = strategies_info["conditionsLen"]
     conditions = strategies_info["conditions"]
-    
+
     ## TAKE ON-CHAIN SNAPSHOT
-    tx = contract.saveSnapshot((addresses, callLen, contracts, selectors, callData, offset, calculationsLen, calculations, conditionsLen, conditions), max_priority_fee="1 gwei", sender=account)
+    tx = contract.saveSnapshot(
+        (
+            addresses,
+            callLen,
+            contracts,
+            selectors,
+            callData,
+            offset,
+            calculationsLen,
+            calculations,
+            conditionsLen,
+            conditions,
+        ),
+        max_priority_fee="1 gwei",
+        sender=account,
+    )
 
     ## SAVE INFO TO FEED CAIRO PROGRAM
     logs = list(tx.decode_logs(contract.NewSnapshot))
-    
+
     strategies_data = logs[0].dataStrategies
     cumulative_offset = 0
     strategies_data_result = []
@@ -117,16 +157,20 @@ def save_snapshot(account, contract, new_allocation, strategies_info_path, cairo
     for i in range(int(len(addresses))):
         strategies_calculation_result.append(int(calculationsLen[i] / 3))
         for j in range(calculationsLen[i]):
-            strategies_calculation_result.append(strategies_calculation[cumulative_offset + j])
+            strategies_calculation_result.append(
+                strategies_calculation[cumulative_offset + j]
+            )
         cumulative_offset += calculationsLen[i]
 
     strategies_condition = logs[0].condition
     cumulative_offset = 0
     strategies_condition_result = []
     for i in range(int(len(addresses))):
-        strategies_condition_result.append(int((conditionsLen[i]-4) / 3))
+        strategies_condition_result.append(int((conditionsLen[i] - 4) / 3))
         for j in range(conditionsLen[i]):
-            strategies_condition_result.append(strategies_condition[cumulative_offset + j])
+            strategies_condition_result.append(
+                strategies_condition[cumulative_offset + j]
+            )
         cumulative_offset += conditionsLen[i]
 
     target_allocation = logs[0].targetAllocations
@@ -135,11 +179,11 @@ def save_snapshot(account, contract, new_allocation, strategies_info_path, cairo
         current_allocation_vault.append(target_allocation[i])
 
     result = {}
-    result['current_allocation'] = current_allocation_vault
-    result['new_allocation'] = new_allocation
-    result['strategies_data'] = strategies_data_result
-    result['strategies_calculation'] = strategies_calculation_result
-    result['strategies_calculation_conditions'] = strategies_condition_result
+    result["current_allocation"] = current_allocation_vault
+    result["new_allocation"] = new_allocation
+    result["strategies_data"] = strategies_data_result
+    result["strategies_calculation"] = strategies_calculation_result
+    result["strategies_calculation_conditions"] = strategies_condition_result
 
     f = open(cairo_program_input_path, "w")
     json.dump(result, f)

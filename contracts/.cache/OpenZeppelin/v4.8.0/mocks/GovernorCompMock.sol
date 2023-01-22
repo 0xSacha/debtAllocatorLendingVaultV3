@@ -6,7 +6,10 @@ import "../governance/extensions/GovernorCountingSimple.sol";
 import "../governance/extensions/GovernorVotesComp.sol";
 
 contract GovernorCompMock is GovernorVotesComp, GovernorCountingSimple {
-    constructor(string memory name_, ERC20VotesComp token_) Governor(name_) GovernorVotesComp(token_) {}
+    constructor(
+        string memory name_,
+        ERC20VotesComp token_
+    ) Governor(name_) GovernorVotesComp(token_) {}
 
     function quorum(uint256) public pure override returns (uint256) {
         return 0;

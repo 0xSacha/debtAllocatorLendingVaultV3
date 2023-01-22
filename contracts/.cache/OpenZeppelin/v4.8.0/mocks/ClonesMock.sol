@@ -11,7 +11,10 @@ contract ClonesMock {
 
     event NewInstance(address instance);
 
-    function clone(address implementation, bytes calldata initdata) public payable {
+    function clone(
+        address implementation,
+        bytes calldata initdata
+    ) public payable {
         _initAndEmit(implementation.clone(), initdata);
     }
 
@@ -23,7 +26,10 @@ contract ClonesMock {
         _initAndEmit(implementation.cloneDeterministic(salt), initdata);
     }
 
-    function predictDeterministicAddress(address implementation, bytes32 salt) public view returns (address predicted) {
+    function predictDeterministicAddress(
+        address implementation,
+        bytes32 salt
+    ) public view returns (address predicted) {
         return implementation.predictDeterministicAddress(salt);
     }
 

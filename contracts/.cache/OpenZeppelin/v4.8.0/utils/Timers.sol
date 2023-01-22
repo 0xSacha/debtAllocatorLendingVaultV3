@@ -11,7 +11,9 @@ library Timers {
         uint64 _deadline;
     }
 
-    function getDeadline(Timestamp memory timer) internal pure returns (uint64) {
+    function getDeadline(
+        Timestamp memory timer
+    ) internal pure returns (uint64) {
         return timer._deadline;
     }
 
@@ -43,7 +45,9 @@ library Timers {
         uint64 _deadline;
     }
 
-    function getDeadline(BlockNumber memory timer) internal pure returns (uint64) {
+    function getDeadline(
+        BlockNumber memory timer
+    ) internal pure returns (uint64) {
         return timer._deadline;
     }
 

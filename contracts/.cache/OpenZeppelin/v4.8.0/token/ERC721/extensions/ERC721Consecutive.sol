@@ -52,7 +52,9 @@ abstract contract ERC721Consecutive is IERC2309, ERC721 {
      * @dev See {ERC721-_ownerOf}. Override that checks the sequential ownership structure for tokens that have
      * been minted as part of a batch, and not yet transferred.
      */
-    function _ownerOf(uint256 tokenId) internal view virtual override returns (address) {
+    function _ownerOf(
+        uint256 tokenId
+    ) internal view virtual override returns (address) {
         address owner = super._ownerOf(tokenId);
 
         // If token is owned by the core, or beyond consecutive range, return base value
@@ -62,7 +64,10 @@ abstract contract ERC721Consecutive is IERC2309, ERC721 {
 
         // Otherwise, check the token was not burned, and fetch ownership from the anchors
         // Note: no need for safe cast, we know that tokenId <= type(uint96).max
-        return _sequentialBurn.get(tokenId) ? address(0) : address(_sequentialOwnership.lowerLookup(uint96(tokenId)));
+        return
+            _sequentialBurn.get(tokenId)
+                ? address(0)
+                : address(_sequentialOwnership.lowerLookup(uint96(tokenId)));
     }
 
     /**
@@ -81,14 +86,26 @@ abstract contract ERC721Consecutive is IERC2309, ERC721 {
      *
      * Emits a {IERC2309-ConsecutiveTransfer} event.
      */
-    function _mintConsecutive(address to, uint96 batchSize) internal virtual returns (uint96) {
+    function _mintConsecutive(
+        address to,
+        uint96 batchSize
+    ) internal virtual returns (uint96) {
         uint96 first = _totalConsecutiveSupply();
 
         // minting a batch of size 0 is a no-op
         if (batchSize > 0) {
-            require(!Address.isContract(address(this)), "ERC721Consecutive: batch minting restricted to constructor");
-            require(to != address(0), "ERC721Consecutive: mint to the zero address");
-            require(batchSize <= _maxBatchSize(), "ERC721Consecutive: batch too large");
+            require(
+                !Address.isContract(address(this)),
+                "ERC721Consecutive: batch minting restricted to constructor"
+            );
+            require(
+                to != address(0),
+                "ERC721Consecutive: mint to the zero address"
+            );
+            require(
+                batchSize <= _maxBatchSize(),
+                "ERC721Consecutive: batch too large"
+            );
 
             // hook before
             _beforeTokenTransfer(address(0), to, first, batchSize);
@@ -112,7 +129,10 @@ abstract contract ERC721Consecutive is IERC2309, ERC721 {
      * After construction, {_mintConsecutive} is no longer available and {_mint} becomes available.
      */
     function _mint(address to, uint256 tokenId) internal virtual override {
-        require(Address.isContract(address(this)), "ERC721Consecutive: can't mint during construction");
+        require(
+            Address.isContract(address(this)),
+            "ERC721Consecutive: can't mint during construction"
+        );
         super._mint(to, tokenId);
     }
 
@@ -130,14 +150,18 @@ abstract contract ERC721Consecutive is IERC2309, ERC721 {
             firstTokenId < _totalConsecutiveSupply() && // and the tokenId was minted in a batch
             !_sequentialBurn.get(firstTokenId) // and the token was never marked as burnt
         ) {
-            require(batchSize == 1, "ERC721Consecutive: batch burn not supported");
+            require(
+                batchSize == 1,
+                "ERC721Consecutive: batch burn not supported"
+            );
             _sequentialBurn.set(firstTokenId);
         }
         super._afterTokenTransfer(from, to, firstTokenId, batchSize);
     }
 
     function _totalConsecutiveSupply() private view returns (uint96) {
-        (bool exists, uint96 latestId, ) = _sequentialOwnership.latestCheckpoint();
+        (bool exists, uint96 latestId, ) = _sequentialOwnership
+            .latestCheckpoint();
         return exists ? latestId + 1 : 0;
     }
 }

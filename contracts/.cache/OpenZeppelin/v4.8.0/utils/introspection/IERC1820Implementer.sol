@@ -16,5 +16,8 @@ interface IERC1820Implementer {
      *
      * See {IERC1820Registry-setInterfaceImplementer}.
      */
-    function canImplementInterfaceForAddress(bytes32 interfaceHash, address account) external view returns (bytes32);
+    function canImplementInterfaceForAddress(
+        bytes32 interfaceHash,
+        address account
+    ) external view returns (bytes32);
 }

@@ -33,7 +33,8 @@ abstract contract CrossChainEnabled {
      */
     modifier onlyCrossChainSender(address expected) {
         address actual = _crossChainSender();
-        if (expected != actual) revert InvalidCrossChainSender(actual, expected);
+        if (expected != actual)
+            revert InvalidCrossChainSender(actual, expected);
         _;
     }
 

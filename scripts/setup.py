@@ -10,8 +10,7 @@ import os
 from dotenv import load_dotenv
 
 
-
-def run():    
+def run():
     ADDRESSES = []
     CALL_LEN = []
     CONTRACTS = []
@@ -24,7 +23,7 @@ def run():
     CONDTIONS = []
     CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_testnet.json")
     ABI_PATH = os.path.join(os.path.dirname(__file__), "DebtAllocatorAbi.json")
-    
+
     with open(CONFIG_PATH, "r") as config_file:
         config = json.load(config_file)
 
@@ -32,7 +31,7 @@ def run():
         abi = json.load(abi_file)
 
     load_dotenv()
-    RPC = os.getenv('NODE_RPC_URL')
+    RPC = os.getenv("NODE_RPC_URL")
     web3 = Web3(Web3.HTTPProvider(RPC))
     address = config["debt_allocator_address"]
     contract = web3.eth.contract(address, abi=abi)
@@ -68,7 +67,7 @@ def run():
         last_block = logs[len(logs) - 1].blockNumber
         last_strategy_added = get_event_data(abi_codec, abi, logs[len(logs) - 1])
         strat_array = last_strategy_added.args.Strategies
-        if(last_block > current_block):
+        if last_block > current_block:
             current_block = last_block
             ADDRESSES = strat_array[0]
             CALL_LEN = strat_array[1]
@@ -99,14 +98,13 @@ def run():
         topics=None,
     )
 
-
     logs = web3.eth.get_logs(event_filter_params)
 
     if len(logs) > 0:
         last_block = logs[len(logs) - 1].blockNumber
         last_strategy_added = get_event_data(abi_codec, abi, logs[len(logs) - 1])
         strat_array = last_strategy_added.args.Strategies
-        if(last_block > current_block):
+        if last_block > current_block:
             current_block = last_block
             ADDRESSES = strat_array[0]
             CALL_LEN = strat_array[1]
@@ -143,7 +141,7 @@ def run():
         last_block = logs[len(logs) - 1].blockNumber
         last_strategy_added = get_event_data(abi_codec, abi, logs[len(logs) - 1])
         strat_array = last_strategy_added.args.Strategies
-        if(last_block > current_block):
+        if last_block > current_block:
             current_block = last_block
             ADDRESSES = strat_array[0]
             CALL_LEN = strat_array[1]
@@ -162,10 +160,7 @@ def run():
             CALCULATIONS = strat_array[7]
             CONDTIONS_LEN = strat_array[8]
             CONDTIONS = strat_array[9]
-            
 
-
-    
     result = {}
     result["addresses"] = ADDRESSES
     result["callLen"] = CALL_LEN
@@ -181,8 +176,6 @@ def run():
     json.dump(result, f)
     f.close()
     print("✅ Data Strategies load")
-
-    
 
 
 run()

@@ -13,7 +13,10 @@ contract StringsMock {
         return Strings.toHexString(value);
     }
 
-    function toHexString(uint256 value, uint256 length) public pure returns (string memory) {
+    function toHexString(
+        uint256 value,
+        uint256 length
+    ) public pure returns (string memory) {
         return Strings.toHexString(value, length);
     }
 

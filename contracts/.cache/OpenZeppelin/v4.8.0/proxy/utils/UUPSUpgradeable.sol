@@ -30,8 +30,14 @@ abstract contract UUPSUpgradeable is IERC1822Proxiable, ERC1967Upgrade {
      * fail.
      */
     modifier onlyProxy() {
-        require(address(this) != __self, "Function must be called through delegatecall");
-        require(_getImplementation() == __self, "Function must be called through active proxy");
+        require(
+            address(this) != __self,
+            "Function must be called through delegatecall"
+        );
+        require(
+            _getImplementation() == __self,
+            "Function must be called through active proxy"
+        );
         _;
     }
 
@@ -40,7 +46,10 @@ abstract contract UUPSUpgradeable is IERC1822Proxiable, ERC1967Upgrade {
      * callable on the implementing contract but not through proxies.
      */
     modifier notDelegated() {
-        require(address(this) == __self, "UUPSUpgradeable: must not be called through delegatecall");
+        require(
+            address(this) == __self,
+            "UUPSUpgradeable: must not be called through delegatecall"
+        );
         _;
     }
 
@@ -52,7 +61,14 @@ abstract contract UUPSUpgradeable is IERC1822Proxiable, ERC1967Upgrade {
      * bricking a proxy that upgrades to it, by delegating to itself until out of gas. Thus it is critical that this
      * function revert if invoked through a proxy. This is guaranteed by the `notDelegated` modifier.
      */
-    function proxiableUUID() external view virtual override notDelegated returns (bytes32) {
+    function proxiableUUID()
+        external
+        view
+        virtual
+        override
+        notDelegated
+        returns (bytes32)
+    {
         return _IMPLEMENTATION_SLOT;
     }
 
@@ -76,7 +92,10 @@ abstract contract UUPSUpgradeable is IERC1822Proxiable, ERC1967Upgrade {
      *
      * Emits an {Upgraded} event.
      */
-    function upgradeToAndCall(address newImplementation, bytes memory data) external payable virtual onlyProxy {
+    function upgradeToAndCall(
+        address newImplementation,
+        bytes memory data
+    ) external payable virtual onlyProxy {
         _authorizeUpgrade(newImplementation);
         _upgradeToAndCallUUPS(newImplementation, data, true);
     }

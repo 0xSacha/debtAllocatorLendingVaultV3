@@ -19,7 +19,10 @@ import "./Ownable.sol";
 abstract contract Ownable2Step is Ownable {
     address private _pendingOwner;
 
-    event OwnershipTransferStarted(address indexed previousOwner, address indexed newOwner);
+    event OwnershipTransferStarted(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
 
     /**
      * @dev Returns the address of the pending owner.
@@ -32,7 +35,9 @@ abstract contract Ownable2Step is Ownable {
      * @dev Starts the ownership transfer of the contract to a new account. Replaces the pending transfer if there is one.
      * Can only be called by the current owner.
      */
-    function transferOwnership(address newOwner) public virtual override onlyOwner {
+    function transferOwnership(
+        address newOwner
+    ) public virtual override onlyOwner {
         _pendingOwner = newOwner;
         emit OwnershipTransferStarted(owner(), newOwner);
     }
@@ -51,7 +56,10 @@ abstract contract Ownable2Step is Ownable {
      */
     function acceptOwnership() external {
         address sender = _msgSender();
-        require(pendingOwner() == sender, "Ownable2Step: caller is not the new owner");
+        require(
+            pendingOwner() == sender,
+            "Ownable2Step: caller is not the new owner"
+        );
         _transferOwnership(sender);
     }
 }

@@ -9,12 +9,13 @@ struct StrategyParams {
 }
 
 contract MockVault {
-    uint256 public totalAssets = 50 * 10**18;
+    uint256 public totalAssets = 50 * 10 ** 18;
     mapping(address => StrategyParams) public strategies;
 
-    function addStrategy(address strategy, StrategyParams memory params)
-        public
-    {
+    function addStrategy(
+        address strategy,
+        StrategyParams memory params
+    ) public {
         strategies[strategy] = params;
     }
 

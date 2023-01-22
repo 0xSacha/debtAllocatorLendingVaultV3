@@ -27,7 +27,11 @@ contract AddressImpl {
         bytes calldata data,
         uint256 value
     ) external payable {
-        bytes memory returnData = Address.functionCallWithValue(target, data, value);
+        bytes memory returnData = Address.functionCallWithValue(
+            target,
+            data,
+            value
+        );
         emit CallReturnValue(abi.decode(returnData, (string)));
     }
 
@@ -36,7 +40,10 @@ contract AddressImpl {
         emit CallReturnValue(abi.decode(returnData, (string)));
     }
 
-    function functionDelegateCall(address target, bytes calldata data) external {
+    function functionDelegateCall(
+        address target,
+        bytes calldata data
+    ) external {
         bytes memory returnData = Address.functionDelegateCall(target, data);
         emit CallReturnValue(abi.decode(returnData, (string)));
     }

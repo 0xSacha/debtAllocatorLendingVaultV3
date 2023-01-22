@@ -5,7 +5,10 @@ pragma solidity ^0.8.4;
 import "../access/AccessControlCrossChain.sol";
 import "../crosschain/arbitrum/CrossChainEnabledArbitrumL2.sol";
 
-contract AccessControlCrossChainMock is AccessControlCrossChain, CrossChainEnabledArbitrumL2 {
+contract AccessControlCrossChainMock is
+    AccessControlCrossChain,
+    CrossChainEnabledArbitrumL2
+{
     constructor() {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }

@@ -33,11 +33,7 @@ contract ERC1155Mock is ERC1155 {
         _mintBatch(to, ids, values, data);
     }
 
-    function burn(
-        address owner,
-        uint256 id,
-        uint256 value
-    ) public {
+    function burn(address owner, uint256 id, uint256 value) public {
         _burn(owner, id, value);
     }
 

@@ -18,7 +18,11 @@ import "./IGovernorCompatibilityBravo.sol";
  *
  * _Available since v4.3._
  */
-abstract contract GovernorCompatibilityBravo is IGovernorTimelock, IGovernorCompatibilityBravo, Governor {
+abstract contract GovernorCompatibilityBravo is
+    IGovernorTimelock,
+    IGovernorCompatibilityBravo,
+    Governor
+{
     enum VoteType {
         Against,
         For,
@@ -41,7 +45,13 @@ abstract contract GovernorCompatibilityBravo is IGovernorTimelock, IGovernorComp
     mapping(uint256 => ProposalDetails) private _proposalDetails;
 
     // solhint-disable-next-line func-name-mixedcase
-    function COUNTING_MODE() public pure virtual override returns (string memory) {
+    function COUNTING_MODE()
+        public
+        pure
+        virtual
+        override
+        returns (string memory)
+    {
         return "support=bravo&quorum=bravo";
     }
 
@@ -55,7 +65,14 @@ abstract contract GovernorCompatibilityBravo is IGovernorTimelock, IGovernorComp
         bytes[] memory calldatas,
         string memory description
     ) public virtual override(IGovernor, Governor) returns (uint256) {
-        _storeProposal(_msgSender(), targets, values, new string[](calldatas.length), calldatas, description);
+        _storeProposal(
+            _msgSender(),
+            targets,
+            values,
+            new string[](calldatas.length),
+            calldatas,
+            description
+        );
         return super.propose(targets, values, calldatas, description);
     }
 
@@ -69,8 +86,21 @@ abstract contract GovernorCompatibilityBravo is IGovernorTimelock, IGovernorComp
         bytes[] memory calldatas,
         string memory description
     ) public virtual override returns (uint256) {
-        _storeProposal(_msgSender(), targets, values, signatures, calldatas, description);
-        return propose(targets, values, _encodeCalldata(signatures, calldatas), description);
+        _storeProposal(
+            _msgSender(),
+            targets,
+            values,
+            signatures,
+            calldatas,
+            description
+        );
+        return
+            propose(
+                targets,
+                values,
+                _encodeCalldata(signatures, calldatas),
+                description
+            );
     }
 
     /**
@@ -103,7 +133,9 @@ abstract contract GovernorCompatibilityBravo is IGovernorTimelock, IGovernorComp
         ProposalDetails storage details = _proposalDetails[proposalId];
 
         require(
-            _msgSender() == details.proposer || getVotes(details.proposer, block.number - 1) < proposalThreshold(),
+            _msgSender() == details.proposer ||
+                getVotes(details.proposer, block.number - 1) <
+                proposalThreshold(),
             "GovernorBravo: proposer above threshold"
         );
 
@@ -118,17 +150,19 @@ abstract contract GovernorCompatibilityBravo is IGovernorTimelock, IGovernorComp
     /**
      * @dev Encodes calldatas with optional function signature.
      */
-    function _encodeCalldata(string[] memory signatures, bytes[] memory calldatas)
-        private
-        pure
-        returns (bytes[] memory)
-    {
+    function _encodeCalldata(
+        string[] memory signatures,
+        bytes[] memory calldatas
+    ) private pure returns (bytes[] memory) {
         bytes[] memory fullcalldatas = new bytes[](calldatas.length);
 
         for (uint256 i = 0; i < signatures.length; ++i) {
             fullcalldatas[i] = bytes(signatures[i]).length == 0
                 ? calldatas[i]
-                : abi.encodePacked(bytes4(keccak256(bytes(signatures[i]))), calldatas[i]);
+                : abi.encodePacked(
+                    bytes4(keccak256(bytes(signatures[i]))),
+                    calldatas[i]
+                );
         }
 
         return fullcalldatas;
@@ -146,7 +180,12 @@ abstract contract GovernorCompatibilityBravo is IGovernorTimelock, IGovernorComp
         string memory description
     ) private {
         bytes32 descriptionHash = keccak256(bytes(description));
-        uint256 proposalId = hashProposal(targets, values, _encodeCalldata(signatures, calldatas), descriptionHash);
+        uint256 proposalId = hashProposal(
+            targets,
+            values,
+            _encodeCalldata(signatures, calldatas),
+            descriptionHash
+        );
 
         ProposalDetails storage details = _proposalDetails[proposalId];
         if (details.descriptionHash == bytes32(0)) {
@@ -163,7 +202,9 @@ abstract contract GovernorCompatibilityBravo is IGovernorTimelock, IGovernorComp
     /**
      * @dev See {IGovernorCompatibilityBravo-proposals}.
      */
-    function proposals(uint256 proposalId)
+    function proposals(
+        uint256 proposalId
+    )
         public
         view
         virtual
@@ -200,7 +241,9 @@ abstract contract GovernorCompatibilityBravo is IGovernorTimelock, IGovernorComp
     /**
      * @dev See {IGovernorCompatibilityBravo-getActions}.
      */
-    function getActions(uint256 proposalId)
+    function getActions(
+        uint256 proposalId
+    )
         public
         view
         virtual
@@ -213,13 +256,21 @@ abstract contract GovernorCompatibilityBravo is IGovernorTimelock, IGovernorComp
         )
     {
         ProposalDetails storage details = _proposalDetails[proposalId];
-        return (details.targets, details.values, details.signatures, details.calldatas);
+        return (
+            details.targets,
+            details.values,
+            details.signatures,
+            details.calldatas
+        );
     }
 
     /**
      * @dev See {IGovernorCompatibilityBravo-getReceipt}.
      */
-    function getReceipt(uint256 proposalId, address voter) public view virtual override returns (Receipt memory) {
+    function getReceipt(
+        uint256 proposalId,
+        address voter
+    ) public view virtual override returns (Receipt memory) {
         return _proposalDetails[proposalId].receipts[voter];
     }
 
@@ -234,14 +285,19 @@ abstract contract GovernorCompatibilityBravo is IGovernorTimelock, IGovernorComp
     /**
      * @dev See {IGovernor-hasVoted}.
      */
-    function hasVoted(uint256 proposalId, address account) public view virtual override returns (bool) {
+    function hasVoted(
+        uint256 proposalId,
+        address account
+    ) public view virtual override returns (bool) {
         return _proposalDetails[proposalId].receipts[account].hasVoted;
     }
 
     /**
      * @dev See {Governor-_quorumReached}. In this module, only forVotes count toward the quorum.
      */
-    function _quorumReached(uint256 proposalId) internal view virtual override returns (bool) {
+    function _quorumReached(
+        uint256 proposalId
+    ) internal view virtual override returns (bool) {
         ProposalDetails storage details = _proposalDetails[proposalId];
         return quorum(proposalSnapshot(proposalId)) <= details.forVotes;
     }
@@ -249,7 +305,9 @@ abstract contract GovernorCompatibilityBravo is IGovernorTimelock, IGovernorComp
     /**
      * @dev See {Governor-_voteSucceeded}. In this module, the forVotes must be scritly over the againstVotes.
      */
-    function _voteSucceeded(uint256 proposalId) internal view virtual override returns (bool) {
+    function _voteSucceeded(
+        uint256 proposalId
+    ) internal view virtual override returns (bool) {
         ProposalDetails storage details = _proposalDetails[proposalId];
         return details.forVotes > details.againstVotes;
     }
@@ -267,7 +325,10 @@ abstract contract GovernorCompatibilityBravo is IGovernorTimelock, IGovernorComp
         ProposalDetails storage details = _proposalDetails[proposalId];
         Receipt storage receipt = details.receipts[account];
 
-        require(!receipt.hasVoted, "GovernorCompatibilityBravo: vote already cast");
+        require(
+            !receipt.hasVoted,
+            "GovernorCompatibilityBravo: vote already cast"
+        );
         receipt.hasVoted = true;
         receipt.support = support;
         receipt.votes = SafeCast.toUint96(weight);

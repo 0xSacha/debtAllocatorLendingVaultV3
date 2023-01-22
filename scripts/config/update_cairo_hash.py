@@ -20,5 +20,6 @@ def main():
 
     account = accounts.load(os.environ["ACCOUNT_ALIAS"])
     contract = project.DebtAllocator.at(config["debt_allocator_address"])
-    contract.updateCairoProgramHash(config["cairo_program_hash"], sender=account, max_priority_fee="1 gwei")
-    
+    contract.updateCairoProgramHash(
+        config["cairo_program_hash"], sender=account, max_priority_fee="1 gwei"
+    )

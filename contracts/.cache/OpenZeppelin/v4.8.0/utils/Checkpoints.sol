@@ -30,7 +30,10 @@ library Checkpoints {
      * @dev Returns the value at a given block number. If a checkpoint is not available at that block, the closest one
      * before it is returned, or zero otherwise.
      */
-    function getAtBlock(History storage self, uint256 blockNumber) internal view returns (uint256) {
+    function getAtBlock(
+        History storage self,
+        uint256 blockNumber
+    ) internal view returns (uint256) {
         require(blockNumber < block.number, "Checkpoints: block not yet mined");
         uint32 key = SafeCast.toUint32(blockNumber);
 
@@ -45,7 +48,10 @@ library Checkpoints {
      * checkpoint is probably "recent", defined as being among the last sqrt(N) checkpoints where N is the number of
      * checkpoints.
      */
-    function getAtProbablyRecentBlock(History storage self, uint256 blockNumber) internal view returns (uint256) {
+    function getAtProbablyRecentBlock(
+        History storage self,
+        uint256 blockNumber
+    ) internal view returns (uint256) {
         require(blockNumber < block.number, "Checkpoints: block not yet mined");
         uint32 key = SafeCast.toUint32(blockNumber);
 
@@ -73,8 +79,16 @@ library Checkpoints {
      *
      * Returns previous value and new value.
      */
-    function push(History storage self, uint256 value) internal returns (uint256, uint256) {
-        return _insert(self._checkpoints, SafeCast.toUint32(block.number), SafeCast.toUint224(value));
+    function push(
+        History storage self,
+        uint256 value
+    ) internal returns (uint256, uint256) {
+        return
+            _insert(
+                self._checkpoints,
+                SafeCast.toUint32(block.number),
+                SafeCast.toUint224(value)
+            );
     }
 
     /**
@@ -103,15 +117,9 @@ library Checkpoints {
      * @dev Returns whether there is a checkpoint in the structure (i.e. it is not empty), and if so the key and value
      * in the most recent checkpoint.
      */
-    function latestCheckpoint(History storage self)
-        internal
-        view
-        returns (
-            bool exists,
-            uint32 _blockNumber,
-            uint224 _value
-        )
-    {
+    function latestCheckpoint(
+        History storage self
+    ) internal view returns (bool exists, uint32 _blockNumber, uint224 _value) {
         uint256 pos = self._checkpoints.length;
         if (pos == 0) {
             return (false, 0, 0);
@@ -205,7 +213,10 @@ library Checkpoints {
         return high;
     }
 
-    function _unsafeAccess(Checkpoint[] storage self, uint256 pos) private pure returns (Checkpoint storage result) {
+    function _unsafeAccess(
+        Checkpoint[] storage self,
+        uint256 pos
+    ) private pure returns (Checkpoint storage result) {
         assembly {
             mstore(0, self.slot)
             result.slot := add(keccak256(0, 0x20), pos)
@@ -237,7 +248,10 @@ library Checkpoints {
     /**
      * @dev Returns the value in the oldest checkpoint with key greater or equal than the search key, or zero if there is none.
      */
-    function lowerLookup(Trace224 storage self, uint32 key) internal view returns (uint224) {
+    function lowerLookup(
+        Trace224 storage self,
+        uint32 key
+    ) internal view returns (uint224) {
         uint256 len = self._checkpoints.length;
         uint256 pos = _lowerBinaryLookup(self._checkpoints, key, 0, len);
         return pos == len ? 0 : _unsafeAccess(self._checkpoints, pos)._value;
@@ -246,7 +260,10 @@ library Checkpoints {
     /**
      * @dev Returns the value in the most recent checkpoint with key lower or equal than the search key.
      */
-    function upperLookup(Trace224 storage self, uint32 key) internal view returns (uint224) {
+    function upperLookup(
+        Trace224 storage self,
+        uint32 key
+    ) internal view returns (uint224) {
         uint256 len = self._checkpoints.length;
         uint256 pos = _upperBinaryLookup(self._checkpoints, key, 0, len);
         return pos == 0 ? 0 : _unsafeAccess(self._checkpoints, pos - 1)._value;
@@ -264,20 +281,17 @@ library Checkpoints {
      * @dev Returns whether there is a checkpoint in the structure (i.e. it is not empty), and if so the key and value
      * in the most recent checkpoint.
      */
-    function latestCheckpoint(Trace224 storage self)
-        internal
-        view
-        returns (
-            bool exists,
-            uint32 _key,
-            uint224 _value
-        )
-    {
+    function latestCheckpoint(
+        Trace224 storage self
+    ) internal view returns (bool exists, uint32 _key, uint224 _value) {
         uint256 pos = self._checkpoints.length;
         if (pos == 0) {
             return (false, 0, 0);
         } else {
-            Checkpoint224 memory ckpt = _unsafeAccess(self._checkpoints, pos - 1);
+            Checkpoint224 memory ckpt = _unsafeAccess(
+                self._checkpoints,
+                pos - 1
+            );
             return (true, ckpt._key, ckpt._value);
         }
     }
@@ -366,11 +380,10 @@ library Checkpoints {
         return high;
     }
 
-    function _unsafeAccess(Checkpoint224[] storage self, uint256 pos)
-        private
-        pure
-        returns (Checkpoint224 storage result)
-    {
+    function _unsafeAccess(
+        Checkpoint224[] storage self,
+        uint256 pos
+    ) private pure returns (Checkpoint224 storage result) {
         assembly {
             mstore(0, self.slot)
             result.slot := add(keccak256(0, 0x20), pos)
@@ -402,7 +415,10 @@ library Checkpoints {
     /**
      * @dev Returns the value in the oldest checkpoint with key greater or equal than the search key, or zero if there is none.
      */
-    function lowerLookup(Trace160 storage self, uint96 key) internal view returns (uint160) {
+    function lowerLookup(
+        Trace160 storage self,
+        uint96 key
+    ) internal view returns (uint160) {
         uint256 len = self._checkpoints.length;
         uint256 pos = _lowerBinaryLookup(self._checkpoints, key, 0, len);
         return pos == len ? 0 : _unsafeAccess(self._checkpoints, pos)._value;
@@ -411,7 +427,10 @@ library Checkpoints {
     /**
      * @dev Returns the value in the most recent checkpoint with key lower or equal than the search key.
      */
-    function upperLookup(Trace160 storage self, uint96 key) internal view returns (uint160) {
+    function upperLookup(
+        Trace160 storage self,
+        uint96 key
+    ) internal view returns (uint160) {
         uint256 len = self._checkpoints.length;
         uint256 pos = _upperBinaryLookup(self._checkpoints, key, 0, len);
         return pos == 0 ? 0 : _unsafeAccess(self._checkpoints, pos - 1)._value;
@@ -429,20 +448,17 @@ library Checkpoints {
      * @dev Returns whether there is a checkpoint in the structure (i.e. it is not empty), and if so the key and value
      * in the most recent checkpoint.
      */
-    function latestCheckpoint(Trace160 storage self)
-        internal
-        view
-        returns (
-            bool exists,
-            uint96 _key,
-            uint160 _value
-        )
-    {
+    function latestCheckpoint(
+        Trace160 storage self
+    ) internal view returns (bool exists, uint96 _key, uint160 _value) {
         uint256 pos = self._checkpoints.length;
         if (pos == 0) {
             return (false, 0, 0);
         } else {
-            Checkpoint160 memory ckpt = _unsafeAccess(self._checkpoints, pos - 1);
+            Checkpoint160 memory ckpt = _unsafeAccess(
+                self._checkpoints,
+                pos - 1
+            );
             return (true, ckpt._key, ckpt._value);
         }
     }
@@ -531,11 +547,10 @@ library Checkpoints {
         return high;
     }
 
-    function _unsafeAccess(Checkpoint160[] storage self, uint256 pos)
-        private
-        pure
-        returns (Checkpoint160 storage result)
-    {
+    function _unsafeAccess(
+        Checkpoint160[] storage self,
+        uint256 pos
+    ) private pure returns (Checkpoint160 storage result) {
         assembly {
             mstore(0, self.slot)
             result.slot := add(keccak256(0, 0x20), pos)

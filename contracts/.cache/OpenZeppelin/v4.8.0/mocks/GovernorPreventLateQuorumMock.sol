@@ -35,7 +35,9 @@ contract GovernorPreventLateQuorumMock is
         return _quorum;
     }
 
-    function proposalDeadline(uint256 proposalId)
+    function proposalDeadline(
+        uint256 proposalId
+    )
         public
         view
         override(Governor, GovernorPreventLateQuorum)
@@ -44,7 +46,12 @@ contract GovernorPreventLateQuorumMock is
         return super.proposalDeadline(proposalId);
     }
 
-    function proposalThreshold() public view override(Governor, GovernorSettings) returns (uint256) {
+    function proposalThreshold()
+        public
+        view
+        override(Governor, GovernorSettings)
+        returns (uint256)
+    {
         return super.proposalThreshold();
     }
 

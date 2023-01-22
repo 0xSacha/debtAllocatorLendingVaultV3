@@ -78,7 +78,10 @@ interface IERC1363 is IERC165, IERC20 {
      * @param spender address The address which will spend the funds
      * @param value uint256 The amount of tokens to be spent
      */
-    function approveAndCall(address spender, uint256 value) external returns (bool);
+    function approveAndCall(
+        address spender,
+        uint256 value
+    ) external returns (bool);
 
     /**
      * @dev Approve the passed address to spend the specified amount of tokens on behalf of msg.sender

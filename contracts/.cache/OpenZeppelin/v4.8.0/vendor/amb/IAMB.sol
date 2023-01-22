@@ -3,7 +3,10 @@
 pragma solidity ^0.8.0;
 
 interface IAMB {
-    event UserRequestForAffirmation(bytes32 indexed messageId, bytes encodedData);
+    event UserRequestForAffirmation(
+        bytes32 indexed messageId,
+        bytes encodedData
+    );
     event UserRequestForSignature(bytes32 indexed messageId, bytes encodedData);
     event AffirmationCompleted(
         address indexed sender,
@@ -11,7 +14,12 @@ interface IAMB {
         bytes32 indexed messageId,
         bool status
     );
-    event RelayedMessage(address indexed sender, address indexed executor, bytes32 indexed messageId, bool status);
+    event RelayedMessage(
+        address indexed sender,
+        address indexed executor,
+        bytes32 indexed messageId,
+        bool status
+    );
 
     function messageSender() external view returns (address);
 
@@ -25,11 +33,17 @@ interface IAMB {
 
     function messageCallStatus(bytes32 _messageId) external view returns (bool);
 
-    function failedMessageDataHash(bytes32 _messageId) external view returns (bytes32);
+    function failedMessageDataHash(
+        bytes32 _messageId
+    ) external view returns (bytes32);
 
-    function failedMessageReceiver(bytes32 _messageId) external view returns (address);
+    function failedMessageReceiver(
+        bytes32 _messageId
+    ) external view returns (address);
 
-    function failedMessageSender(bytes32 _messageId) external view returns (address);
+    function failedMessageSender(
+        bytes32 _messageId
+    ) external view returns (address);
 
     function requireToPassMessage(
         address _contract,

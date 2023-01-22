@@ -15,7 +15,10 @@ contract UUPSUpgradeableUnsafeMock is UUPSUpgradeableMock {
         ERC1967Upgrade._upgradeToAndCall(newImplementation, bytes(""), false);
     }
 
-    function upgradeToAndCall(address newImplementation, bytes memory data) external payable override {
+    function upgradeToAndCall(
+        address newImplementation,
+        bytes memory data
+    ) external payable override {
         ERC1967Upgrade._upgradeToAndCall(newImplementation, data, false);
     }
 }

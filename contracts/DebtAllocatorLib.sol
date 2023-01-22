@@ -86,11 +86,9 @@ library StrategiesUtils {
         );
     }
 
-    function getStrategiesHash(PackedStrategies memory _packedStrategies)
-        internal
-        pure
-        returns (uint256 newHash)
-    {
+    function getStrategiesHash(
+        PackedStrategies memory _packedStrategies
+    ) internal pure returns (uint256 newHash) {
         bytes32[] memory callDataReduced = getReducedBytes32Array(
             _packedStrategies.callData
         );
@@ -112,11 +110,9 @@ library StrategiesUtils {
         );
     }
 
-    function getReducedBytes32Array(bytes32[][] memory callData)
-        internal
-        pure
-        returns (bytes32[] memory result)
-    {
+    function getReducedBytes32Array(
+        bytes32[][] memory callData
+    ) internal pure returns (bytes32[] memory result) {
         uint256 callDataTotalLen = 0;
         for (uint256 i = 0; i < callData.length; i++) {
             callDataTotalLen += callData[i].length;
@@ -132,10 +128,10 @@ library StrategiesUtils {
         return (results);
     }
 
-    function checkMessageSenderIsProposer(address sender, address proposer)
-        internal
-        pure
-    {
+    function checkMessageSenderIsProposer(
+        address sender,
+        address proposer
+    ) internal pure {
         require(sender == proposer, "NOT_ALLOWED");
     }
 
@@ -173,9 +169,9 @@ library StrategiesUtils {
         checkValidityOfData(_newStrategyParam);
     }
 
-    function checkValidityOfData(StrategyParam memory _newStrategyParam)
-        internal
-    {
+    function checkValidityOfData(
+        StrategyParam memory _newStrategyParam
+    ) internal {
         // check lengths
         require(
             _newStrategyParam.callLen == _newStrategyParam.contracts.length &&
@@ -239,11 +235,9 @@ library StrategiesUtils {
         return (dataStrategies_);
     }
 
-    function parseProgramOutput(uint256[] calldata programOutput)
-        internal
-        pure
-        returns (ProgramOutput memory _programOutput)
-    {
+    function parseProgramOutput(
+        uint256[] calldata programOutput
+    ) internal pure returns (ProgramOutput memory _programOutput) {
         uint256 _inputHash = programOutput[0] << 128;
         _inputHash += programOutput[1];
 
@@ -293,11 +287,10 @@ library StrategiesUtils {
         );
     }
 
-    function getFact(uint256[] calldata programOutput, bytes32 programHash)
-        internal
-        pure
-        returns (bytes32 fact)
-    {
+    function getFact(
+        uint256[] calldata programOutput,
+        bytes32 programHash
+    ) internal pure returns (bytes32 fact) {
         bytes32 outputHash = keccak256(abi.encodePacked(programOutput));
         fact = keccak256(abi.encodePacked(programHash, outputHash));
     }
@@ -313,22 +306,19 @@ library StrategiesUtils {
         return (results);
     }
 
-    function bytesToBytes32(bytes memory b, uint256 offset)
-        internal
-        pure
-        returns (bytes32 result)
-    {
+    function bytesToBytes32(
+        bytes memory b,
+        uint256 offset
+    ) internal pure returns (bytes32 result) {
         offset += 32;
         assembly {
             result := mload(add(b, offset))
         }
     }
 
-    function castCheckdataToBytes4(bytes[] memory oldCheckdata)
-        internal
-        pure
-        returns (bytes4[] memory checkdata)
-    {
+    function castCheckdataToBytes4(
+        bytes[] memory oldCheckdata
+    ) internal pure returns (bytes4[] memory checkdata) {
         checkdata = new bytes4[](oldCheckdata.length);
         for (uint256 i = 0; i < oldCheckdata.length; i++) {
             checkdata[i] = bytes4(oldCheckdata[i]);
@@ -553,11 +543,10 @@ library ArrayUtils {
         );
     }
 
-    function appendAddressToArray(address[] memory array, address newItem)
-        internal
-        pure
-        returns (address[] memory newArray)
-    {
+    function appendAddressToArray(
+        address[] memory array,
+        address newItem
+    ) internal pure returns (address[] memory newArray) {
         newArray = new address[](array.length + 1);
         for (uint256 i = 0; i < array.length; i++) {
             newArray[i] = array[i];
@@ -565,11 +554,10 @@ library ArrayUtils {
         newArray[array.length] = newItem;
     }
 
-    function appendUint256ToArray(uint256[] memory array, uint256 newItem)
-        internal
-        pure
-        returns (uint256[] memory newArray)
-    {
+    function appendUint256ToArray(
+        uint256[] memory array,
+        uint256 newItem
+    ) internal pure returns (uint256[] memory newArray) {
         newArray = new uint256[](array.length + 1);
         for (uint256 i = 0; i < array.length; i++) {
             newArray[i] = array[i];
@@ -748,11 +736,9 @@ library ArrayUtils {
         }
     }
 
-    function updateUint256ArrayWithLen(UpdateU256Len memory U256Len)
-        internal
-        pure
-        returns (uint256[] memory newUint256Array)
-    {
+    function updateUint256ArrayWithLen(
+        UpdateU256Len memory U256Len
+    ) internal pure returns (uint256[] memory newUint256Array) {
         newUint256Array = new uint256[](
             U256Len.array.length -
                 U256Len.callLen[U256Len.index] +
@@ -788,11 +774,10 @@ library ArrayUtils {
         }
     }
 
-    function removeAddressArray(address[] memory array, uint256 index)
-        internal
-        pure
-        returns (address[] memory newArray)
-    {
+    function removeAddressArray(
+        address[] memory array,
+        uint256 index
+    ) internal pure returns (address[] memory newArray) {
         newArray = new address[](array.length - 1);
         for (uint256 i = 0; i < index; i++) {
             newArray[i] = array[i];
@@ -802,11 +787,10 @@ library ArrayUtils {
         }
     }
 
-    function removeUint256Array(uint256[] memory array, uint256 index)
-        internal
-        pure
-        returns (uint256[] memory newArray)
-    {
+    function removeUint256Array(
+        uint256[] memory array,
+        uint256 index
+    ) internal pure returns (uint256[] memory newArray) {
         newArray = new uint256[](array.length - 1);
         for (uint256 i = 0; i < index; i++) {
             newArray[i] = array[i];

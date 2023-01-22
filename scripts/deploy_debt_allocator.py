@@ -3,6 +3,7 @@ import json
 import os
 from dotenv import load_dotenv
 
+
 def main():
     CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_mainnet.json")
     with open(CONFIG_PATH, "r") as config_file:
@@ -14,6 +15,11 @@ def main():
     load_dotenv()
     account = accounts.load(os.environ["ACCOUNT_ALIAS"])
 
-    contract = project.DebtAllocator.deploy(CAIRO_VERIFIER, CAIRO_PROGRAM_HASH, VAULT_ADDRESS, sender=account, max_priority_fee="1 gwei")
+    contract = project.DebtAllocator.deploy(
+        CAIRO_VERIFIER,
+        CAIRO_PROGRAM_HASH,
+        VAULT_ADDRESS,
+        sender=account,
+        max_priority_fee="1 gwei",
+    )
     project.track_deployment(contract)
-    

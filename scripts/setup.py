@@ -1,14 +1,10 @@
 # TODO: import different functions and use this script as a router / proxy to setup folder functions
 from web3 import Web3
-import requests
-from web3._utils.abi import get_constructor_abi, merge_args_and_kwargs
 from web3._utils.events import get_event_data
 from web3._utils.filters import construct_event_filter_params
-from web3._utils.contracts import encode_abi
 import json
 import os
 from dotenv import load_dotenv
-
 
 def run():
     ADDRESSES = []
@@ -22,7 +18,7 @@ def run():
     CONDTIONS_LEN = []
     CONDTIONS = []
     CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_testnet.json")
-    ABI_PATH = os.path.join(os.path.dirname(__file__), "DebtAllocatorAbi.json")
+    ABI_PATH = os.path.join(os.path.dirname(__file__), "/config/DebtAllocatorAbi.json")
 
     with open(CONFIG_PATH, "r") as config_file:
         config = json.load(config_file)

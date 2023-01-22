@@ -1,8 +1,6 @@
 from ape import accounts, project
-from typing import List, Optional
 import json
 import os
-import time
 
 
 #
@@ -323,7 +321,6 @@ AAVE_CALCULATION_CONDITION = [
 
 
 def main():
-
     load_dotenv()
     f = open("./scripts/config_mainnet.json")
     config_dict = json.load(f)
@@ -334,7 +331,7 @@ def main():
     f.close()
     account = accounts.load(os.environ["ACCOUNT_ALIAS"])
 
-    contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
+    debt_allocator = project.DebtAllocator.at(config_dict["debt_allocator_address"])
 
     aave_strategy = config_dict["strategy_aave_address"]
     addresses = strategies_info["addresses"]
@@ -348,7 +345,7 @@ def main():
     conditionsLen = strategies_info["conditionsLen"]
     conditions = strategies_info["conditions"]
 
-    contract.addStrategy(
+    debt_allocator.addStrategy(
         (
             addresses,
             callLen,

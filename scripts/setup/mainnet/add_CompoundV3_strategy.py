@@ -323,7 +323,7 @@ def main():
     f.close()
 
     account = accounts.load(os.environ["ACCOUNT_ALIAS"])
-    contract = project.DebtAllocator.at(config_dict["debt_allocator_address"])
+    debt_allocator = project.DebtAllocator.at(config_dict["debt_allocator_address"])
     compound_strategy_v3 = config_dict["strategy_compound_v3_address"]
 
     addresses = strategies_info["addresses"]
@@ -337,7 +337,7 @@ def main():
     conditionsLen = strategies_info["conditionsLen"]
     conditions = strategies_info["conditions"]
 
-    contract.addStrategy(
+    debt_allocator.addStrategy(
         (
             addresses,
             callLen,

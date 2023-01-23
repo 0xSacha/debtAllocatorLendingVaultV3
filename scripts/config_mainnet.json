@@ -14,5 +14,5 @@
   "prover_url": "https://gw1.external.provingservice.io/v1/gateway",
   "steps_limit": 1000000,
   "data_strat_test": "0x05144c0aA4Fcb45e0F929CE966bfB202aCB86dA0",
-  "strategies_info_path": "./scripts/strategies_info.json"
+  "strategies_info_path": "./scripts/config/strategies_info.json"
 }

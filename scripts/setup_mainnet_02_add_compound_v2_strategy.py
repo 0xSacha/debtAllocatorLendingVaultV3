@@ -1,0 +1,407 @@
+from ape import accounts, project
+import json
+import os
+from dotenv import load_dotenv
+
+##  USDC MAINNET
+
+WANTED_TOKEN = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+cTOKEN = "0x39AA39c021dfbaE8faC545936693aC917d5E7563"
+INTEREST_RATE_cTOKEN = "0xD8EC56013EA119E7181d231E5048f90fBbe753c0"
+Comptroller = "0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B"
+
+COMP_USD = "0xdbd020CAeF83eFd542f4De03e3cF0C28A4428bd5"
+WANTED_TOKEN_USD = "0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6"
+
+
+COMPOUND_CONTRACT_ADDRESS_0 = cTOKEN
+COMPOUND_SELECTOR_0 = "0x3b1d21a2"
+COMPOUND_CALLDATA_0 = []
+COMPOUND_STRATEGYY_OFFSET_0 = 0
+
+COMPOUND_CONTRACT_ADDRESS_1 = cTOKEN
+COMPOUND_SELECTOR_1 = "0x47bd3718"
+COMPOUND_CALLDATA_1 = []
+COMPOUND_STRATEGYY_OFFSET_1 = 0
+
+COMPOUND_CONTRACT_ADDRESS_2 = cTOKEN
+COMPOUND_SELECTOR_2 = "0x8f840ddd"
+COMPOUND_CALLDATA_2 = []
+COMPOUND_STRATEGYY_OFFSET_2 = 0
+
+COMPOUND_CONTRACT_ADDRESS_3 = cTOKEN
+COMPOUND_SELECTOR_3 = "0x173b9904"
+COMPOUND_CALLDATA_3 = []
+COMPOUND_STRATEGYY_OFFSET_3 = 0
+
+COMPOUND_CONTRACT_ADDRESS_4 = INTEREST_RATE_cTOKEN
+COMPOUND_SELECTOR_4 = "0xfd2da339"
+COMPOUND_CALLDATA_4 = []
+COMPOUND_STRATEGYY_OFFSET_4 = 0
+
+COMPOUND_CONTRACT_ADDRESS_5 = INTEREST_RATE_cTOKEN
+COMPOUND_SELECTOR_5 = "0x8726bb89"
+COMPOUND_CALLDATA_5 = []
+COMPOUND_STRATEGYY_OFFSET_5 = 0
+
+COMPOUND_CONTRACT_ADDRESS_6 = INTEREST_RATE_cTOKEN
+COMPOUND_SELECTOR_6 = "0xb9f9850a"
+COMPOUND_CALLDATA_6 = []
+COMPOUND_STRATEGYY_OFFSET_6 = 0
+
+COMPOUND_CONTRACT_ADDRESS_7 = INTEREST_RATE_cTOKEN
+COMPOUND_SELECTOR_7 = "0xf14039de"
+COMPOUND_CALLDATA_7 = []
+COMPOUND_STRATEGYY_OFFSET_7 = 0
+
+COMPOUND_CONTRACT_ADDRESS_8 = INTEREST_RATE_cTOKEN
+COMPOUND_SELECTOR_8 = "0xa385fb96"
+COMPOUND_CALLDATA_8 = []
+COMPOUND_STRATEGYY_OFFSET_8 = 0
+
+COMPOUND_CONTRACT_ADDRESS_9 = Comptroller
+COMPOUND_SELECTOR_9 = "0x6aa875b5"
+COMPOUND_CALLDATA_9 = [
+    "0x00000000000000000000000039AA39c021dfbaE8faC545936693aC917d5E7563"
+]
+COMPOUND_STRATEGYY_OFFSET_9 = 0
+
+COMPOUND_CONTRACT_ADDRESS_10 = COMP_USD
+COMPOUND_SELECTOR_10 = "0x50d25bcd"
+COMPOUND_CALLDATA_10 = []
+COMPOUND_STRATEGYY_OFFSET_10 = 0
+
+COMPOUND_CONTRACT_ADDRESS_11 = COMP_USD
+COMPOUND_SELECTOR_11 = "0x313ce567"
+COMPOUND_CALLDATA_11 = []
+COMPOUND_STRATEGYY_OFFSET_11 = 0
+
+COMPOUND_CONTRACT_ADDRESS_12 = WANTED_TOKEN_USD
+COMPOUND_SELECTOR_12 = "0x50d25bcd"
+COMPOUND_CALLDATA_12 = []
+COMPOUND_STRATEGYY_OFFSET_12 = 0
+
+COMPOUND_CONTRACT_ADDRESS_13 = WANTED_TOKEN_USD
+COMPOUND_SELECTOR_13 = "0x313ce567"
+COMPOUND_CALLDATA_13 = []
+COMPOUND_STRATEGYY_OFFSET_13 = 0
+
+COMPOUND_CONTRACT_ADDRESS_14 = WANTED_TOKEN
+COMPOUND_SELECTOR_14 = "0x313ce567"
+COMPOUND_CALLDATA_14 = []
+COMPOUND_STRATEGYY_OFFSET_14 = 0
+
+COMPOUND_STRATEGY_CONTRACTS = [
+    COMPOUND_CONTRACT_ADDRESS_0,
+    COMPOUND_CONTRACT_ADDRESS_1,
+    COMPOUND_CONTRACT_ADDRESS_2,
+    COMPOUND_CONTRACT_ADDRESS_3,
+    COMPOUND_CONTRACT_ADDRESS_4,
+    COMPOUND_CONTRACT_ADDRESS_5,
+    COMPOUND_CONTRACT_ADDRESS_6,
+    COMPOUND_CONTRACT_ADDRESS_7,
+    COMPOUND_CONTRACT_ADDRESS_8,
+    COMPOUND_CONTRACT_ADDRESS_9,
+    COMPOUND_CONTRACT_ADDRESS_10,
+    COMPOUND_CONTRACT_ADDRESS_11,
+    COMPOUND_CONTRACT_ADDRESS_12,
+    COMPOUND_CONTRACT_ADDRESS_13,
+    COMPOUND_CONTRACT_ADDRESS_14,
+]
+COMPOUND_STRATEGYY_SELECTORS = [
+    COMPOUND_SELECTOR_0,
+    COMPOUND_SELECTOR_1,
+    COMPOUND_SELECTOR_2,
+    COMPOUND_SELECTOR_3,
+    COMPOUND_SELECTOR_4,
+    COMPOUND_SELECTOR_5,
+    COMPOUND_SELECTOR_6,
+    COMPOUND_SELECTOR_7,
+    COMPOUND_SELECTOR_8,
+    COMPOUND_SELECTOR_9,
+    COMPOUND_SELECTOR_10,
+    COMPOUND_SELECTOR_11,
+    COMPOUND_SELECTOR_12,
+    COMPOUND_SELECTOR_13,
+    COMPOUND_SELECTOR_14,
+]
+COMPOUND_STRATEGYY_CALLDATA = [
+    COMPOUND_CALLDATA_0,
+    COMPOUND_CALLDATA_1,
+    COMPOUND_CALLDATA_2,
+    COMPOUND_CALLDATA_3,
+    COMPOUND_CALLDATA_4,
+    COMPOUND_CALLDATA_5,
+    COMPOUND_CALLDATA_6,
+    COMPOUND_CALLDATA_7,
+    COMPOUND_CALLDATA_8,
+    COMPOUND_CALLDATA_9,
+    COMPOUND_CALLDATA_10,
+    COMPOUND_CALLDATA_11,
+    COMPOUND_CALLDATA_12,
+    COMPOUND_CALLDATA_13,
+    COMPOUND_CALLDATA_14,
+]
+COMPOUND_STRATEGYY_OFFSET = [
+    COMPOUND_STRATEGYY_OFFSET_0,
+    COMPOUND_STRATEGYY_OFFSET_1,
+    COMPOUND_STRATEGYY_OFFSET_2,
+    COMPOUND_STRATEGYY_OFFSET_3,
+    COMPOUND_STRATEGYY_OFFSET_4,
+    COMPOUND_STRATEGYY_OFFSET_5,
+    COMPOUND_STRATEGYY_OFFSET_6,
+    COMPOUND_STRATEGYY_OFFSET_7,
+    COMPOUND_STRATEGYY_OFFSET_8,
+    COMPOUND_STRATEGYY_OFFSET_9,
+    COMPOUND_STRATEGYY_OFFSET_10,
+    COMPOUND_STRATEGYY_OFFSET_11,
+    COMPOUND_STRATEGYY_OFFSET_12,
+    COMPOUND_STRATEGYY_OFFSET_13,
+    COMPOUND_STRATEGYY_OFFSET_14,
+]
+COMPOUND_STRATEGYY_CALCULATION = [
+    0,
+    0,
+    5,
+    10000,
+    1,
+    0,
+    10001,
+    2,
+    1,
+    1,
+    1000000000000020000,
+    2,
+    10003,
+    10002,
+    3,
+    4,
+    5,
+    2,
+    10005,
+    1000000000000020000,
+    3,
+    10006,
+    7,
+    0,
+    10004,
+    4,
+    1,
+    10008,
+    6,
+    2,
+    10009,
+    1000000000000020000,
+    3,
+    10010,
+    10007,
+    0,
+    1000000000000020000,
+    3,
+    1,
+    10011,
+    10012,
+    2,
+    10013,
+    1000000000000020000,
+    3,
+    10014,
+    10004,
+    2,
+    10015,
+    1000000000000020000,
+    3,
+    10016,
+    8,
+    2,
+    9,
+    8,
+    2,
+    20010,
+    14,
+    4,
+    10018,
+    10019,
+    2,
+    10020,
+    10002,
+    3,
+    10021,
+    10,
+    2,
+    20010,
+    11,
+    4,
+    10022,
+    10023,
+    3,
+    20010,
+    13,
+    4,
+    10024,
+    10025,
+    2,
+    10026,
+    12,
+    3,
+    10027,
+    10017,
+    0,
+    10028,
+    1000020000,
+    2,
+    0,
+    0,
+    5,
+    10000,
+    1,
+    0,
+    10001,
+    2,
+    1,
+    1,
+    1000000000000020000,
+    2,
+    10003,
+    10002,
+    3,
+    10004,
+    5,
+    2,
+    10005,
+    1000000000000020000,
+    3,
+    10006,
+    7,
+    0,
+    1000000000000020000,
+    3,
+    1,
+    10008,
+    10007,
+    2,
+    10009,
+    1000000000000020000,
+    3,
+    10010,
+    10004,
+    2,
+    10011,
+    1000000000000020000,
+    3,
+    10012,
+    8,
+    2,
+    9,
+    8,
+    2,
+    20010,
+    14,
+    4,
+    10014,
+    10015,
+    2,
+    10016,
+    10002,
+    3,
+    10017,
+    10,
+    2,
+    20010,
+    11,
+    4,
+    10018,
+    10019,
+    3,
+    20010,
+    13,
+    4,
+    10020,
+    10021,
+    2,
+    10022,
+    12,
+    3,
+    10023,
+    10013,
+    0,
+    10024,
+    1000020000,
+    2,
+]
+COMPOUND_CALCULATION_CONDITION = [
+    0,
+    0,
+    5,
+    10000,
+    1,
+    0,
+    10001,
+    2,
+    1,
+    1,
+    1000000000000020000,
+    2,
+    10003,
+    10002,
+    3,
+    10004,
+    4,
+    30,
+    26,
+]
+
+
+def main():
+    load_dotenv()
+    f = open("./scripts/config_mainnet.json")
+    config_dict = json.load(f)
+    f.close()
+    f = open("./scripts/strategies_info.json")
+    strategies_info = json.load(f)
+    f.close()
+
+    account = accounts.load(os.environ["ACCOUNT_ALIAS"])
+    debt_allocator = project.DebtAllocator.at(config_dict["debt_allocator_address"])
+    compound_strategy = config_dict["strategy_compound_address"]
+
+    addresses = strategies_info["addresses"]
+    callLen = strategies_info["callLen"]
+    contracts = strategies_info["contracts"]
+    selectors = strategies_info["selectors"]
+    callData = strategies_info["callData"]
+    offset = strategies_info["offset"]
+    calculationsLen = strategies_info["calculationsLen"]
+    calculations = strategies_info["calculations"]
+    conditionsLen = strategies_info["conditionsLen"]
+    conditions = strategies_info["conditions"]
+
+    debt_allocator.addStrategy(
+        (
+            addresses,
+            callLen,
+            contracts,
+            selectors,
+            callData,
+            offset,
+            calculationsLen,
+            calculations,
+            conditionsLen,
+            conditions,
+        ),
+        compound_strategy,
+        (
+            int(len(COMPOUND_STRATEGY_CONTRACTS)),
+            COMPOUND_STRATEGY_CONTRACTS,
+            COMPOUND_STRATEGYY_SELECTORS,
+            COMPOUND_STRATEGYY_CALLDATA,
+            COMPOUND_STRATEGYY_OFFSET,
+            int(len(COMPOUND_STRATEGYY_CALCULATION)),
+            COMPOUND_STRATEGYY_CALCULATION,
+            int(len(COMPOUND_CALCULATION_CONDITION)),
+            COMPOUND_CALCULATION_CONDITION,
+        ),
+        sender=account,
+        max_priority_fee="1 gwei",
+    )
+    print("✅ Success")

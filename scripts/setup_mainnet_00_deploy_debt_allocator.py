@@ -25,6 +25,8 @@ def main():
     config = _load_config("config_mainnet.json")
     CAIRO_PROGRAM_HASH = config["cairo_program_hash"]
     CAIRO_VERIFIER = config["verifier_address"]
+    if chain.chain_id == 31337:
+        CAIRO_VERIFIER = project.MockVerifier.deploy(sender=account)
     VAULT_ADDRESS = config["vault_address"]
 
     print("ChainID", chain.chain_id)

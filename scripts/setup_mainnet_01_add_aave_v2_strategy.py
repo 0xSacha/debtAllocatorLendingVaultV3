@@ -1,7 +1,7 @@
 from ape import accounts, project
 import json
 import os
-
+from dotenv import load_dotenv
 
 #
 ## AAVE    : USDC - Mainnet
@@ -326,7 +326,7 @@ def main():
     config_dict = json.load(f)
     f.close()
 
-    f = open("./scripts/strategies_info.json")
+    f = open(config_dict["strategies_info_path"])
     strategies_info = json.load(f)
     f.close()
     account = accounts.load(os.environ["ACCOUNT_ALIAS"])
@@ -344,7 +344,19 @@ def main():
     calculations = strategies_info["calculations"]
     conditionsLen = strategies_info["conditionsLen"]
     conditions = strategies_info["conditions"]
-
+    print((
+            addresses,
+            callLen,
+            contracts,
+            selectors,
+            callData,
+            offset,
+            calculationsLen,
+            calculations,
+            conditionsLen,
+            conditions,
+        ),
+        aave_strategy)
     debt_allocator.addStrategy(
         (
             addresses,

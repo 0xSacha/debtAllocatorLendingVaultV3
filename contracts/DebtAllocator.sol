@@ -242,7 +242,7 @@ contract DebtAllocator is Ownable {
         PackedStrategies memory _packedStrategies,
         ProgramOutput memory _programOutput
     ) internal {
-        // We first harvest strategies with decreasing apr and update their allocation (so we release funds for strategies with increasint apr)
+        // We first harvest strategies with decreasing apr and update their allocation (so we release funds for strategies with increasing apr)
         for (
             uint256 index = 0;
             index < _programOutput.currentTargetAllocation.length;
@@ -273,7 +273,7 @@ contract DebtAllocator is Ownable {
             index++
         ) {
             if (
-                _programOutput.newTargetAllocation[index] >=
+                _programOutput.newTargetAllocation[index] >
                 _programOutput.currentTargetAllocation[index]
             ) {
                 address _strategy = _packedStrategies.addresses[index];
@@ -345,7 +345,6 @@ contract DebtAllocator is Ownable {
         emit StrategyAdded(newPackedStrategies);
     }
 
-    // TODO: use utils functions
     function updateStrategy(
         PackedStrategies memory _packedStrategies,
         uint256 indexStrategyToUpdate,

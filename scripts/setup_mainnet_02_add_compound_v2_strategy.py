@@ -1,7 +1,7 @@
 from ape import accounts, project
 import json
 import os
-
+from dotenv import load_dotenv
 
 ##  USDC MAINNET
 
@@ -108,7 +108,7 @@ COMPOUND_STRATEGY_CONTRACTS = [
     COMPOUND_CONTRACT_ADDRESS_13,
     COMPOUND_CONTRACT_ADDRESS_14,
 ]
-COMPOUND_STRATEGYY_SELECTOR = [
+COMPOUND_STRATEGYY_SELECTORS = [
     COMPOUND_SELECTOR_0,
     COMPOUND_SELECTOR_1,
     COMPOUND_SELECTOR_2,
@@ -357,7 +357,7 @@ def main():
     f = open("./scripts/config_mainnet.json")
     config_dict = json.load(f)
     f.close()
-    f = open("./scripts/strategies_info.json")
+    f = open("./scripts/config/strategies_info.json")
     strategies_info = json.load(f)
     f.close()
 

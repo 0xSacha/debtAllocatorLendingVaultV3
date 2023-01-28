@@ -6,6 +6,8 @@ from starkware.cairo.bootloaders.generate_fact import get_program_output
 from typing import Optional
 from starkware.cairo.sharp.fact_checker import FactChecker
 
+from ape import accounts, project
+
 def _load_config(config_file):
     CONFIG_PATH = os.path.join(os.path.dirname(__file__), config_file)
     with open(CONFIG_PATH, "r") as file:
@@ -39,8 +41,10 @@ def main():
 
     mins = 0
     print("Waiting for Job to be processed. This can take several minutes (> 15 min)")
+    debt_allocator = project.DebtAllocator.at(config["debt_allocator_address"])
+    verifier = project.MockVerifier.at(debt_allocator.cairoVerifier())
     while True:
-        if client.get_job_status(job_key) == "PROCESSED":
+        if verifier.isValid(fact):
             print("Job has been processed!")
             break
         print(mins, "minutes passed")

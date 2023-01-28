@@ -52,7 +52,7 @@ def main():
             conditionsLen,
             conditions,
         ),
-        max_priority_fee="1 gwei",
+        max_fee="100 gwei", max_priority_fee="1 gwei",
         sender=account,
     )
     logs = list(tx.decode_logs(debt_allocator.NewSolution))

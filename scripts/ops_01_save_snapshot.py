@@ -43,7 +43,7 @@ def save_snapshot(
             conditionsLen,
             conditions,
         ),
-        max_priority_fee="1 gwei",
+        max_fee="100 gwei", max_priority_fee="1 gwei",
         sender=account,
     )
 

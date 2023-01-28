@@ -22,7 +22,7 @@ def main():
     CONDITIONS_LEN = []
     CONDITIONS = []
     config = _load_config("config_mainnet.json")
-    block_number_start = 16464656
+    block_number_start = 16477135
     block_number_range = 10000
     block_number_stop = block_number_start + block_number_range
 
@@ -92,7 +92,7 @@ def main():
     result["calculations"] = CALCULATIONS
     result["conditionsLen"] = CONDITIONS_LEN
     result["conditions"] = CONDITIONS
-    f = open("./scripts/strategies_info.json", "w")
+    f = open("./scripts/config/strategies_info.json", "w")
     json.dump(result, f)
     f.close()
     print("✅ Data Strategies load")

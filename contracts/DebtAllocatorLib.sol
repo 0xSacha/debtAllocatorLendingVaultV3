@@ -80,6 +80,7 @@ library StrategiesUtils {
             ];
             cumulative_new_debt += _programOutput.newTargetAllocation[index];
         }
+        // TODO: this is not true, debt might change over time. need to think about this
         require(
             cumulative_current_debt == cumulative_new_debt,
             "INVALID_NEW_ALLOCATION"

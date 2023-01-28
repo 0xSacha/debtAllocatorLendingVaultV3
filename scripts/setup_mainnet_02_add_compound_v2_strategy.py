@@ -357,7 +357,7 @@ def main():
     f = open("./scripts/config_mainnet.json")
     config_dict = json.load(f)
     f.close()
-    f = open("./scripts/strategies_info.json")
+    f = open("./scripts/config/strategies_info.json")
     strategies_info = json.load(f)
     f.close()
 

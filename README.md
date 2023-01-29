@@ -50,7 +50,7 @@ The SETUP is only done by yearn governance. It is included here for the sake of 
 Proposers only need to execute Operations steps
 
 ### Operations
-#### Find your solution
+#### 0. Find your solution
 Use your own mechanism to find the optimal debt allocation
 
 Once you have found a debt allocation, modify `scripts/config_mainnet.json` with your new debt allocation
@@ -58,7 +58,7 @@ Once you have found a debt allocation, modify `scripts/config_mainnet.json` with
   "new_allocation_array": <<NEW_ARRAY>>,
 ```
 
-#### Sync latest data 
+#### 0. Sync latest data 
 Run 
 ```
 ape run ops_000_sync_data
@@ -66,7 +66,7 @@ ape run ops_000_sync_data
 
 This will read the last setup of strategies and the data required to calculate their APR
 
-#### Save (or reuse) a snapshot with current data
+#### 1. Save (or reuse) a snapshot with current data
 Snapshots are used to make sure that the Cairo Program uses recent data coming from the blockchain
 
 Run
@@ -81,7 +81,7 @@ ape run ops_01b_sync_last_snapshot
 ```
 to use the last valid snapshot (free gas)
 
-#### Generate Proof of valid result
+#### 2. Generate Proof of valid result
 Run
 ```
 ape run ops_02a_send_proof
@@ -92,13 +92,13 @@ Once run, you can monitor the status of the proof generation (and its on-chain v
 ape run ops_02b_monitor_proof_status
 ```
 
-#### Send and verify solution
+#### 3. Send and verify solution
 Run
 ```
 ape run ops_03a_verify_solution
 ```
 
-This will also update the vault allocation
+This will also update the vault allocation and pay pending rewards to the previous solver
 
 
 ### Setup

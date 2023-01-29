@@ -5,8 +5,9 @@ from dotenv import load_dotenv
 from starkware.cairo.bootloaders.generate_fact import get_program_output
 from typing import Optional
 from starkware.cairo.sharp.fact_checker import FactChecker
+from starkware.cairo.lang.vm.cairo_pie import CairoPie
 
-from ape import accounts, project
+from ape import project
 
 def _load_config(config_file):
     CONFIG_PATH = os.path.join(os.path.dirname(__file__), config_file)
@@ -14,12 +15,6 @@ def _load_config(config_file):
         config = json.load(file)
     return config
 
-def _save_job_key(config_file, config, job_key):
-    CONFIG_PATH = os.path.join(os.path.dirname(__file__), config_file)
-    config["last_job_key"] = job_key 
-    with open(CONFIG_PATH, "w") as file:
-        json.dump(config, file)
-    return config
 
 def main():
     load_dotenv()
@@ -29,9 +24,7 @@ def main():
     client = init_client(os.environ["BIN_PATH"], [os.environ["NODE_RPC_URL"]])
 
     #### RUN THE CAIRO PROGRAM ####
-    compiled_program = client.compile_cairo(config["cairo_program_path"])
-    cairo_pie = client.run_program(compiled_program, config["cairo_program_input_path"])
-    cairo_pie.to_file(config["cairo_program_output_path"])
+    cairo_pie = CairoPie.from_file(config["cairo_program_output_path"])
     program_output = get_program_output(cairo_pie)
 
     #### SUBMIT FOR VERIFICATION ####
@@ -43,11 +36,8 @@ def main():
     print(f"New APR: {program_output[-1] / 1e25:.2f}%")
     print(f"Old APR: {program_output[-2] / 1e25:.2f}%")
     
-    job_key = client.submit_cairo_pie(cairo_pie=cairo_pie)
+    job_key = config["last_job_key"]
     fact = client.get_fact(cairo_pie)
-
-    _save_job_key("config_mainnet.json", config, job_key)
-
     print("Job Key:", job_key)
     print("Fact:", fact)
 
@@ -56,10 +46,12 @@ def main():
     debt_allocator = project.DebtAllocator.at(config["debt_allocator_address"])
     verifier = project.MockVerifier.at(debt_allocator.cairoVerifier())
     while True:
+        print(mins, "minutes passed")
+        print("Checking verifier:", verifier)
         if verifier.isValid(fact):
             print("Job has been processed!")
             break
-        print(mins, "minutes passed")
+        print(client.get_job_status(job_key))
         mins += 1
         time.sleep(60)
         print("Job is still pending... sleeping for 60 secs")

@@ -1,5 +1,7 @@
 aiohttp==3.8.3
 aiosignal==1.3.1
+ape-etherscan==0.5.4
+ape-hardhat==0.5.4
 ape-infura==0.5.3
 ape-solidity==0.5.3
 appnope==0.1.3
